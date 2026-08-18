@@ -1,0 +1,339 @@
+import { AcademyConfig } from "@/types";
+
+/**
+ * ========================================================================
+ * CENTRAL DE CONFIGURAÇÕES - LAS CHICAS FITNESS
+ * ========================================================================
+ * Todos os textos, contatos, redes sociais, horários, fotos e estatísticas
+ * estão centralizados aqui para facilitar a personalização.
+ */
+
+export const ACADEMY_CONFIG: AcademyConfig = {
+  name: "Las Chicas Fitness",
+  shortName: "Las Chicas",
+  slogan: "SEU CORPO. SUA FORÇA. SUA EVOLUÇÃO.",
+  subSlogan:
+    "Treine na Las Chicas Fitness e transforme sua rotina através de movimento, disciplina e evolução.",
+  aboutHeadline: "MAIS QUE UMA ACADEMIA. UM ESTILO DE VIDA.",
+  aboutDescription:
+    "A Las Chicas Fitness nasceu para proporcionar um ambiente premium onde treino, saúde, autoestima e evolução caminham juntos. Aqui, cada aluna possui seu próprio objetivo e cada treino representa um passo a mais nessa jornada extraordinária.",
+  aboutSecondary:
+    "Combinamos estrutura de alto padrão, acolhimento, energia contagiante e acompanhamento técnico para você superar seus limites com confiança, beleza e determinação.",
+
+  // ======================================================================
+  // CONTATOS & REDES SOCIAIS (PLACEHOLDERS EDITÁVEIS)
+  // ======================================================================
+  contacts: {
+    // Altere para o WhatsApp real da academia (somente números com DDI + DDD)
+    // Exemplo: "5511999998888"
+    whatsappNumber: "5511999999999",
+    whatsappDisplay: "(11) 99999-9999",
+    phone: "(11) 99999-9999",
+    email: "contato@laschicasfitness.com.br",
+    instagramHandle: "@laschicasfitness",
+    instagramUrl: "https://instagram.com/laschicasfitness",
+
+    // Endereço físico
+    address: {
+      street: "ACADEMY_ADDRESS", // Substitua pelo endereço real (ex: Av. Principal, 1500)
+      neighborhood: "Centro",
+      city: "Sua Cidade",
+      state: "UF",
+      zipCode: "00000-000",
+      fullAddress: "Av. Principal, 1000 - Bairro Nobre, Sua Cidade - UF",
+    },
+
+    // Mapa interativo do Google Maps (iframe embed). Substitua pelo iframe da localização oficial.
+    googleMapsEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1975765792257!2d-46.6565343!3d-23.5613467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzQwLjkiUyA0NsKwMzknMjMuNSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr",
+  },
+
+  // ======================================================================
+  // HORÁRIOS DE FUNCIONAMENTO
+  // ======================================================================
+  hours: {
+    weekdays: "Segunda a Sexta: 06:00 às 22:00",
+    saturdays: "Sábados: 08:00 às 16:00",
+    sundaysAndHolidays: "Domingos e Feriados: 08:00 às 13:00",
+  },
+
+  // ======================================================================
+  // NÚMEROS E ESTATÍSTICAS (PLACEHOLDERS EDITÁVEIS)
+  // ======================================================================
+  stats: [
+    {
+      value: "+1.200",
+      label: "Alunas Ativas",
+      suffix: "",
+      description: "Mulheres transformando suas vidas",
+    },
+    {
+      value: "15+",
+      label: "Modalidades",
+      suffix: "",
+      description: "Treinos para todos os ritmos",
+    },
+    {
+      value: "20+",
+      label: "Profissionais",
+      suffix: "",
+      description: "Especialistas em performance",
+    },
+    {
+      value: "+50k",
+      label: "Treinos Realizados",
+      suffix: "",
+      description: "Metas superadas a cada mês",
+    },
+  ],
+
+  // ======================================================================
+  // MODALIDADES (PLACEHOLDERS EDITÁVEIS)
+  // ======================================================================
+  modalities: [
+    {
+      id: "musculacao",
+      title: "Musculação",
+      subtitle: "Força, Hipertrofia & Definição",
+      description:
+        "Treinos personalizados focados no desenvolvimento muscular, queima de gordura e fortalecimento com biomecânica avançada.",
+      iconName: "Dumbbell",
+      tags: ["Força", "Definição", "Postura"],
+      imageUrl:
+        "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200&auto=format&fit=crop",
+      intensity: "Personalizada",
+    },
+    {
+      id: "funcional",
+      title: "Treinamento Funcional",
+      subtitle: "Agilidade, Resistência & Mobilidade",
+      description:
+        "Movimentos dinâmicos com peso corporal e acessórios para melhorar condicionamento físico, estabilidade e capacidade cardiovascular.",
+      iconName: "Zap",
+      tags: ["Agilidade", "Cardio", "Queima Calórica"],
+      imageUrl:
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      intensity: "Alta",
+    },
+    {
+      id: "cardio-hiit",
+      title: "Cardio & HIIT",
+      subtitle: "Resistência & Aceleração Metabólica",
+      description:
+        "Treinos intervalados de alta intensidade e esteiras/bikes de última geração para maximizar o gasto calórico e saúde do coração.",
+      iconName: "Flame",
+      tags: ["Resistência", "Metabolismo", "Energia"],
+      imageUrl:
+        "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1200&auto=format&fit=crop",
+      intensity: "Alta",
+    },
+    {
+      id: "personal",
+      title: "Personal Trainer",
+      subtitle: "Acompanhamento Exclusivo 1 a 1",
+      description:
+        "Supervisão individualizada com prescrição de treino direcionada aos seus objetivos, correção de movimentos e foco em resultados rápidos.",
+      iconName: "UserCheck",
+      tags: ["Exclusivo", "Resultados", "Foco"],
+      imageUrl:
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop",
+      intensity: "Personalizada",
+    },
+  ],
+
+  // ======================================================================
+  // BENEFÍCIOS E DIFERENCIAIS
+  // ======================================================================
+  benefits: [
+    {
+      id: "b1",
+      title: "Ambiente Moderno",
+      description:
+        "Design sofisticado, climatização perfeita, iluminação pensada e energia vibrante em cada detalhe.",
+      iconName: "Sparkles",
+    },
+    {
+      id: "b2",
+      title: "Equipamentos de Ponta",
+      description:
+        "Maquinário moderno com biomecânica precisa para segurança articular e máxima eficiência nos exercícios.",
+      iconName: "Layers",
+    },
+    {
+      id: "b3",
+      title: "Profissionais Preparados",
+      description:
+        "Equipe técnica qualificada, atenciosa e atualizada com as melhores metodologias do treinamento feminino.",
+      iconName: "Award",
+    },
+    {
+      id: "b4",
+      title: "Acompanhamento de Perto",
+      description:
+        "Avaliação física detalhada e suporte constante para garantir evolução contínua e sem lesões.",
+      iconName: "Target",
+    },
+    {
+      id: "b5",
+      title: "Variedade de Treinos",
+      description:
+        "Diversidade de modalidades e metodologias para manter sua motivação alta em todas as fases da rotina.",
+      iconName: "Activity",
+    },
+    {
+      id: "b6",
+      title: "Comunidade Acolhedora",
+      description:
+        "Um espaço empático e inspirador onde mulheres se apoiam mutuamente para conquistar seus objetivos.",
+      iconName: "Users",
+    },
+    {
+      id: "b7",
+      title: "Foco em Resultados",
+      description:
+        "Metodologias comprovadas cientificamente para você atingir seu melhor condicionamento e bem-estar.",
+      iconName: "TrendingUp",
+    },
+    {
+      id: "b8",
+      title: "Qualidade de Vida",
+      description:
+        "Muito além da estética: ganhe disposição diária, redução do estresse, sono reparador e longevidade.",
+      iconName: "HeartPulse",
+    },
+  ],
+
+  // ======================================================================
+  // ESTRUTURA DA ACADEMIA (CATEGORIZADA)
+  // ======================================================================
+  structure: [
+    {
+      id: "str-1",
+      title: "Área de Musculação Premium",
+      category: "Musculação",
+      description:
+        "Halteres emborrachados, estações de polias múltiplas e maquinário de alta precisão biomecânica.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      id: "str-2",
+      title: "Espaço Funcional & Cross",
+      category: "Funcional",
+      description:
+        "Piso emborrachado de absorção de impacto, kettlebells, cordas navais e caixas de salto.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      id: "str-3",
+      title: "Studio de Cardio Tecnológico",
+      category: "Cardio",
+      description:
+        "Esteiras ergonômicas, escadas de alta performance e bikes de spinning com painéis digitais.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      id: "str-4",
+      title: "Recepção & Lounge de Convivência",
+      category: "Recepção",
+      description:
+        "Atendimento acolhedor, área de shake bar e ambiente confortável para relaxar antes ou depois do treino.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1623874514711-0f321325f318?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      id: "str-5",
+      title: "Ambiente Interno Climatizado",
+      category: "Ambiente Interno",
+      description:
+        "Design acústico, iluminação cênica suave e ventilação cruzada para o máximo conforto térmico.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      id: "str-6",
+      title: "Fachada & Estacionamento",
+      category: "Fachada",
+      description:
+        "Arquitetura imponente com segurança 24h, fácil acesso e comodidade para sua rotina.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  // ======================================================================
+  // GALERIA DINÂMICA
+  // ======================================================================
+  gallery: [
+    {
+      id: "gal-1",
+      title: "Treino de Força & Foco",
+      category: "Superação",
+      imageUrl:
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      aspect: "tall",
+    },
+    {
+      id: "gal-2",
+      title: "Ambiente Climatizado de Alta Energia",
+      category: "Estrutura",
+      imageUrl:
+        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+      aspect: "wide",
+    },
+    {
+      id: "gal-3",
+      title: "Movimento & Disciplina Diária",
+      category: "Performance",
+      imageUrl:
+        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
+      aspect: "square",
+    },
+    {
+      id: "gal-4",
+      title: "Conexão & Comunidade Fitness",
+      category: "Comunidade",
+      imageUrl:
+        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
+      aspect: "square",
+    },
+    {
+      id: "gal-5",
+      title: "Acompanhamento Técnico Especializado",
+      category: "Personal",
+      imageUrl:
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop",
+      aspect: "wide",
+    },
+    {
+      id: "gal-6",
+      title: "Equipamentos com Biomecânica Perfeita",
+      category: "Tecnologia",
+      imageUrl:
+        "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1200&auto=format&fit=crop",
+      aspect: "tall",
+    },
+  ],
+
+  // ======================================================================
+  // MARCA D'ÁGUA NO FOOTER
+  // ======================================================================
+  author: {
+    name: "Pedro",
+    label: "Feito por Pedro",
+    url: "#",
+  },
+};
+
+/**
+ * Função utilitária para gerar link de WhatsApp com mensagem automática
+ */
+export function getWhatsAppUrl(customMessage?: string): string {
+  const phone = ACADEMY_CONFIG.contacts.whatsappNumber;
+  const message =
+    customMessage ||
+    `Olá! Gostaria de saber mais sobre as matrículas e planos da ${ACADEMY_CONFIG.name}.`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
