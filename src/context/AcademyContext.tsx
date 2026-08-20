@@ -86,7 +86,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
           instagramPosts:
             Array.isArray(parsed.instagramPosts) &&
             parsed.instagramPosts.length > 0 &&
-            !parsed.instagramPosts.some((p: any) => p.mediaUrl?.includes("mixkit") || p.id?.startsWith("insta-1"))
+            parsed.instagramPosts.some((p: any) => p.mediaUrl?.includes("/videos/reels/"))
               ? parsed.instagramPosts
               : ACADEMY_CONFIG.instagramPosts,
         }));
