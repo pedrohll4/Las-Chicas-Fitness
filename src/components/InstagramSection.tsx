@@ -137,7 +137,11 @@ export function InstagramSection() {
             }}
           >
             {posts.map((post, idx) => {
-              const isVideo = post.type === "video";
+              const isMp4Video =
+                post.mediaUrl?.endsWith(".mp4") ||
+                post.mediaUrl?.endsWith(".webm") ||
+                post.mediaUrl?.includes("video");
+              const isReel = post.type === "video" || isMp4Video;
               const targetUrl =
                 post.permalink && post.permalink.includes("las.chicasfitness")
                   ? post.permalink
@@ -152,7 +156,7 @@ export function InstagramSection() {
                   className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] rounded-2xl overflow-hidden bg-surface border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
                 >
                   {/* Media: Video (sem som / loop) or Image */}
-                  {isVideo ? (
+                  {isMp4Video ? (
                     <div className="relative w-full h-full">
                       <video
                         src={post.mediaUrl}
@@ -177,11 +181,18 @@ export function InstagramSection() {
                         fill
                         className="object-cover object-center group-hover:scale-105 filter brightness-95 group-hover:brightness-100 transition-transform duration-700 ease-out"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        unoptimized={post.mediaUrl.startsWith("data:")}
+                        unoptimized={post.mediaUrl.startsWith("data:") || post.mediaUrl.startsWith("/images/")}
                       />
-                      {/* Photo indicator badge */}
-                      <div className="absolute top-3 right-3 p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-pink-300">
-                        <Instagram className="w-3.5 h-3.5" />
+                      {/* Photo or Reel indicator badge */}
+                      <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-pink-300 flex items-center gap-1">
+                        {isReel ? (
+                          <>
+                            <Play className="w-3 h-3 fill-current" />
+                            <span className="text-[10px] font-bold">Reels</span>
+                          </>
+                        ) : (
+                          <Instagram className="w-3.5 h-3.5" />
+                        )}
                       </div>
                     </div>
                   )}
