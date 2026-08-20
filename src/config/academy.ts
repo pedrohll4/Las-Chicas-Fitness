@@ -11,7 +11,7 @@ import { AcademyConfig } from "@/types";
 export const ACADEMY_CONFIG: AcademyConfig = {
   name: "Las Chicas Fitness",
   shortName: "Las Chicas",
-  slogan: "SEU CORPO. SUA FORÇA. SUA EVOLUÇÃO.",
+  slogan: "MULHERES FORTES. RESULTADOS REAIS.",
   subSlogan:
     "Treine na Las Chicas Fitness e transforme sua rotina através de movimento, disciplina e evolução.",
   aboutHeadline: "MAIS QUE UMA ACADEMIA. UM ESTILO DE VIDA.",
