@@ -68,25 +68,13 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
           contacts: {
             ...ACADEMY_CONFIG.contacts,
             ...(parsed.contacts || {}),
-            instagramHandle:
-              parsed.contacts?.instagramHandle &&
-              parsed.contacts?.instagramHandle.includes("las.chicasfitness")
-                ? parsed.contacts.instagramHandle
-                : "@las.chicasfitness",
-            instagramUrl:
-              parsed.contacts?.instagramUrl &&
-              parsed.contacts?.instagramUrl.includes("las.chicasfitness")
-                ? parsed.contacts.instagramUrl
-                : "https://www.instagram.com/las.chicasfitness/",
           },
           plans:
             Array.isArray(parsed.plans) && parsed.plans.length > 0
               ? parsed.plans
               : ACADEMY_CONFIG.plans,
           instagramPosts:
-            Array.isArray(parsed.instagramPosts) &&
-            parsed.instagramPosts.length > 0 &&
-            parsed.instagramPosts.some((p: any) => p.mediaUrl?.includes("/videos/reels/"))
+            Array.isArray(parsed.instagramPosts) && parsed.instagramPosts.length > 0
               ? parsed.instagramPosts
               : ACADEMY_CONFIG.instagramPosts,
         }));
