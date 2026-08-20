@@ -8,6 +8,7 @@ import {
   GalleryItem,
   BenefitItem,
   PlanItem,
+  InstagramPost,
   StatItem,
 } from "@/types";
 import { ACADEMY_CONFIG } from "@/config/academy";
@@ -20,6 +21,7 @@ interface AcademyContextType {
   updateGallery: (gallery: GalleryItem[]) => void;
   updateBenefits: (benefits: BenefitItem[]) => void;
   updatePlans: (plans: PlanItem[]) => void;
+  updateInstagramPosts: (posts: InstagramPost[]) => void;
   updateStats: (stats: StatItem[]) => void;
   resetToDefaults: () => void;
   exportConfigJson: () => string;
@@ -63,10 +65,28 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
           ...ACADEMY_CONFIG,
           ...prev,
           ...parsed,
+          contacts: {
+            ...ACADEMY_CONFIG.contacts,
+            ...(parsed.contacts || {}),
+            instagramHandle:
+              parsed.contacts?.instagramHandle &&
+              parsed.contacts?.instagramHandle !== "@laschicasfitness"
+                ? parsed.contacts.instagramHandle
+                : ACADEMY_CONFIG.contacts.instagramHandle,
+            instagramUrl:
+              parsed.contacts?.instagramUrl &&
+              !parsed.contacts?.instagramUrl.includes("@laschicasfitness")
+                ? parsed.contacts.instagramUrl
+                : ACADEMY_CONFIG.contacts.instagramUrl,
+          },
           plans:
             Array.isArray(parsed.plans) && parsed.plans.length > 0
               ? parsed.plans
               : ACADEMY_CONFIG.plans,
+          instagramPosts:
+            Array.isArray(parsed.instagramPosts) && parsed.instagramPosts.length > 0
+              ? parsed.instagramPosts
+              : ACADEMY_CONFIG.instagramPosts,
         }));
       }
 
@@ -118,6 +138,11 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
 
   const updatePlans = (plans: PlanItem[]) => {
     const updated = { ...config, plans };
+    persistConfig(updated);
+  };
+
+  const updateInstagramPosts = (instagramPosts: InstagramPost[]) => {
+    const updated = { ...config, instagramPosts };
     persistConfig(updated);
   };
 
@@ -236,6 +261,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         updateGallery,
         updateBenefits,
         updatePlans,
+        updateInstagramPosts,
         updateStats,
         resetToDefaults,
         exportConfigJson,

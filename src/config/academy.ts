@@ -30,8 +30,8 @@ export const ACADEMY_CONFIG: AcademyConfig = {
     whatsappDisplay: "(11) 99999-9999",
     phone: "(11) 99999-9999",
     email: "contato@laschicasfitness.com.br",
-    instagramHandle: "@laschicasfitness",
-    instagramUrl: "https://instagram.com/laschicasfitness",
+    instagramHandle: "@las.chicasfitness",
+    instagramUrl: "https://www.instagram.com/las.chicasfitness/",
 
     // Endereço físico
     address: {
@@ -264,6 +264,63 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       isPopular: false,
       ctaText: "Escolher Semestral",
       customMessage: "Olá! Gostaria de me matricular no Plano Semestral Evolution da Las Chicas Fitness.",
+    },
+  ],
+
+  // ======================================================================
+  // POSTAGENS E VÍDEOS DO INSTAGRAM (CARROSSEL DINÂMICO)
+  // ======================================================================
+  instagramPosts: [
+    {
+      id: "insta-1",
+      type: "video",
+      mediaUrl: "https://assets.mixkit.co/videos/42217/42217-720.mp4",
+      likes: "482",
+      comments: "38",
+      caption: "Superação e evolução constante no treino de membros superiores 💪✨",
+    },
+    {
+      id: "insta-2",
+      type: "image",
+      mediaUrl:
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
+      likes: "394",
+      comments: "29",
+      caption: "Ambiente acolhedor e pensado para o seu melhor rendimento! 🏋️‍♀️",
+    },
+    {
+      id: "insta-3",
+      type: "video",
+      mediaUrl: "https://assets.mixkit.co/videos/42205/42205-720.mp4",
+      likes: "612",
+      comments: "54",
+      caption: "Foco, biomecânica correta e orientação especializada todos os dias 🔥",
+    },
+    {
+      id: "insta-4",
+      type: "image",
+      mediaUrl:
+        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop",
+      likes: "528",
+      comments: "41",
+      caption: "A energia contagiante das aulas coletivas na Las Chicas Fitness! 💖",
+    },
+    {
+      id: "insta-5",
+      type: "video",
+      mediaUrl: "https://assets.mixkit.co/videos/42216/42216-720.mp4",
+      likes: "730",
+      comments: "67",
+      caption: "Movimento que liberta, fortalece e eleva a autoestima ✨",
+    },
+    {
+      id: "insta-6",
+      type: "image",
+      mediaUrl:
+        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
+      likes: "419",
+      comments: "32",
+      caption: "Estrutura moderna de alto padrão esperando por você 🏛️",
     },
   ],
 

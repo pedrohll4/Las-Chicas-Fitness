@@ -21,6 +21,8 @@ import {
   Sparkles,
   CreditCard,
   Star,
+  Instagram,
+  Video,
   AlertCircle,
   Key,
 } from "lucide-react";
@@ -33,14 +35,16 @@ import {
   BenefitItem,
   StatItem,
   PlanItem,
+  InstagramPost,
 } from "@/types";
 
 type ActiveTab =
   | "geral"
+  | "planos"
+  | "instagram"
   | "servicos"
   | "estrutura"
   | "galeria"
-  | "planos"
   | "beneficios"
   | "contatos"
   | "sistema";
@@ -54,6 +58,7 @@ export function AdminCustomizer() {
     updateGallery,
     updateBenefits,
     updatePlans,
+    updateInstagramPosts,
     updateStats,
     resetToDefaults,
     exportConfigJson,
@@ -224,6 +229,38 @@ export function AdminCustomizer() {
     updatePlans(updated);
   };
 
+  // Instagram handlers
+  const handleAddInstagramPost = () => {
+    const newPost: InstagramPost = {
+      id: `insta-${Date.now()}`,
+      type: "image",
+      mediaUrl:
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
+      likes: "350",
+      comments: "25",
+      caption: "Superação e energia na Las Chicas Fitness! ✨",
+    };
+    const updated = [...(formData.instagramPosts || []), newPost];
+    setFormData({ ...formData, instagramPosts: updated });
+    updateInstagramPosts(updated);
+    showToast("Nova postagem do Instagram adicionada!");
+  };
+
+  const handleRemoveInstagramPost = (id: string) => {
+    const updated = (formData.instagramPosts || []).filter((p) => p.id !== id);
+    setFormData({ ...formData, instagramPosts: updated });
+    updateInstagramPosts(updated);
+    showToast("Postagem removida do carrossel!");
+  };
+
+  const handleUpdateInstagramPost = (id: string, partial: Partial<InstagramPost>) => {
+    const updated = (formData.instagramPosts || []).map((p) =>
+      p.id === id ? { ...p, ...partial } : p
+    );
+    setFormData({ ...formData, instagramPosts: updated });
+    updateInstagramPosts(updated);
+  };
+
   // Export JSON
   const handleDownloadBackup = () => {
     const jsonStr = exportConfigJson();
@@ -265,6 +302,7 @@ export function AdminCustomizer() {
   const TABS = [
     { id: "geral", label: "Geral & Textos", icon: Building2 },
     { id: "planos", label: "Planos & Mensalidades", icon: CreditCard },
+    { id: "instagram", label: "Instagram & Vídeos", icon: Instagram },
     { id: "servicos", label: "Serviços & Modalidades", icon: Dumbbell },
     { id: "estrutura", label: "Fotos da Estrutura", icon: Images },
     { id: "galeria", label: "Galeria de Fotos", icon: Camera },
@@ -816,7 +854,264 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 3: MODALIDADES & SERVIÇOS */}
+          {/* TAB 3: INSTAGRAM & VÍDEOS */}
+          {/* ========================================================================= */}
+          {activeTab === "instagram" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-white">Carrossel do Instagram</h3>
+                  <p className="text-xs text-zinc-400">
+                    Adicione vídeos em loop (sem som) e fotos que aparecem no carrossel dinâmico.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const defaultPosts: InstagramPost[] = [
+                        {
+                          id: "insta-1",
+                          type: "video",
+                          mediaUrl: "https://assets.mixkit.co/videos/42217/42217-720.mp4",
+                          likes: "482",
+                          comments: "38",
+                          caption: "Superação e evolução constante no treino de membros superiores 💪✨",
+                        },
+                        {
+                          id: "insta-2",
+                          type: "image",
+                          mediaUrl:
+                            "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
+                          likes: "394",
+                          comments: "29",
+                          caption: "Ambiente acolhedor e pensado para o seu melhor rendimento! 🏋️‍♀️",
+                        },
+                        {
+                          id: "insta-3",
+                          type: "video",
+                          mediaUrl: "https://assets.mixkit.co/videos/42205/42205-720.mp4",
+                          likes: "612",
+                          comments: "54",
+                          caption: "Foco, biomecânica correta e orientação especializada todos os dias 🔥",
+                        },
+                        {
+                          id: "insta-4",
+                          type: "image",
+                          mediaUrl:
+                            "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop",
+                          likes: "528",
+                          comments: "41",
+                          caption: "A energia contagiante das aulas coletivas na Las Chicas Fitness! 💖",
+                        },
+                        {
+                          id: "insta-5",
+                          type: "video",
+                          mediaUrl: "https://assets.mixkit.co/videos/42216/42216-720.mp4",
+                          likes: "730",
+                          comments: "67",
+                          caption: "Movimento que liberta, fortalece e eleva a autoestima ✨",
+                        },
+                        {
+                          id: "insta-6",
+                          type: "image",
+                          mediaUrl:
+                            "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
+                          likes: "419",
+                          comments: "32",
+                          caption: "Estrutura moderna de alto padrão esperando por você 🏛️",
+                        },
+                      ];
+                      setFormData({ ...formData, instagramPosts: defaultPosts });
+                      updateInstagramPosts(defaultPosts);
+                      showToast("Postagens e vídeos padrões restaurados!");
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-card hover:bg-surface-light border border-white/10 text-zinc-300 hover:text-white text-xs font-semibold transition-all"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-brand-pink" />
+                    <span className="hidden sm:inline">Restaurar Mídias</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleAddInstagramPost}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Adicionar Mídia</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Informações do Perfil */}
+              <div className="p-4 rounded-2xl bg-surface border border-white/5 space-y-4">
+                <h4 className="text-xs font-bold text-brand-pink uppercase tracking-wider">
+                  Configurações do Perfil do Instagram
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                      Nome de Usuário (@arroba)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.contacts.instagramHandle}
+                      onChange={(e) => {
+                        const updated = {
+                          ...formData,
+                          contacts: { ...formData.contacts, instagramHandle: e.target.value },
+                        };
+                        setFormData(updated);
+                        updateConfig(updated);
+                      }}
+                      placeholder="@las.chicasfitness"
+                      className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                      Link Direto do Perfil
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.contacts.instagramUrl}
+                      onChange={(e) => {
+                        const updated = {
+                          ...formData,
+                          contacts: { ...formData.contacts, instagramUrl: e.target.value },
+                        };
+                        setFormData(updated);
+                        updateConfig(updated);
+                      }}
+                      placeholder="https://www.instagram.com/las.chicasfitness/"
+                      className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista de Postagens e Vídeos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {(formData.instagramPosts || []).map((post, index) => (
+                  <div
+                    key={post.id}
+                    className="p-5 rounded-2xl bg-surface border border-white/10 space-y-3 relative"
+                  >
+                    <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-brand-pink">
+                          Mídia #{index + 1}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-semibold text-zinc-300">
+                          {post.type === "video" ? "🎬 Vídeo sem som" : "📷 Foto"}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveInstagramPost(post.id)}
+                        className="p-1 rounded text-zinc-500 hover:text-red-400 transition-colors"
+                        title="Excluir mídia"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Tipo de Mídia
+                        </label>
+                        <select
+                          value={post.type}
+                          onChange={(e) =>
+                            handleUpdateInstagramPost(post.id, {
+                              type: e.target.value as "image" | "video",
+                            })
+                          }
+                          className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
+                        >
+                          <option value="image">Foto</option>
+                          <option value="video">Vídeo (Reels / MP4)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Curtidas (exibição)
+                        </label>
+                        <input
+                          type="text"
+                          value={post.likes}
+                          onChange={(e) =>
+                            handleUpdateInstagramPost(post.id, { likes: e.target.value })
+                          }
+                          placeholder="482"
+                          className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Legenda do Post
+                      </label>
+                      <input
+                        type="text"
+                        value={post.caption || ""}
+                        onChange={(e) =>
+                          handleUpdateInstagramPost(post.id, { caption: e.target.value })
+                        }
+                        placeholder="Texto descritivo do treino..."
+                        className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
+                      />
+                    </div>
+
+                    {post.type === "video" ? (
+                      <div className="space-y-2">
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                          URL do Vídeo (.mp4)
+                        </label>
+                        <input
+                          type="text"
+                          value={post.mediaUrl}
+                          onChange={(e) =>
+                            handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
+                          }
+                          placeholder="https://exemplo.com/treino.mp4"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
+                        />
+                        {post.mediaUrl && (
+                          <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-black border border-white/10 mt-1">
+                            <video
+                              src={post.mediaUrl}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <ImageUploader
+                        label="Foto do Post"
+                        value={post.mediaUrl}
+                        onChange={(url) =>
+                          handleUpdateInstagramPost(post.id, { mediaUrl: url })
+                        }
+                        aspectRatio="wide"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 4: MODALIDADES & SERVIÇOS */}
           {/* ========================================================================= */}
           {activeTab === "servicos" && (
             <div className="space-y-6">

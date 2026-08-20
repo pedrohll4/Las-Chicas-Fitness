@@ -58,6 +58,16 @@ export interface PlanItem {
   customMessage?: string;
 }
 
+export interface InstagramPost {
+  id: string;
+  type: "image" | "video";
+  mediaUrl: string;
+  likes: string;
+  comments?: string;
+  caption?: string;
+  permalink?: string;
+}
+
 export interface AcademyHours {
   weekdays: string;
   saturdays: string;
@@ -96,6 +106,7 @@ export interface AcademyConfig {
   structure: StructureItem[];
   gallery: GalleryItem[];
   plans: PlanItem[];
+  instagramPosts: InstagramPost[];
   author: {
     name: string;
     label: string;
