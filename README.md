@@ -1,102 +1,52 @@
-# Las Chicas Fitness — Website Institucional
+# Las Chicas Fitness — Website Institucional & Painel de Personalização
 
-Website institucional moderno, profissional e responsivo para a academia **Las Chicas Fitness**, desenvolvido com Next.js (App Router), TypeScript e Tailwind CSS.
-
----
-
-## 🚀 Tecnologias Utilizadas
-
-- **[Next.js](https://nextjs.org/)** (App Router)
-- **[React](https://react.dev/)**
-- **[TypeScript](https://www.typescriptlang.org/)**
-- **[Tailwind CSS](https://tailwindcss.com/)**
-- **[Lucide React](https://lucide.dev/)** (Ícones modernos)
-- **[Framer Motion](https://www.framer.com/motion/)**
+Website institucional moderno, profissional e responsivo para a academia **Las Chicas Fitness**, desenvolvido com Next.js (App Router), TypeScript, Tailwind CSS e sistema integrado de **Personalização em Tempo Real (Admin CMS)**.
 
 ---
 
-## 📁 Estrutura do Projeto
+## ✨ Funcionalidades Principais
 
-```text
-├── public/
-│   ├── images/
-│   │   └── logo.png              # Logo oficial da Las Chicas Fitness
-│   ├── icon.png                  # Ícone / Favicon do site
-│   └── logo.png
-├── src/
-│   ├── app/
-│   │   ├── globals.css           # Estilos globais e efeitos glow/glassmorphism
-│   │   ├── layout.tsx            # Metadados de SEO, OpenGraph e fontes
-│   │   └── page.tsx              # Página principal (Landing Page)
-│   ├── components/
-│   │   ├── Header.tsx            # Navbar fixa com blur inteligente e menu mobile
-│   │   ├── Hero.tsx              # Seção principal com tipografia forte e CTAs
-│   │   ├── About.tsx             # Sobre a academia com métricas editáveis
-│   │   ├── Services.tsx          # Modalidades com cards e detalhes
-│   │   ├── Benefits.tsx          # 8 diferenciais da academia
-│   │   ├── Structure.tsx         # Estrutura com categorias e Lightbox
-│   │   ├── Gallery.tsx           # Galeria de fotos dinâmica
-│   │   ├── LightboxModal.tsx     # Modal de ampliação de fotos
-│   │   ├── CTA.tsx               # Banner de conversão para matrícula
-│   │   ├── InstagramSection.tsx  # Chamada para seguir nas redes
-│   │   ├── Location.tsx          # Endereço, horários de treino e mapa interativo
-│   │   ├── Footer.tsx            # Rodapé com marca d'água "Feito por Pedro"
-│   │   └── WhatsAppButton.tsx    # Botão flutuante de WhatsApp com tooltip
-│   ├── config/
-│   │   └── academy.ts            # Central de configurações e placeholders
-│   └── types/
-│       └── index.ts              # Tipagens TypeScript
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-└── next.config.mjs
-```
+- **Identidade Visual Premium**: Paleta Preto Profundo (`#0A0A0C`) + Rosa Vibrante (`#FF2E93`), logo oficial integrada, microefeitos de vidro e iluminação suave (*glow*).
+- **Painel de Personalização Admin**:
+  - Acesso protegido por senha de administrador via botão **"Personalizar"** no rodapé.
+  - Edição ao vivo de fotos da estrutura, galeria e modalidades com suporte a URLs e **upload direto do computador**.
+  - Edição de textos, slogans, estatísticas, diferenciais, horários de funcionamento e canais de contato.
+  - **Backup & Restauração**: Exportar e importar configurações em formato JSON e restaurar padrões originais.
+  - Troca de senha do administrador.
+- **Seções Completas**: Header com blur dinâmico, Hero, Sobre, Modalidades, Benefícios, Estrutura com categorias, Galeria com Lightbox em tela cheia, CTA de Matrícula, Instagram, Localização com Google Maps, Rodapé com marca d'água e Botão Flutuante de WhatsApp.
 
 ---
 
-## ⚙️ Como Personalizar os Dados da Academia
+## 🔐 Acesso ao Painel de Personalização
 
-Todos os dados (WhatsApp, telefone, Instagram, endereço, horários, fotos e estatísticas) estão centralizados no arquivo:
+1. No final do rodapé da página, clique no botão **"Personalizar"** (ao lado de *"Feito por Pedro"*).
+2. Digite a senha de administrador:
+   - **Senha Padrão Inicial**: `admin123`
+3. O painel se abrirá na lateral da tela permitindo editar qualquer informação do site em tempo real!
 
-👉 **`src/config/academy.ts`**
-
-Para alterar o WhatsApp de matrícula, basta mudar o campo `whatsappNumber`:
-
-```typescript
-contacts: {
-  whatsappNumber: "5511999999999", // Coloque o número com DDI e DDD (somente dígitos)
-  whatsappDisplay: "(11) 99999-9999",
-  phone: "(11) 99999-9999",
-  instagramHandle: "@laschicasfitness",
-  instagramUrl: "https://instagram.com/laschicasfitness",
-  address: {
-    fullAddress: "Av. Principal, 1000 - Bairro Nobre, Sua Cidade - UF",
-  },
-  ...
-}
-```
+*(Você pode alterar a senha a qualquer momento na aba **Sistema & Backup** dentro do painel)*.
 
 ---
 
-## 💻 Como Rodar Localmente
+## 🚀 Como Rodar Localmente
 
 1. **Instalar dependências**:
    ```bash
    npm install
    ```
 
-2. **Executar em ambiente de desenvolvimento**:
+2. **Executar em desenvolvimento**:
    ```bash
    npm run dev
    ```
-   Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
+   Acesse [http://localhost:3000](http://localhost:3000).
 
 3. **Gerar build de produção**:
    ```bash
    npm run build
    ```
 
-4. **Executar o build de produção**:
+4. **Executar o build**:
    ```bash
    npm start
    ```
@@ -105,11 +55,7 @@ contacts: {
 
 ## 🌐 Publicação na Vercel
 
-O projeto foi 100% otimizado para deploy instantâneo na **Vercel**:
-
-1. Suba o código para um repositório no **GitHub**, **GitLab** ou **Bitbucket**.
-2. Acesse [vercel.com](https://vercel.com) e clique em **"Add New Project"**.
-3. Importe o repositório. O Next.js será detectado automaticamente.
-4. Clique em **"Deploy"**.
-
-Pronto! Seu site estará no ar em segundos com certificado SSL e CDN global.
+O projeto está 100% pronto para deploy na **Vercel**:
+1. Faça o push para o seu repositório no GitHub (`main`).
+2. Conecte o repositório na [Vercel](https://vercel.com).
+3. Clique em **Deploy**.

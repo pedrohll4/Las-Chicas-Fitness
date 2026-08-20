@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sparkles,
   Layers,
@@ -8,7 +10,7 @@ import {
   TrendingUp,
   HeartPulse,
 } from "lucide-react";
-import { ACADEMY_CONFIG } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 const BENEFIT_ICONS: Record<string, React.ElementType> = {
   Sparkles,
@@ -22,6 +24,8 @@ const BENEFIT_ICONS: Record<string, React.ElementType> = {
 };
 
 export function Benefits() {
+  const { config } = useAcademy();
+
   return (
     <section id="beneficios" className="py-24 sm:py-32 bg-[#0A0A0C] relative overflow-hidden">
       {/* Background ambient lighting */}
@@ -38,7 +42,7 @@ export function Benefits() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight mb-4">
             POR QUE TREINAR NA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-pink-300">
-              {ACADEMY_CONFIG.name}?
+              {config.name}?
             </span>
           </h2>
 
@@ -50,7 +54,7 @@ export function Benefits() {
 
         {/* 8 Benefits Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ACADEMY_CONFIG.benefits.map((benefit, index) => {
+          {config.benefits.map((benefit, index) => {
             const Icon = BENEFIT_ICONS[benefit.iconName] || Sparkles;
             return (
               <div

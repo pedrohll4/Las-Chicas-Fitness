@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Maximize2, Sparkles } from "lucide-react";
-import { ACADEMY_CONFIG } from "@/config/academy";
+import { Maximize2 } from "lucide-react";
+import { useAcademy } from "@/context/AcademyContext";
 import { LightboxModal, LightboxImage } from "@/components/LightboxModal";
 
 const CATEGORIES = [
@@ -17,13 +17,14 @@ const CATEGORIES = [
 ] as const;
 
 export function Structure() {
+  const { config } = useAcademy();
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const filteredItems =
     selectedCategory === "Todas"
-      ? ACADEMY_CONFIG.structure
-      : ACADEMY_CONFIG.structure.filter((item) => item.category === selectedCategory);
+      ? config.structure
+      : config.structure.filter((item) => item.category === selectedCategory);
 
   const lightboxImages: LightboxImage[] = filteredItems.map((item) => ({
     imageUrl: item.imageUrl,
@@ -91,6 +92,7 @@ export function Structure() {
                   fill
                   className="object-cover object-center group-hover:scale-105 filter brightness-90 group-hover:brightness-100 transition-all duration-500"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  unoptimized={item.imageUrl.startsWith("data:")}
                 />
 
                 {/* Dark Gradient Overlay */}

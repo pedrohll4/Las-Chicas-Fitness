@@ -1,6 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { Instagram, ArrowUpRight, Heart } from "lucide-react";
-import { ACADEMY_CONFIG } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 const INSTA_POSTS = [
   {
@@ -26,6 +28,8 @@ const INSTA_POSTS = [
 ];
 
 export function InstagramSection() {
+  const { config } = useAcademy();
+
   return (
     <section className="py-20 bg-[#0A0A0C] border-t border-white/5 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,13 +38,13 @@ export function InstagramSection() {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/10 border border-brand-pink/20 text-brand-pink text-xs font-bold uppercase tracking-wider mb-3">
               <Instagram className="w-3.5 h-3.5" />
-              <span>{ACADEMY_CONFIG.contacts.instagramHandle}</span>
+              <span>{config.contacts.instagramHandle}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase leading-tight">
               ACOMPANHE A <br className="sm:hidden" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-pink-300">
-                {ACADEMY_CONFIG.name}
+                {config.name}
               </span>
             </h2>
 
@@ -51,7 +55,7 @@ export function InstagramSection() {
 
           <div>
             <a
-              href={ACADEMY_CONFIG.contacts.instagramUrl}
+              href={config.contacts.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-surface-card hover:bg-surface-light border border-white/15 hover:border-brand-pink text-white text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 shadow-md group"
@@ -68,7 +72,7 @@ export function InstagramSection() {
           {INSTA_POSTS.map((post, idx) => (
             <a
               key={idx}
-              href={ACADEMY_CONFIG.contacts.instagramUrl}
+              href={config.contacts.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative aspect-square rounded-2xl overflow-hidden bg-surface border border-white/10 shadow-md hover:border-brand-pink/50 transition-all duration-300"

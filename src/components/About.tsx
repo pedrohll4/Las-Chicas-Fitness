@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { CheckCircle2, ArrowRight } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 export function About() {
+  const { config, getWhatsAppUrl } = useAcademy();
+
   return (
     <section id="sobre" className="py-24 sm:py-32 bg-[#0A0A0C] relative overflow-hidden">
       {/* Background radial accent */}
@@ -19,19 +23,25 @@ export function About() {
 
             {/* Main Headline */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight mb-6">
-              MAIS QUE UMA ACADEMIA. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-pink-300">
-                UM ESTILO DE VIDA.
-              </span>
+              {config.aboutHeadline.includes(".") ? (
+                <>
+                  {config.aboutHeadline.split(".")[0]}. <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-pink-300">
+                    {config.aboutHeadline.split(".")[1]}
+                  </span>
+                </>
+              ) : (
+                config.aboutHeadline
+              )}
             </h2>
 
             {/* Text description */}
             <p className="text-base sm:text-lg text-zinc-300 font-normal leading-relaxed mb-4">
-              {ACADEMY_CONFIG.aboutDescription}
+              {config.aboutDescription}
             </p>
 
             <p className="text-sm sm:text-base text-zinc-400 font-normal leading-relaxed mb-8">
-              {ACADEMY_CONFIG.aboutSecondary}
+              {config.aboutSecondary}
             </p>
 
             {/* Highlights bullet points */}
@@ -54,9 +64,9 @@ export function About() {
               </div>
             </div>
 
-            {/* Editable Stats Grid */}
+            {/* Dynamic Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-surface border border-white/5 shadow-card-dark">
-              {ACADEMY_CONFIG.stats.map((stat, index) => (
+              {config.stats.map((stat, index) => (
                 <div key={index} className="text-center sm:text-left px-2">
                   <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-baseline justify-center sm:justify-start gap-0.5">
                     <span className="text-transparent bg-clip-text bg-gradient-to-br from-white to-pink-200">
@@ -88,7 +98,7 @@ export function About() {
                 <div className="aspect-[4/5] relative">
                   <Image
                     src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop"
-                    alt="Treino na Las Chicas Fitness"
+                    alt={`Treino na ${config.name}`}
                     fill
                     className="object-cover object-center filter brightness-95 contrast-105"
                     sizes="(max-width: 1024px) 100vw, 500px"
@@ -108,7 +118,7 @@ export function About() {
                     </span>
                   </div>
                   <a
-                    href={getWhatsAppUrl("Olá! Gostaria de agendar uma visita na Las Chicas Fitness.")}
+                    href={getWhatsAppUrl(`Olá! Gostaria de agendar uma visita na ${config.name}.`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2.5 rounded-lg bg-brand-pink text-white hover:bg-brand-pink-dark transition-colors shadow-glow-pink"

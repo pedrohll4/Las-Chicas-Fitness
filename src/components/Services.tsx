@@ -1,15 +1,20 @@
+"use client";
+
 import Image from "next/image";
-import { Dumbbell, Zap, Flame, UserCheck, ArrowUpRight } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { Dumbbell, Zap, Flame, UserCheck, ArrowUpRight, Activity } from "lucide-react";
+import { useAcademy } from "@/context/AcademyContext";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Dumbbell,
   Zap,
   Flame,
   UserCheck,
+  Activity,
 };
 
 export function Services() {
+  const { config, getWhatsAppUrl } = useAcademy();
+
   return (
     <section id="modalidades" className="py-24 sm:py-32 bg-[#0C0C10] relative">
       {/* Subtle background ambient line */}
@@ -37,7 +42,7 @@ export function Services() {
 
         {/* Modalities Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ACADEMY_CONFIG.modalities.map((item) => {
+          {config.modalities.map((item) => {
             const IconComponent = ICON_MAP[item.iconName] || Dumbbell;
             return (
               <div
@@ -52,6 +57,7 @@ export function Services() {
                     fill
                     className="object-cover object-center filter brightness-[0.75] group-hover:scale-110 group-hover:brightness-90 transition-all duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    unoptimized={item.imageUrl.startsWith("data:")}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
 
@@ -96,7 +102,7 @@ export function Services() {
                     </div>
 
                     <a
-                      href={getWhatsAppUrl(`Olá! Gostaria de saber mais sobre a modalidade ${item.title} na Las Chicas Fitness.`)}
+                      href={getWhatsAppUrl(`Olá! Gostaria de saber mais sobre a modalidade ${item.title} na ${config.name}.`)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-between w-full py-2.5 px-4 rounded-xl bg-surface-light hover:bg-brand-pink/20 text-xs font-bold text-zinc-200 hover:text-white border border-white/5 hover:border-brand-pink/40 transition-all group/btn"

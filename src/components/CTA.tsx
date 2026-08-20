@@ -1,7 +1,11 @@
+"use client";
+
 import { MessageCircle, Sparkles, Check, ArrowRight } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 export function CTA() {
+  const { config, getWhatsAppUrl } = useAcademy();
+
   return (
     <section className="py-20 sm:py-28 relative overflow-hidden bg-[#070709]">
       {/* Dynamic Pink Glow Effects */}
@@ -31,13 +35,13 @@ export function CTA() {
           {/* Subtext */}
           <p className="max-w-2xl mx-auto text-base sm:text-xl text-zinc-300 font-normal leading-relaxed mb-10">
             Seu próximo treino pode ser o primeiro passo para uma nova versão de você. Fale conosco
-            diretamente no WhatsApp e garanta condições especiais.
+            diretamente no WhatsApp e garanta condições especiais na {config.name}.
           </p>
 
           {/* CTA Action */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-10">
             <a
-              href={getWhatsAppUrl("Olá! Quero me matricular na Las Chicas Fitness e começar minha evolução.")}
+              href={getWhatsAppUrl(`Olá! Quero me matricular na ${config.name} e começar minha evolução.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-4.5 rounded-full bg-gradient-to-r from-brand-pink via-[#FF1493] to-[#E11D48] text-white font-extrabold text-sm sm:text-base tracking-wider uppercase shadow-glow-pink hover:shadow-glow-pink-lg hover:scale-105 active:scale-95 transition-all duration-300"

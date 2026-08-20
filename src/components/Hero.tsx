@@ -3,9 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, Sparkles, ShieldCheck, Dumbbell, Flame } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 export function Hero() {
+  const { config, getWhatsAppUrl } = useAcademy();
+
   return (
     <section
       id="hero"
@@ -15,7 +17,7 @@ export function Hero() {
       <div className="absolute inset-0 z-0">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop"
-          alt="Ambiente Las Chicas Fitness"
+          alt={`Ambiente ${config.name}`}
           fill
           priority
           quality={90}
@@ -44,23 +46,35 @@ export function Hero() {
 
         {/* Main Bold Headline */}
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-white leading-[1.08] uppercase mb-6 drop-shadow-2xl">
-          SEU CORPO. <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-100 to-brand-pink drop-shadow-[0_0_35px_rgba(255,46,147,0.5)]">
-            SUA FORÇA.
-          </span>{" "}
-          <br className="hidden sm:block" />
-          SUA EVOLUÇÃO.
+          {config.slogan.split(".").map((part, index) => {
+            const trimmed = part.trim();
+            if (!trimmed) return null;
+            if (index === 1) {
+              return (
+                <span key={index} className="block">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-100 to-brand-pink drop-shadow-[0_0_35px_rgba(255,46,147,0.5)]">
+                    {trimmed}.
+                  </span>
+                </span>
+              );
+            }
+            return (
+              <span key={index} className="block">
+                {trimmed}.
+              </span>
+            );
+          })}
         </h1>
 
         {/* Secondary Subtitle */}
         <p className="max-w-2xl text-base sm:text-lg md:text-xl text-zinc-300 font-normal leading-relaxed mb-10 text-balance drop-shadow-md">
-          {ACADEMY_CONFIG.subSlogan}
+          {config.subSlogan}
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md sm:max-w-none mb-14">
           <a
-            href={getWhatsAppUrl("Olá! Quero começar a treinar na Las Chicas Fitness.")}
+            href={getWhatsAppUrl(`Olá! Quero começar a treinar na ${config.name}.`)}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-brand-pink via-[#FF1493] to-[#E11D48] text-white font-bold text-sm tracking-wider uppercase shadow-glow-pink hover:shadow-glow-pink-lg hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"

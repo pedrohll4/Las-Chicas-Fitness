@@ -1,7 +1,11 @@
+"use client";
+
 import { MapPin, Clock, Phone, MessageCircle, Instagram, Mail, Navigation } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 
 export function Location() {
+  const { config, getWhatsAppUrl } = useAcademy();
+
   return (
     <section id="localizacao" className="py-24 sm:py-32 bg-[#0C0C10] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -37,7 +41,7 @@ export function Location() {
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">Nosso Endereço</h3>
                   <p className="text-sm text-zinc-300 leading-relaxed font-mono">
-                    {ACADEMY_CONFIG.contacts.address.fullAddress}
+                    {config.contacts.address.fullAddress}
                   </p>
                 </div>
               </div>
@@ -51,15 +55,15 @@ export function Location() {
                   <div className="space-y-1.5 text-xs sm:text-sm text-zinc-300">
                     <p className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand-pink" />
-                      <span>{ACADEMY_CONFIG.hours.weekdays}</span>
+                      <span>{config.hours.weekdays}</span>
                     </p>
                     <p className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-pink-400" />
-                      <span>{ACADEMY_CONFIG.hours.saturdays}</span>
+                      <span>{config.hours.saturdays}</span>
                     </p>
                     <p className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-pink-300" />
-                      <span>{ACADEMY_CONFIG.hours.sundaysAndHolidays}</span>
+                      <span>{config.hours.sundaysAndHolidays}</span>
                     </p>
                   </div>
                 </div>
@@ -82,23 +86,23 @@ export function Location() {
                   <MessageCircle className="w-4 h-4 text-brand-pink shrink-0" />
                   <div>
                     <span className="block text-[10px] text-zinc-500 uppercase">WhatsApp</span>
-                    <span>{ACADEMY_CONFIG.contacts.whatsappDisplay}</span>
+                    <span>{config.contacts.whatsappDisplay}</span>
                   </div>
                 </a>
 
                 <a
-                  href={`tel:${ACADEMY_CONFIG.contacts.phone.replace(/\D/g, "")}`}
+                  href={`tel:${config.contacts.phone.replace(/\D/g, "")}`}
                   className="flex items-center gap-3 p-3 rounded-xl bg-surface-light hover:bg-brand-pink/20 border border-white/5 hover:border-brand-pink/40 text-zinc-200 hover:text-white transition-all text-xs font-semibold"
                 >
                   <Phone className="w-4 h-4 text-brand-pink shrink-0" />
                   <div>
                     <span className="block text-[10px] text-zinc-500 uppercase">Telefone</span>
-                    <span>{ACADEMY_CONFIG.contacts.phone}</span>
+                    <span>{config.contacts.phone}</span>
                   </div>
                 </a>
 
                 <a
-                  href={ACADEMY_CONFIG.contacts.instagramUrl}
+                  href={config.contacts.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-xl bg-surface-light hover:bg-brand-pink/20 border border-white/5 hover:border-brand-pink/40 text-zinc-200 hover:text-white transition-all text-xs font-semibold"
@@ -106,18 +110,18 @@ export function Location() {
                   <Instagram className="w-4 h-4 text-brand-pink shrink-0" />
                   <div>
                     <span className="block text-[10px] text-zinc-500 uppercase">Instagram</span>
-                    <span>{ACADEMY_CONFIG.contacts.instagramHandle}</span>
+                    <span>{config.contacts.instagramHandle}</span>
                   </div>
                 </a>
 
                 <a
-                  href={`mailto:${ACADEMY_CONFIG.contacts.email}`}
+                  href={`mailto:${config.contacts.email}`}
                   className="flex items-center gap-3 p-3 rounded-xl bg-surface-light hover:bg-brand-pink/20 border border-white/5 hover:border-brand-pink/40 text-zinc-200 hover:text-white transition-all text-xs font-semibold"
                 >
                   <Mail className="w-4 h-4 text-brand-pink shrink-0" />
                   <div>
                     <span className="block text-[10px] text-zinc-500 uppercase">E-mail</span>
-                    <span>{ACADEMY_CONFIG.contacts.email}</span>
+                    <span>{config.contacts.email}</span>
                   </div>
                 </a>
               </div>
@@ -137,17 +141,23 @@ export function Location() {
 
             {/* Map Frame */}
             <div className="flex-1 w-full h-full relative">
-              <iframe
-                title="Mapa de Localização"
-                src={ACADEMY_CONFIG.contacts.googleMapsEmbedUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-full min-h-[320px] filter grayscale contrast-125 invert-[0.9] hue-rotate-180 opacity-90"
-              />
+              {config.contacts.googleMapsEmbedUrl ? (
+                <iframe
+                  title="Mapa de Localização"
+                  src={config.contacts.googleMapsEmbedUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full min-h-[320px] filter grayscale contrast-125 invert-[0.9] hue-rotate-180 opacity-90"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-surface p-6 text-center text-zinc-500 text-xs">
+                  Insira o link do iframe do Google Maps no painel de personalização
+                </div>
+              )}
             </div>
           </div>
         </div>

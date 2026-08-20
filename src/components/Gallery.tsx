@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Maximize2, Camera } from "lucide-react";
-import { ACADEMY_CONFIG } from "@/config/academy";
+import { useAcademy } from "@/context/AcademyContext";
 import { LightboxModal, LightboxImage } from "@/components/LightboxModal";
 
 export function Gallery() {
+  const { config } = useAcademy();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const lightboxImages: LightboxImage[] = ACADEMY_CONFIG.gallery.map((item) => ({
+  const lightboxImages: LightboxImage[] = config.gallery.map((item) => ({
     imageUrl: item.imageUrl,
     title: item.title,
     category: item.category,
@@ -28,7 +29,7 @@ export function Gallery() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight mb-4">
             VIVA A ENERGIA DA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-pink-300">
-              {ACADEMY_CONFIG.name}
+              {config.name}
             </span>
           </h2>
 
@@ -40,8 +41,7 @@ export function Gallery() {
 
         {/* Dynamic Asymmetric Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {ACADEMY_CONFIG.gallery.map((item, index) => {
-            // Apply different row/aspect spans for asymmetric dynamic look on desktop
+          {config.gallery.map((item, index) => {
             const aspectClass =
               item.aspect === "tall"
                 ? "sm:row-span-2 aspect-[3/4] sm:aspect-auto"
@@ -61,6 +61,7 @@ export function Gallery() {
                   fill
                   className="object-cover object-center filter brightness-90 contrast-105 group-hover:scale-110 group-hover:brightness-100 transition-transform duration-700 ease-out"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized={item.imageUrl.startsWith("data:")}
                 />
 
                 {/* Dark Gradient Overlay */}

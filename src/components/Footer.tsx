@@ -1,9 +1,22 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Instagram, MapPin, Phone, Heart, Code2 } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import {
+  MessageCircle,
+  Instagram,
+  MapPin,
+  Phone,
+  Heart,
+  Code2,
+  SlidersHorizontal,
+  Lock,
+} from "lucide-react";
+import { useAcademy } from "@/context/AcademyContext";
 
 export function Footer() {
+  const { config, getWhatsAppUrl, openCustomizer, isAdmin } = useAcademy();
+
   return (
     <footer className="bg-[#070709] border-t border-white/10 text-zinc-400 text-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
@@ -13,7 +26,7 @@ export function Footer() {
             <Link href="#hero" className="inline-block relative h-14 w-44">
               <Image
                 src="/images/logo.png"
-                alt="Logo Las Chicas Fitness"
+                alt={`Logo ${config.name}`}
                 fill
                 className="object-contain filter drop-shadow-[0_2px_10px_rgba(255,46,147,0.3)]"
                 sizes="180px"
@@ -21,7 +34,7 @@ export function Footer() {
             </Link>
 
             <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              {ACADEMY_CONFIG.aboutDescription}
+              {config.aboutDescription}
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -30,17 +43,17 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-surface border border-white/10 hover:border-brand-pink text-zinc-300 hover:text-brand-pink transition-all shadow-sm"
-                aria-label="WhatsApp Las Chicas Fitness"
+                aria-label={`WhatsApp ${config.name}`}
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
 
               <a
-                href={ACADEMY_CONFIG.contacts.instagramUrl}
+                href={config.contacts.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-surface border border-white/10 hover:border-brand-pink text-zinc-300 hover:text-brand-pink transition-all shadow-sm"
-                aria-label="Instagram Las Chicas Fitness"
+                aria-label={`Instagram ${config.name}`}
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -92,7 +105,7 @@ export function Footer() {
               Modalidades
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
-              {ACADEMY_CONFIG.modalities.map((item) => (
+              {config.modalities.map((item) => (
                 <li key={item.id}>
                   <Link href="#modalidades" className="hover:text-brand-pink transition-colors">
                     {item.title}
@@ -110,32 +123,54 @@ export function Footer() {
             <ul className="space-y-2 text-xs sm:text-sm text-zinc-300">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-brand-pink shrink-0 mt-0.5" />
-                <span>{ACADEMY_CONFIG.contacts.address.fullAddress}</span>
+                <span>{config.contacts.address.fullAddress}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-brand-pink shrink-0" />
-                <span>{ACADEMY_CONFIG.contacts.phone}</span>
+                <span>{config.contacts.phone}</span>
               </li>
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-brand-pink shrink-0" />
-                <span>{ACADEMY_CONFIG.contacts.whatsappDisplay}</span>
+                <span>{config.contacts.whatsappDisplay}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar with Watermark */}
+        {/* Bottom Bar with Watermark & Personalizar Button */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>© 2026 {ACADEMY_CONFIG.name}. Todos os direitos reservados.</p>
+          <p>© 2026 {config.name}. Todos os direitos reservados.</p>
 
-          {/* Marca d'água discreta: Feito por Pedro */}
-          <div className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.02] hover:bg-brand-pink/10 border border-white/5 hover:border-brand-pink/30 text-zinc-400 hover:text-zinc-200 transition-all duration-300 cursor-default">
-            <Code2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-brand-pink transition-colors" />
-            <span>Feito por</span>
-            <span className="font-semibold text-zinc-300 group-hover:text-brand-pink transition-colors">
-              Pedro
-            </span>
-            <Heart className="w-3 h-3 text-brand-pink/40 group-hover:text-brand-pink group-hover:scale-125 transition-all" />
+          <div className="flex items-center gap-3">
+            {/* Botão Personalizar Solicitado pelo Usuário */}
+            <button
+              type="button"
+              onClick={openCustomizer}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface hover:bg-brand-pink/15 border border-white/10 hover:border-brand-pink/50 text-zinc-300 hover:text-white transition-all shadow-sm group cursor-pointer"
+              title="Acessar painel de personalização do site"
+            >
+              {isAdmin ? (
+                <SlidersHorizontal className="w-3.5 h-3.5 text-brand-pink group-hover:rotate-45 transition-transform" />
+              ) : (
+                <Lock className="w-3.5 h-3.5 text-brand-pink" />
+              )}
+              <span className="font-semibold text-xs text-zinc-200 group-hover:text-white">
+                Personalizar
+              </span>
+              {isAdmin && (
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              )}
+            </button>
+
+            {/* Marca d'água discreta: Feito por Pedro */}
+            <div className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.02] hover:bg-brand-pink/10 border border-white/5 hover:border-brand-pink/30 text-zinc-400 hover:text-zinc-200 transition-all duration-300 cursor-default">
+              <Code2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-brand-pink transition-colors" />
+              <span>Feito por</span>
+              <span className="font-semibold text-zinc-300 group-hover:text-brand-pink transition-colors">
+                Pedro
+              </span>
+              <Heart className="w-3 h-3 text-brand-pink/40 group-hover:text-brand-pink group-hover:scale-125 transition-all" />
+            </div>
           </div>
         </div>
       </div>

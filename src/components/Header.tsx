@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, MessageCircle, ChevronRight } from "lucide-react";
-import { ACADEMY_CONFIG, getWhatsAppUrl } from "@/config/academy";
+import { Menu, X, MessageCircle, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { useAcademy } from "@/context/AcademyContext";
 import { NavItem } from "@/types";
 
 const NAV_LINKS: NavItem[] = [
@@ -18,6 +18,7 @@ const NAV_LINKS: NavItem[] = [
 ];
 
 export function Header() {
+  const { config, getWhatsAppUrl, isAdmin, openCustomizer } = useAcademy();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -34,7 +35,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fechar menu mobile ao redimensionar tela
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -58,12 +58,12 @@ export function Header() {
         <Link
           href="#hero"
           className="group flex items-center gap-3 transition-transform duration-200 hover:scale-[1.02]"
-          aria-label="Las Chicas Fitness - Início"
+          aria-label={`${config.name} - Início`}
         >
           <div className="relative h-12 w-36 sm:h-14 sm:w-44 flex items-center">
             <Image
               src="/images/logo.png"
-              alt="Logo Las Chicas Fitness"
+              alt={`Logo ${config.name}`}
               fill
               priority
               className="object-contain filter drop-shadow-[0_2px_12px_rgba(255,46,147,0.3)] transition-all duration-300 group-hover:drop-shadow-[0_4px_20px_rgba(255,46,147,0.6)]"
@@ -86,10 +86,22 @@ export function Header() {
           ))}
         </nav>
 
-        {/* CTA Button Desktop */}
-        <div className="hidden lg:flex items-center gap-4">
+        {/* CTA Button & Admin Indicator Desktop */}
+        <div className="hidden lg:flex items-center gap-3">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={openCustomizer}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-brand-pink/15 hover:bg-brand-pink border border-brand-pink/40 text-pink-200 hover:text-white text-xs font-bold transition-all shadow-sm"
+              title="Abrir painel de personalização"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Painel Admin</span>
+            </button>
+          )}
+
           <a
-            href={getWhatsAppUrl("Olá! Gostaria de me matricular na Las Chicas Fitness.")}
+            href={getWhatsAppUrl(`Olá! Gostaria de me matricular na ${config.name}.`)}
             target="_blank"
             rel="noopener noreferrer"
             className="relative group overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-brand-pink"
@@ -134,9 +146,23 @@ export function Header() {
             </Link>
           ))}
 
-          <div className="pt-4 border-t border-white/10">
+          <div className="pt-4 border-t border-white/10 space-y-3">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openCustomizer();
+                }}
+                className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl bg-surface-card border border-brand-pink/40 text-pink-200 font-bold text-xs tracking-wider uppercase"
+              >
+                <SlidersHorizontal className="w-4 h-4 text-brand-pink" />
+                <span>Abrir Painel Admin</span>
+              </button>
+            )}
+
             <a
-              href={getWhatsAppUrl("Olá! Gostaria de me matricular na Las Chicas Fitness.")}
+              href={getWhatsAppUrl(`Olá! Gostaria de me matricular na ${config.name}.`)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsMobileMenuOpen(false)}
