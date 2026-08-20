@@ -91,9 +91,9 @@ function PostCard({
             scrolling="no"
             loading="lazy"
             style={{
-              top: "50%",
+              top: "48%",
               left: "50%",
-              transform: "translate(-50%, -50%) scale(2)",
+              transform: "translate(-50%, -50%) scale(1.35)",
               width: "100%",
               height: "100%",
               transformOrigin: "center center",
