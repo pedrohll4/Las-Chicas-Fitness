@@ -1135,32 +1135,12 @@ export function AdminCustomizer() {
                         className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px] focus:outline-none focus:border-brand-pink"
                       />
 
-                      {/* Preview de Reel do Instagram */}
-                      {post.mediaUrl &&
-                        (post.mediaUrl.includes("instagram.com/reel/") ||
-                          post.mediaUrl.includes("instagram.com/p/")) && (
-                          <div className="mt-2 rounded-xl overflow-hidden bg-black border border-white/10 aspect-[4/5] max-h-64 w-full flex items-center justify-center relative">
-                            <iframe
-                              key={post.mediaUrl}
-                              src={
-                                post.mediaUrl.includes("/reel/")
-                                  ? `https://www.instagram.com/reel/${post.mediaUrl.split("/reel/")[1]?.split("/")[0]?.split("?")[0]}/embed/captioned/`
-                                  : `https://www.instagram.com/p/${post.mediaUrl.split("/p/")[1]?.split("/")[0]?.split("?")[0]}/embed/captioned/`
-                              }
-                              className="w-full h-full border-0"
-                              scrolling="no"
-                              loading="lazy"
-                              allowFullScreen
-                            />
-                          </div>
-                        )}
-
-                      {/* Preview de vídeo MP4 */}
-                      {post.mediaUrl &&
-                        (post.mediaUrl.endsWith(".mp4") ||
+                      {/* Preview de Mídia */}
+                      {post.mediaUrl && (
+                        <div className="mt-2 rounded-xl overflow-hidden bg-black border border-white/10 aspect-[4/5] max-h-60 w-full relative flex items-center justify-center">
+                          {post.mediaUrl.endsWith(".mp4") ||
                           post.mediaUrl.endsWith(".webm") ||
-                          post.mediaUrl.startsWith("data:video")) && (
-                          <div className="mt-2 rounded-xl overflow-hidden bg-black border border-white/10 aspect-video w-full">
+                          post.mediaUrl.startsWith("data:video") ? (
                             <video
                               src={post.mediaUrl}
                               autoPlay
@@ -1169,8 +1149,33 @@ export function AdminCustomizer() {
                               playsInline
                               className="w-full h-full object-cover"
                             />
-                          </div>
-                        )}
+                          ) : post.mediaUrl.includes("instagram.com") ? (
+                            <img
+                              src={`/api/instagram-image?url=${encodeURIComponent(
+                                post.mediaUrl
+                              )}`}
+                              onError={(e) => {
+                                // Fallback para a rota de extração se necessário
+                                fetch(`/api/instagram-oembed?url=${encodeURIComponent(post.mediaUrl)}`)
+                                  .then((r) => r.json())
+                                  .then((d) => {
+                                    if (d.thumbnailUrl) {
+                                      (e.target as HTMLImageElement).src = d.thumbnailUrl;
+                                    }
+                                  });
+                              }}
+                              alt="Preview Reel Instagram"
+                              className="w-full h-full object-cover object-center"
+                            />
+                          ) : (
+                            <img
+                              src={post.mediaUrl}
+                              alt="Preview"
+                              className="w-full h-full object-cover object-center"
+                            />
+                          )}
+                        </div>
+                      )}
 
                       {/* Upload de arquivo de imagem/vídeo */}
                       <div className="flex items-center gap-2 mt-1">
