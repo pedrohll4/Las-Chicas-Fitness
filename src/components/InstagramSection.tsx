@@ -14,16 +14,7 @@ import {
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 
-// Lista de vídeos locais de treino em alta qualidade para looping contínuo
-const FALLBACK_LOOPING_VIDEOS = [
-  "/videos/reels/reel-1.mp4",
-  "/videos/reels/reel-2.mp4",
-  "/videos/reels/reel-3.mp4",
-  "/videos/reels/reel-4.mp4",
-  "/videos/reels/reel-5.mp4",
-];
-
-// Componente para garantir que o vídeo comece a rodar em loop imediatamente
+// Componente para reprodução suave de vídeos em loop
 function LoopingReelVideo({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -35,9 +26,7 @@ function LoopingReelVideo({ src }: { src: string }) {
       video.playsInline = true;
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Fallback caso o navegador exija interação prévia
-        });
+        playPromise.catch(() => {});
       }
     }
   }, [src]);
@@ -83,13 +72,13 @@ export function InstagramSection() {
 
   const totalPages = Math.max(1, posts.length - itemsPerPage + 1);
 
-  // Auto-avanço do carrossel a cada 4.5 segundos (pausa ao passar o mouse)
+  // Auto-avanço do carrossel a cada 4 segundos (pausa ao passar o mouse)
   useEffect(() => {
     if (isPaused || posts.length <= itemsPerPage) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1 >= totalPages ? 0 : prev + 1));
-    }, 4500);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [isPaused, totalPages, posts.length, itemsPerPage]);
@@ -110,7 +99,7 @@ export function InstagramSection() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background ambient lighting */}
+      {/* Ambient Pink Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-brand-pink/10 rounded-full blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -130,8 +119,8 @@ export function InstagramSection() {
             </h2>
 
             <p className="text-sm sm:text-base text-zinc-400 mt-2 max-w-xl">
-              Veja nossos treinos, vídeos, dicas e a rotina inspiradora da nossa comunidade feminina
-              no Instagram oficial.
+              Veja nossos treinos, vídeos, fotos reais da academia e a rotina inspiradora da nossa
+              comunidade feminina.
             </p>
           </div>
 
@@ -179,31 +168,25 @@ export function InstagramSection() {
             }}
           >
             {posts.map((post, idx) => {
-              const isInstagramUrl =
-                typeof post.mediaUrl === "string" &&
-                (post.mediaUrl.includes("instagram.com/reel/") ||
-                  post.mediaUrl.includes("instagram.com/p/"));
-
               const isDirectVideo =
                 typeof post.mediaUrl === "string" &&
                 (post.mediaUrl.endsWith(".mp4") ||
                   post.mediaUrl.endsWith(".webm") ||
-                  post.mediaUrl.includes("/videos/"));
+                  post.mediaUrl.startsWith("data:video"));
 
-              const isVideo = post.type === "video" || isDirectVideo || isInstagramUrl;
-
-              // Determina o vídeo correto para rodar em loop
-              const videoSrc = isDirectVideo
-                ? post.mediaUrl
-                : FALLBACK_LOOPING_VIDEOS[idx % FALLBACK_LOOPING_VIDEOS.length];
+              const isReel = post.type === "video" || isDirectVideo;
 
               // Determina o link de destino ao clicar no card
               const targetUrl =
-                isInstagramUrl
-                  ? post.mediaUrl
-                  : post.permalink && post.permalink.startsWith("http")
+                post.permalink && post.permalink.startsWith("http")
                   ? post.permalink
                   : config.contacts?.instagramUrl || "https://www.instagram.com/las.chicasfitness/";
+
+              // Foto de fallback caso venha sem url
+              const imageSrc =
+                post.mediaUrl && !post.mediaUrl.includes("mixkit")
+                  ? post.mediaUrl
+                  : `/images/instagram/reel_${(idx % 12) + 1}.jpg`;
 
               return (
                 <a
@@ -211,13 +194,12 @@ export function InstagramSection() {
                   href={targetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] sm:aspect-[9/13] rounded-2xl overflow-hidden bg-black border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
+                  className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] sm:aspect-[9/13] rounded-2xl overflow-hidden bg-[#111116] border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
                 >
-                  {/* Media Container (Vídeo em loop ou Imagem) */}
-                  {isVideo ? (
+                  {/* Media Container: Vídeo real ou Foto oficial de Las Chicas */}
+                  {isDirectVideo ? (
                     <div className="relative w-full h-full bg-black">
-                      <LoopingReelVideo src={videoSrc} />
-                      {/* Reels indicator badge */}
+                      <LoopingReelVideo src={post.mediaUrl} />
                       <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20 shadow-md">
                         <Play className="w-3 h-3 fill-current text-brand-pink" />
                         <span>Reels</span>
@@ -227,21 +209,28 @@ export function InstagramSection() {
                   ) : (
                     <div className="relative w-full h-full bg-surface-card">
                       <Image
-                        src={post.mediaUrl || "/images/instagram/reel_13.jpg"}
-                        alt={post.caption || `Postagem Instagram ${idx + 1}`}
+                        src={imageSrc}
+                        alt={post.caption || `Postagem Las Chicas Fitness ${idx + 1}`}
                         fill
                         className="object-cover object-center group-hover:scale-105 filter brightness-95 group-hover:brightness-100 transition-transform duration-700 ease-out"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         unoptimized={true}
                       />
-                      <div className="absolute top-3 right-3 p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-pink-300 z-20">
-                        <Instagram className="w-3.5 h-3.5" />
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20 shadow-md">
+                        {isReel ? (
+                          <>
+                            <Play className="w-3 h-3 fill-current text-brand-pink" />
+                            <span>Reels</span>
+                          </>
+                        ) : (
+                          <Instagram className="w-3.5 h-3.5 text-brand-pink" />
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Dark gradient overlay for typography readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none" />
 
                   {/* Hover & Details Content */}
                   <div className="absolute inset-0 p-5 flex flex-col justify-between pointer-events-none z-10">

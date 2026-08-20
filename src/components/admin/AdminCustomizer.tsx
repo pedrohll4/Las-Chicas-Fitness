@@ -1106,69 +1106,29 @@ export function AdminCustomizer() {
                       />
                     </div>
 
-                    {post.mediaUrl && (post.mediaUrl.includes("instagram.com/reel/") || post.mediaUrl.includes("instagram.com/p/")) ? (
-                      <div className="space-y-2">
-                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
-                          Link do Reel / Post do Instagram
-                        </label>
-                        <input
-                          type="text"
-                          value={post.mediaUrl}
-                          onChange={(e) =>
-                            handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
-                          }
-                          placeholder="https://www.instagram.com/reel/..."
-                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
-                        />
-                        <div className="relative aspect-[4/5] max-h-60 w-full rounded-xl overflow-hidden bg-black border border-white/10 mt-1 flex items-center justify-center">
-                          <iframe
-                            src={
-                              post.mediaUrl.includes("/reel/")
-                                ? `https://www.instagram.com/reel/${post.mediaUrl.split("/reel/")[1]?.split("/")[0]?.split("?")[0]}/embed/`
-                                : `https://www.instagram.com/p/${post.mediaUrl.split("/p/")[1]?.split("/")[0]?.split("?")[0]}/embed/`
-                            }
-                            className="w-full h-full border-0 pointer-events-none"
-                            scrolling="no"
-                          />
-                        </div>
-                      </div>
-                    ) : post.type === "video" ? (
-                      <div className="space-y-2">
-                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
-                          Link do Vídeo (.mp4) ou Link do Reel do Instagram
-                        </label>
-                        <input
-                          type="text"
-                          value={post.mediaUrl}
-                          onChange={(e) =>
-                            handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
-                          }
-                          placeholder="https://www.instagram.com/reel/... ou https://exemplo.com/video.mp4"
-                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
-                        />
-                        {post.mediaUrl && (
-                          <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-black border border-white/10 mt-1">
-                            <video
-                              src={post.mediaUrl}
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <ImageUploader
-                        label="Foto do Post (Upload ou URL)"
-                        value={post.mediaUrl}
-                        onChange={(url) =>
-                          handleUpdateInstagramPost(post.id, { mediaUrl: url })
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Link de Destino do Instagram (ao clicar)
+                      </label>
+                      <input
+                        type="text"
+                        value={post.permalink || ""}
+                        onChange={(e) =>
+                          handleUpdateInstagramPost(post.id, { permalink: e.target.value })
                         }
-                        aspectRatio="wide"
+                        placeholder="https://www.instagram.com/reel/... ou https://www.instagram.com/las.chicasfitness/"
+                        className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white font-mono text-[11px]"
                       />
-                    )}
+                    </div>
+
+                    <ImageUploader
+                      label="Foto ou Vídeo do Post (Upload do seu computador ou link)"
+                      value={post.mediaUrl}
+                      onChange={(url) =>
+                        handleUpdateInstagramPost(post.id, { mediaUrl: url })
+                      }
+                      aspectRatio="video"
+                    />
                   </div>
                 ))}
               </div>
