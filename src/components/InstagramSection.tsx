@@ -83,19 +83,25 @@ function InstagramReelCard({
   const isInstaLink = !!instaInfo;
 
   const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const [loadingThumb, setLoadingThumb] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [thumbError, setThumbError] = useState(false);
 
-  // Busca thumbnail via nossa rota de API quando for link do Instagram
+  // Busca thumbnail real via API de scraping quando for link do Instagram
   useEffect(() => {
     if (!isInstaLink) return;
-    setLoadingThumb(true);
+    setLoading(true);
+    setThumbError(false);
     fetch(`/api/instagram-oembed?url=${encodeURIComponent(post.mediaUrl || "")}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.thumbnailUrl) setThumbnail(data.thumbnailUrl);
+        if (data.thumbnailUrl) {
+          setThumbnail(data.thumbnailUrl);
+        } else {
+          setThumbError(true);
+        }
       })
-      .catch(() => {})
-      .finally(() => setLoadingThumb(false));
+      .catch(() => setThumbError(true))
+      .finally(() => setLoading(false));
   }, [post.mediaUrl, isInstaLink]);
 
   // URL de destino ao clicar
@@ -105,7 +111,7 @@ function InstagramReelCard({
     ? post.mediaUrl
     : instagramUrl;
 
-  // Imagem de fallback quando não há thumbnail
+  // Imagem de fallback da academia quando não há thumbnail
   const fallbackImage = `/images/instagram/reel_${(idx % 12) + 1}.jpg`;
 
   return (
@@ -120,20 +126,31 @@ function InstagramReelCard({
         // Vídeo MP4 local em loop
         <LoopingVideo src={post.mediaUrl!} />
       ) : isInstaLink ? (
-        // Link de Reel/Post do Instagram → mostra thumbnail real + botão play
-        <div className="relative w-full h-full bg-[#0a0a0c] flex items-center justify-center">
-          {thumbnail ? (
+        // Link de Reel/Post do Instagram → thumbnail real + overlay play
+        <div className="relative w-full h-full bg-[#0a0a0c]">
+          {loading ? (
+            // Skeleton de carregamento
+            <div className="absolute inset-0 bg-zinc-900 animate-pulse">
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-zinc-700/60 animate-pulse flex items-center justify-center">
+                  <Instagram className="w-5 h-5 text-zinc-600" />
+                </div>
+                <div className="h-1.5 w-20 rounded-full bg-zinc-700/60 animate-pulse" />
+              </div>
+            </div>
+          ) : thumbnail && !thumbError ? (
+            // Thumbnail real do Reel
             <Image
               src={thumbnail}
               alt={post.caption || "Reel Las Chicas Fitness"}
               fill
               className="object-cover brightness-90 group-hover:scale-105 transition-transform duration-700"
               unoptimized
+              onError={() => setThumbError(true)}
             />
-          ) : loadingThumb ? (
-            <div className="w-8 h-8 rounded-full border-2 border-brand-pink border-t-transparent animate-spin" />
           ) : (
-            // Sem thumbnail disponível → imagem real da academia como fallback
+            // Sem thumbnail → foto real da academia como fallback
             <Image
               src={fallbackImage}
               alt={post.caption || "Reel Las Chicas Fitness"}
@@ -143,10 +160,10 @@ function InstagramReelCard({
             />
           )}
 
-          {/* Overlay escuro + ícone de play grande no centro */}
-          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-300" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm border border-white/25 flex items-center justify-center group-hover:bg-brand-pink/80 group-hover:scale-110 transition-all duration-300 shadow-xl">
+          {/* Overlay escuro + botão play centralizado */}
+          <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors duration-300" />
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="w-14 h-14 rounded-full bg-black/55 backdrop-blur-sm border border-white/25 flex items-center justify-center group-hover:bg-brand-pink/80 group-hover:scale-110 transition-all duration-300 shadow-xl">
               <Play className="w-6 h-6 text-white fill-white ml-1" />
             </div>
           </div>
@@ -154,7 +171,7 @@ function InstagramReelCard({
       ) : (
         // Foto normal
         <Image
-          src={post.mediaUrl || fallbackImage}
+          src={post.mediaUrl && !post.mediaUrl.includes("mixkit") ? post.mediaUrl : fallbackImage}
           alt={post.caption || `Postagem Las Chicas Fitness ${idx + 1}`}
           fill
           className="object-cover brightness-90 group-hover:scale-105 transition-transform duration-700"
@@ -162,7 +179,7 @@ function InstagramReelCard({
         />
       )}
 
-      {/* Badge de tipo no canto superior direito */}
+      {/* Badge de tipo */}
       <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20 shadow-md">
         {isInstaLink || post.type === "video" ? (
           <>
@@ -174,19 +191,16 @@ function InstagramReelCard({
         )}
       </div>
 
-      {/* Gradiente escuro na base */}
+      {/* Gradiente na base */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none z-10" />
 
       {/* Conteúdo textual */}
       <div className="absolute inset-0 p-5 flex flex-col justify-between pointer-events-none z-20">
-        {/* Handle no topo */}
         <div>
           <span className="text-[11px] font-bold text-pink-200 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 shadow-sm">
             {instagramHandle || "@las.chicasfitness"}
           </span>
         </div>
-
-        {/* Legenda e estatísticas */}
         <div className="space-y-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
           {post.caption && (
             <p className="text-xs text-zinc-200 line-clamp-2 leading-relaxed font-medium">

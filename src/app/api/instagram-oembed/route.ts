@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Extrai o ID do reel ou post de um link do Instagram
 function extractInstagramId(url: string): { type: "reel" | "post" | null; id: string | null } {
   const reelMatch = url.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
   if (reelMatch) return { type: "reel", id: reelMatch[1] };
-
   const postMatch = url.match(/instagram\.com\/p\/([A-Za-z0-9_-]+)/);
   if (postMatch) return { type: "post", id: postMatch[1] };
-
   return { type: null, id: null };
+}
+
+// Extrai o valor de uma meta tag og: do HTML
+function extractMetaContent(html: string, property: string): string | null {
+  // Tenta og: ou twitter: tags
+  const patterns = [
+    new RegExp(`<meta[^>]*property=["']${property}["'][^>]*content=["']([^"']+)["']`, "i"),
+    new RegExp(`<meta[^>]*content=["']([^"']+)["'][^>]*property=["']${property}["']`, "i"),
+    new RegExp(`<meta[^>]*name=["']${property}["'][^>]*content=["']([^"']+)["']`, "i"),
+  ];
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+  return null;
 }
 
 export async function GET(req: NextRequest) {
@@ -20,57 +32,64 @@ export async function GET(req: NextRequest) {
   }
 
   const { type, id } = extractInstagramId(url);
-
   if (!type || !id) {
     return NextResponse.json({ error: "Link inválido do Instagram" }, { status: 400 });
   }
 
+  let thumbnailUrl: string | null = null;
+  let title: string = "";
+
   try {
-    // Usa a API pública de oEmbed do Instagram (sem token necessário para dados básicos)
-    const oembedUrl = `https://graph.facebook.com/v19.0/instagram_oembed?url=${encodeURIComponent(url)}&maxwidth=400&fields=thumbnail_url,title,author_name&access_token=anonymous`;
+    // Faz scraping do og:image da página pública do Instagram
+    // Usa User-Agent de browser real para o Instagram não bloquear
+    const cleanUrl =
+      type === "reel"
+        ? `https://www.instagram.com/reel/${id}/`
+        : `https://www.instagram.com/p/${id}/`;
 
-    // Tenta o endpoint público alternativo
-    const publicOembed = `https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`;
-
-    let thumbnailUrl: string | null = null;
-    let authorName: string = "@las.chicasfitness";
-    let title: string = "";
-
-    try {
-      const resp = await fetch(publicOembed, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (compatible; LasChicasFitnessBot/1.0)",
-        },
-        next: { revalidate: 3600 }, // cache por 1 hora
-      });
-
-      if (resp.ok) {
-        const data = await resp.json();
-        thumbnailUrl = data.thumbnail_url || null;
-        authorName = data.author_name || "@las.chicasfitness";
-        title = data.title || "";
-      }
-    } catch {
-      // fallback: sem thumbnail
-    }
-
-    return NextResponse.json({
-      id,
-      type,
-      thumbnailUrl,
-      authorName,
-      title,
-      embedUrl:
-        type === "reel"
-          ? `https://www.instagram.com/reel/${id}/embed/captioned/`
-          : `https://www.instagram.com/p/${id}/embed/captioned/`,
-      permalink: url,
+    const resp = await fetch(cleanUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control": "no-cache",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Upgrade-Insecure-Requests": "1",
+      },
+      // cache de 2 horas para não fazer requests repetidos
+      next: { revalidate: 7200 },
     });
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Erro ao buscar dados do Instagram" },
-      { status: 500 }
-    );
+
+    if (resp.ok) {
+      // Lê apenas os primeiros 40KB do HTML (suficiente para pegar as meta tags do head)
+      const buffer = await resp.arrayBuffer();
+      const html = new TextDecoder().decode(buffer.slice(0, 40000));
+
+      // Busca og:image (thumbnail real do Reel)
+      thumbnailUrl =
+        extractMetaContent(html, "og:image") ||
+        extractMetaContent(html, "twitter:image") ||
+        null;
+
+      // Busca og:title (legenda/título do Reel)
+      title =
+        extractMetaContent(html, "og:title") ||
+        extractMetaContent(html, "og:description") ||
+        "";
+    }
+  } catch {
+    // Sem thumbnail — o frontend vai usar a foto real da academia como fallback
   }
+
+  return NextResponse.json({
+    id,
+    type,
+    thumbnailUrl,
+    title,
+    permalink: url,
+  });
 }
