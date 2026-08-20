@@ -99,7 +99,7 @@ export function AdminCustomizer() {
 
   const handleSaveAll = async () => {
     updateConfig(formData);
-    const ok = await saveGlobalConfig();
+    const ok = await saveGlobalConfig(formData);
     if (ok) {
       showToast("✅ Publicado com sucesso para todos os visitantes do site!");
     } else {

@@ -3,6 +3,9 @@ import { ACADEMY_CONFIG } from "@/config/academy";
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const CLOUD_STORAGE_URL =
   "https://api.restful-api.dev/objects/ff8081819ff5b11001a020bae93d61f3";
 
@@ -15,8 +18,14 @@ const LOCAL_FILE_PATH = path.join(
 
 // Obter configuração global (Nuvem / Arquivo / Padrão)
 export async function GET() {
+  const headers = {
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  };
+
   try {
-    // 1. Tenta carregar da nuvem (acessível globalmente na Vercel para todos os usuários)
+    // 1. Tenta carregar da nuvem (acessível globalmente na Vercel para todos os computadores)
     const cloudResp = await fetch(CLOUD_STORAGE_URL, {
       headers: { "User-Agent": "Mozilla/5.0" },
       cache: "no-store",
@@ -25,17 +34,20 @@ export async function GET() {
     if (cloudResp.ok) {
       const json = await cloudResp.json();
       if (json?.data?.config) {
-        return NextResponse.json({
-          source: "cloud",
-          config: {
-            ...ACADEMY_CONFIG,
-            ...json.data.config,
-            contacts: {
-              ...ACADEMY_CONFIG.contacts,
-              ...(json.data.config.contacts || {}),
+        return NextResponse.json(
+          {
+            source: "cloud",
+            config: {
+              ...ACADEMY_CONFIG,
+              ...json.data.config,
+              contacts: {
+                ...ACADEMY_CONFIG.contacts,
+                ...(json.data.config.contacts || {}),
+              },
             },
           },
-        });
+          { headers }
+        );
       }
     }
   } catch (cloudErr) {
@@ -47,27 +59,33 @@ export async function GET() {
     if (fs.existsSync(LOCAL_FILE_PATH)) {
       const fileData = fs.readFileSync(LOCAL_FILE_PATH, "utf-8");
       const parsed = JSON.parse(fileData);
-      return NextResponse.json({
-        source: "local_file",
-        config: {
-          ...ACADEMY_CONFIG,
-          ...parsed,
-          contacts: {
-            ...ACADEMY_CONFIG.contacts,
-            ...(parsed.contacts || {}),
+      return NextResponse.json(
+        {
+          source: "local_file",
+          config: {
+            ...ACADEMY_CONFIG,
+            ...parsed,
+            contacts: {
+              ...ACADEMY_CONFIG.contacts,
+              ...(parsed.contacts || {}),
+            },
           },
         },
-      });
+        { headers }
+      );
     }
   } catch (fileErr) {
     console.warn("Erro ao ler arquivo local:", fileErr);
   }
 
   // 3. Fallback final: Configuração padrão do código
-  return NextResponse.json({
-    source: "default",
-    config: ACADEMY_CONFIG,
-  });
+  return NextResponse.json(
+    {
+      source: "default",
+      config: ACADEMY_CONFIG,
+    },
+    { headers }
+  );
 }
 
 // Salvar configuração global (Nuvem + Arquivo Local)
@@ -122,12 +140,19 @@ export async function POST(req: NextRequest) {
       // Em ambientes de produção read-only (como Vercel) isso é esperado
     }
 
-    return NextResponse.json({
-      success: true,
-      savedToCloud,
-      savedToLocal,
-      message: "Configuração salva com sucesso para todos os visitantes!",
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        savedToCloud,
+        savedToLocal,
+        message: "Configuração salva com sucesso para todos os visitantes!",
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
+    );
   } catch (err: any) {
     return NextResponse.json(
       { error: "Erro ao processar salvamento: " + err.message },

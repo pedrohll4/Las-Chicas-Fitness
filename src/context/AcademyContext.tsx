@@ -27,7 +27,7 @@ interface AcademyContextType {
   exportConfigJson: () => string;
   importConfigJson: (jsonStr: string) => boolean;
 
-  saveGlobalConfig: () => Promise<boolean>;
+  saveGlobalConfig: (overrideConfig?: AcademyConfig) => Promise<boolean>;
   isSavingGlobal: boolean;
 
   // Auth & UI state
@@ -95,26 +95,23 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       setIsInitialized(true);
     }
 
-    // B) Sincronização em segundo plano com a API global na nuvem
-    fetch("/api/config")
+    // B) Sincronização em segundo plano com a API global na nuvem (sempre busca a versão fresca)
+    fetch("/api/config", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data?.config && data.source !== "default") {
-          setConfig((prev) => {
-            const merged = {
-              ...ACADEMY_CONFIG,
-              ...prev,
-              ...data.config,
-              contacts: {
-                ...ACADEMY_CONFIG.contacts,
-                ...(data.config.contacts || {}),
-              },
-            };
-            try {
-              localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(merged));
-            } catch (err) {}
-            return merged;
-          });
+          const freshConfig: AcademyConfig = {
+            ...ACADEMY_CONFIG,
+            ...data.config,
+            contacts: {
+              ...ACADEMY_CONFIG.contacts,
+              ...(data.config.contacts || {}),
+            },
+          };
+          setConfig(freshConfig);
+          try {
+            localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(freshConfig));
+          } catch (err) {}
         }
       })
       .catch((err) => {
@@ -133,16 +130,23 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Salvar na Nuvem / Servidor para todos os visitantes do site
-  const saveGlobalConfig = async (): Promise<boolean> => {
+  const saveGlobalConfig = async (overrideConfig?: AcademyConfig): Promise<boolean> => {
     setIsSavingGlobal(true);
+    const configToSave = overrideConfig || config;
     try {
       const res = await fetch("/api/config", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config }),
+        body: JSON.stringify({ config: configToSave }),
       });
       const data = await res.json();
-      return res.ok && !!data.success;
+      if (res.ok && data.success) {
+        try {
+          localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(configToSave));
+        } catch (e) {}
+        return true;
+      }
+      return false;
     } catch (e) {
       console.error("Erro ao salvar na nuvem:", e);
       return false;
