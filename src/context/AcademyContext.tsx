@@ -59,7 +59,15 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
       if (savedConfig) {
         const parsed = JSON.parse(savedConfig);
-        setConfig((prev) => ({ ...prev, ...parsed }));
+        setConfig((prev) => ({
+          ...ACADEMY_CONFIG,
+          ...prev,
+          ...parsed,
+          plans:
+            Array.isArray(parsed.plans) && parsed.plans.length > 0
+              ? parsed.plans
+              : ACADEMY_CONFIG.plans,
+        }));
       }
 
       const savedAuth = sessionStorage.getItem(STORAGE_KEY_AUTH);
