@@ -96,6 +96,11 @@ export function Footer() {
                   Galeria
                 </Link>
               </li>
+              <li>
+                <Link href="#planos" className="hover:text-brand-pink transition-colors">
+                  Planos
+                </Link>
+              </li>
             </ul>
           </div>
 

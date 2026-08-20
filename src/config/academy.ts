@@ -204,6 +204,70 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   ],
 
   // ======================================================================
+  // PLANOS E MENSALIDADES (PLACEHOLDERS EDITÁVEIS)
+  // ======================================================================
+  plans: [
+    {
+      id: "plano-mensal",
+      name: "Plano Mensal Flex",
+      badge: "Sem Fidelidade",
+      price: "139",
+      period: "/mês",
+      billingInfo: "Sem taxa de cancelamento",
+      description: "Ideal para quem busca total flexibilidade e liberdade na rotina.",
+      features: [
+        "Acesso livre à área de musculação",
+        "Acesso completo ao estúdio cardio",
+        "Orientação de treino com professores",
+        "Vestiários modernos com armários rotativos",
+        "Sem taxa de matrícula",
+      ],
+      isPopular: false,
+      ctaText: "Escolher Mensal",
+      customMessage: "Olá! Gostaria de me matricular no Plano Mensal Flex da Las Chicas Fitness.",
+    },
+    {
+      id: "plano-anual",
+      name: "Plano Anual VIP",
+      badge: "MAIS ESCOLHIDO",
+      price: "89",
+      period: "/mês",
+      billingInfo: "Economize mais de 35% ao ano",
+      description: "O plano favorito das nossas alunas com a melhor experiência completa.",
+      features: [
+        "Acesso ilimitado a todas as áreas e equipamentos",
+        "Aulas coletivas e Treinamento Funcional inclusos",
+        "Avaliação física e bioimpedância periódica",
+        "1 convidada gratuita por mês (Free Pass)",
+        "Zero taxa de matrícula e anuidade",
+        "Kit de boas-vindas exclusivo Las Chicas",
+      ],
+      isPopular: true,
+      ctaText: "Garantir Plano VIP",
+      customMessage: "Olá! Gostaria de garantir minha vaga no Plano Anual VIP da Las Chicas Fitness.",
+    },
+    {
+      id: "plano-semestral",
+      name: "Plano Semestral Evolution",
+      badge: "Melhor Custo-Benefício",
+      price: "109",
+      period: "/mês",
+      billingInfo: "Compromisso de 6 meses",
+      description: "Constância perfeita para você atingir seus objetivos de evolução.",
+      features: [
+        "Acesso completo a todas as modalidades",
+        "Montagem de treino personalizado",
+        "Avaliação física completa inicial",
+        "Armários e chuveiros premium",
+        "Desconto em eventos e workshops",
+      ],
+      isPopular: false,
+      ctaText: "Escolher Semestral",
+      customMessage: "Olá! Gostaria de me matricular no Plano Semestral Evolution da Las Chicas Fitness.",
+    },
+  ],
+
+  // ======================================================================
   // ESTRUTURA DA ACADEMIA (CATEGORIZADA)
   // ======================================================================
   structure: [

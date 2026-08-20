@@ -7,6 +7,7 @@ import {
   StructureItem,
   GalleryItem,
   BenefitItem,
+  PlanItem,
   StatItem,
 } from "@/types";
 import { ACADEMY_CONFIG } from "@/config/academy";
@@ -18,6 +19,7 @@ interface AcademyContextType {
   updateStructure: (structure: StructureItem[]) => void;
   updateGallery: (gallery: GalleryItem[]) => void;
   updateBenefits: (benefits: BenefitItem[]) => void;
+  updatePlans: (plans: PlanItem[]) => void;
   updateStats: (stats: StatItem[]) => void;
   resetToDefaults: () => void;
   exportConfigJson: () => string;
@@ -103,6 +105,11 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
 
   const updateBenefits = (benefits: BenefitItem[]) => {
     const updated = { ...config, benefits };
+    persistConfig(updated);
+  };
+
+  const updatePlans = (plans: PlanItem[]) => {
+    const updated = { ...config, plans };
     persistConfig(updated);
   };
 
@@ -220,6 +227,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         updateStructure,
         updateGallery,
         updateBenefits,
+        updatePlans,
         updateStats,
         resetToDefaults,
         exportConfigJson,

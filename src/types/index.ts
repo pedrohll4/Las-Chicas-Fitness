@@ -44,6 +44,20 @@ export interface GalleryItem {
   aspect?: "tall" | "wide" | "square";
 }
 
+export interface PlanItem {
+  id: string;
+  name: string;
+  badge?: string;
+  price: string;
+  period: string; // ex: "/mês", "/ano"
+  billingInfo?: string; // ex: "Cobrado mensalmente", "Economize 30%"
+  description: string;
+  features: string[];
+  isPopular?: boolean;
+  ctaText?: string;
+  customMessage?: string;
+}
+
 export interface AcademyHours {
   weekdays: string;
   saturdays: string;
@@ -81,6 +95,7 @@ export interface AcademyConfig {
   benefits: BenefitItem[];
   structure: StructureItem[];
   gallery: GalleryItem[];
+  plans: PlanItem[];
   author: {
     name: string;
     label: string;

@@ -19,19 +19,28 @@ import {
   PhoneCall,
   Settings,
   Sparkles,
-  ChevronRight,
+  CreditCard,
+  Star,
   AlertCircle,
   Key,
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import { ModalityItem, StructureItem, GalleryItem, BenefitItem, StatItem } from "@/types";
+import {
+  ModalityItem,
+  StructureItem,
+  GalleryItem,
+  BenefitItem,
+  StatItem,
+  PlanItem,
+} from "@/types";
 
 type ActiveTab =
   | "geral"
   | "servicos"
   | "estrutura"
   | "galeria"
+  | "planos"
   | "beneficios"
   | "contatos"
   | "sistema";
@@ -44,6 +53,7 @@ export function AdminCustomizer() {
     updateStructure,
     updateGallery,
     updateBenefits,
+    updatePlans,
     updateStats,
     resetToDefaults,
     exportConfigJson,
@@ -176,6 +186,44 @@ export function AdminCustomizer() {
     updateGallery(updated);
   };
 
+  // Plan handlers
+  const handleAddPlan = () => {
+    const newPlan: PlanItem = {
+      id: `plano-${Date.now()}`,
+      name: "Novo Plano",
+      badge: "Opção Flex",
+      price: "120",
+      period: "/mês",
+      billingInfo: "Mensalidade padrão",
+      description: "Descrição dos benefícios e do perfil ideal para este plano.",
+      features: [
+        "Acesso à musculação e cardio",
+        "Acompanhamento com instrutores",
+        "Sem taxa de adesão",
+      ],
+      isPopular: false,
+      ctaText: "Escolher Plano",
+      customMessage: "Olá! Gostaria de me matricular neste plano da Las Chicas Fitness.",
+    };
+    const updated = [...formData.plans, newPlan];
+    setFormData({ ...formData, plans: updated });
+    updatePlans(updated);
+    showToast("Novo plano adicionado!");
+  };
+
+  const handleRemovePlan = (id: string) => {
+    const updated = formData.plans.filter((p) => p.id !== id);
+    setFormData({ ...formData, plans: updated });
+    updatePlans(updated);
+    showToast("Plano removido!");
+  };
+
+  const handleUpdatePlan = (id: string, partial: Partial<PlanItem>) => {
+    const updated = formData.plans.map((p) => (p.id === id ? { ...p, ...partial } : p));
+    setFormData({ ...formData, plans: updated });
+    updatePlans(updated);
+  };
+
   // Export JSON
   const handleDownloadBackup = () => {
     const jsonStr = exportConfigJson();
@@ -216,6 +264,7 @@ export function AdminCustomizer() {
 
   const TABS = [
     { id: "geral", label: "Geral & Textos", icon: Building2 },
+    { id: "planos", label: "Planos & Mensalidades", icon: CreditCard },
     { id: "servicos", label: "Serviços & Modalidades", icon: Dumbbell },
     { id: "estrutura", label: "Fotos da Estrutura", icon: Images },
     { id: "galeria", label: "Galeria de Fotos", icon: Camera },
@@ -491,7 +540,207 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 2: MODALIDADES & SERVIÇOS */}
+          {/* TAB 2: PLANOS & MENSALIDADES */}
+          {/* ========================================================================= */}
+          {activeTab === "planos" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-white">Planos e Preços</h3>
+                  <p className="text-xs text-zinc-400">
+                    Edite valores, benefícios inclusos e o plano em destaque.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddPlan}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Adicionar Plano</span>
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                {formData.plans.map((plan, index) => (
+                  <div
+                    key={plan.id}
+                    className={`p-5 rounded-2xl bg-surface border space-y-4 relative ${
+                      plan.isPopular
+                        ? "border-brand-pink shadow-glow-pink"
+                        : "border-white/10"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-brand-pink uppercase tracking-wider">
+                          Plano #{index + 1}
+                        </span>
+                        {plan.isPopular && (
+                          <span className="px-2 py-0.5 rounded-full bg-brand-pink/20 border border-brand-pink/40 text-[10px] font-extrabold text-pink-300 uppercase">
+                            Destaque
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={!!plan.isPopular}
+                            onChange={(e) =>
+                              handleUpdatePlan(plan.id, { isPopular: e.target.checked })
+                            }
+                            className="rounded border-white/20 text-brand-pink focus:ring-brand-pink accent-brand-pink"
+                          />
+                          <span>Marcar como Destaque</span>
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePlan(plan.id)}
+                          className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors ml-2"
+                          title="Excluir plano"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Nome do Plano
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.name}
+                          onChange={(e) => handleUpdatePlan(plan.id, { name: e.target.value })}
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Selo / Badge
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.badge || ""}
+                          onChange={(e) => handleUpdatePlan(plan.id, { badge: e.target.value })}
+                          placeholder="Ex: MAIS ESCOLHIDO, Sem Fidelidade"
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Preço (apenas número)
+                        </label>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-xs text-zinc-400 font-bold">R$</span>
+                          <input
+                            type="text"
+                            value={plan.price}
+                            onChange={(e) => handleUpdatePlan(plan.id, { price: e.target.value })}
+                            placeholder="89"
+                            className="w-full pl-9 pr-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-bold focus:outline-none focus:border-brand-pink"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Período
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.period}
+                          onChange={(e) => handleUpdatePlan(plan.id, { period: e.target.value })}
+                          placeholder="/mês, /ano"
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Info de Cobrança
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.billingInfo || ""}
+                          onChange={(e) => handleUpdatePlan(plan.id, { billingInfo: e.target.value })}
+                          placeholder="Ex: Economize 35%"
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                        Descrição Curta
+                      </label>
+                      <input
+                        type="text"
+                        value={plan.description}
+                        onChange={(e) => handleUpdatePlan(plan.id, { description: e.target.value })}
+                        className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                        Benefícios Inclusos (1 por linha)
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={plan.features.join("\n")}
+                        onChange={(e) =>
+                          handleUpdatePlan(plan.id, {
+                            features: e.target.value.split("\n").filter((f) => f.trim().length > 0),
+                          })
+                        }
+                        placeholder="Acesso livre à musculação&#10;Aulas coletivas inclusas&#10;Sem taxa de matrícula"
+                        className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink font-mono"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Texto do Botão
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.ctaText || "Quero me Matricular"}
+                          onChange={(e) => handleUpdatePlan(plan.id, { ctaText: e.target.value })}
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                          Mensagem Automática do WhatsApp
+                        </label>
+                        <input
+                          type="text"
+                          value={plan.customMessage || ""}
+                          onChange={(e) => handleUpdatePlan(plan.id, { customMessage: e.target.value })}
+                          placeholder="Olá! Gostaria de me matricular no..."
+                          className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 3: MODALIDADES & SERVIÇOS */}
           {/* ========================================================================= */}
           {activeTab === "servicos" && (
             <div className="space-y-6">
@@ -624,7 +873,7 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 3: FOTOS DA ESTRUTURA */}
+          {/* TAB 4: FOTOS DA ESTRUTURA */}
           {/* ========================================================================= */}
           {activeTab === "estrutura" && (
             <div className="space-y-6">
@@ -721,7 +970,7 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 4: GALERIA DE FOTOS */}
+          {/* TAB 5: GALERIA DE FOTOS */}
           {/* ========================================================================= */}
           {activeTab === "galeria" && (
             <div className="space-y-6">
@@ -817,7 +1066,7 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 5: DIFERENCIAIS / BENEFÍCIOS */}
+          {/* TAB 6: DIFERENCIAIS / BENEFÍCIOS */}
           {/* ========================================================================= */}
           {activeTab === "beneficios" && (
             <div className="space-y-6">
@@ -868,7 +1117,7 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 6: CONTATOS & HORÁRIOS */}
+          {/* TAB 7: CONTATOS & HORÁRIOS */}
           {/* ========================================================================= */}
           {activeTab === "contatos" && (
             <div className="space-y-6">
@@ -1113,7 +1362,7 @@ export function AdminCustomizer() {
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 7: SISTEMA & BACKUP */}
+          {/* TAB 8: SISTEMA & BACKUP */}
           {/* ========================================================================= */}
           {activeTab === "sistema" && (
             <div className="space-y-6">
