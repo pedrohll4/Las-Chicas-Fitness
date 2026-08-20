@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Instagram,
@@ -14,191 +14,121 @@ import {
 import { useAcademy } from "@/context/AcademyContext";
 import { InstagramPost } from "@/types";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
-function extractInstagramInfo(url: string): { type: "reel" | "post"; id: string } | null {
+function getInstagramEmbedUrl(url: string): string | null {
   if (!url) return null;
   const reelMatch = url.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
-  if (reelMatch) return { type: "reel", id: reelMatch[1] };
+  if (reelMatch) return `https://www.instagram.com/reel/${reelMatch[1]}/embed/`;
   const postMatch = url.match(/instagram\.com\/p\/([A-Za-z0-9_-]+)/);
-  if (postMatch) return { type: "post", id: postMatch[1] };
+  if (postMatch) return `https://www.instagram.com/p/${postMatch[1]}/embed/`;
   return null;
 }
 
-function isDirectVideo(url: string | undefined) {
+function isDirectVideo(url: string | undefined): boolean {
   if (!url) return false;
-  return (
-    url.endsWith(".mp4") ||
-    url.endsWith(".webm") ||
-    (url.startsWith("data:video"))
-  );
+  return url.endsWith(".mp4") || url.endsWith(".webm") || url.startsWith("data:video");
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Componente para vídeo local em loop
-// ─────────────────────────────────────────────────────────────────────────────
+function isInstagramLink(url: string | undefined): boolean {
+  if (!url) return false;
+  return url.includes("instagram.com/reel/") || url.includes("instagram.com/p/");
+}
+
+// ─── Componente: Vídeo MP4 em loop ─────────────────────────────────────────
 
 function LoopingVideo({ src }: { src: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
-    if (v) {
-      v.muted = true;
-      v.play().catch(() => {});
-    }
+    if (v) { v.muted = true; v.play().catch(() => {}); }
   }, [src]);
   return (
-    <video
-      ref={ref}
-      src={src}
-      autoPlay
-      loop
-      muted
-      playsInline
-      preload="auto"
-      className="w-full h-full object-cover pointer-events-none"
-    />
+    <video ref={ref} src={src} autoPlay loop muted playsInline preload="auto"
+      className="w-full h-full object-cover pointer-events-none" />
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Card de Reel do Instagram com thumbnail real via oEmbed
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Componente: Card individual ────────────────────────────────────────────
 
-function InstagramReelCard({
-  post,
-  idx,
-  instagramHandle,
-  instagramUrl,
+function PostCard({
+  post, idx, handle, profileUrl,
 }: {
-  post: InstagramPost;
-  idx: number;
-  instagramHandle: string;
-  instagramUrl: string;
+  post: InstagramPost; idx: number; handle: string; profileUrl: string;
 }) {
-  const instaInfo = extractInstagramInfo(post.mediaUrl || "");
-  const isVideo = isDirectVideo(post.mediaUrl);
-  const isInstaLink = !!instaInfo;
+  const embedUrl = getInstagramEmbedUrl(post.mediaUrl || "");
+  const isInsta = isInstagramLink(post.mediaUrl);
+  const isVid = isDirectVideo(post.mediaUrl);
+  const fallback = `/images/instagram/reel_${(idx % 18) + 1}.jpg`;
 
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [thumbError, setThumbError] = useState(false);
-
-  // Busca thumbnail real via API de scraping quando for link do Instagram
-  useEffect(() => {
-    if (!isInstaLink) return;
-    setLoading(true);
-    setThumbError(false);
-    fetch(`/api/instagram-oembed?url=${encodeURIComponent(post.mediaUrl || "")}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.thumbnailUrl) {
-          setThumbnail(data.thumbnailUrl);
-        } else {
-          setThumbError(true);
-        }
-      })
-      .catch(() => setThumbError(true))
-      .finally(() => setLoading(false));
-  }, [post.mediaUrl, isInstaLink]);
-
-  // URL de destino ao clicar
-  const targetUrl = post.permalink?.startsWith("http")
-    ? post.permalink
-    : isInstaLink
-    ? post.mediaUrl
-    : instagramUrl;
-
-  // Imagem de fallback da academia quando não há thumbnail
-  const fallbackImage = `/images/instagram/reel_${(idx % 12) + 1}.jpg`;
+  // Ao clicar → abre o permalink ou o próprio link do Instagram
+  const href =
+    post.permalink?.startsWith("http")
+      ? post.permalink
+      : isInsta
+      ? post.mediaUrl!
+      : profileUrl;
 
   return (
     <a
-      href={targetUrl}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] rounded-2xl overflow-hidden bg-[#111116] border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
+      className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] rounded-2xl overflow-hidden bg-[#111] border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
     >
-      {/* ── MÍDIA ── */}
-      {isVideo ? (
-        // Vídeo MP4 local em loop
-        <LoopingVideo src={post.mediaUrl!} />
-      ) : isInstaLink ? (
-        // Link de Reel/Post do Instagram → thumbnail real + overlay play
-        <div className="relative w-full h-full bg-[#0a0a0c]">
-          {loading ? (
-            // Skeleton de carregamento
-            <div className="absolute inset-0 bg-zinc-900 animate-pulse">
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-zinc-700/60 animate-pulse flex items-center justify-center">
-                  <Instagram className="w-5 h-5 text-zinc-600" />
-                </div>
-                <div className="h-1.5 w-20 rounded-full bg-zinc-700/60 animate-pulse" />
-              </div>
-            </div>
-          ) : thumbnail && !thumbError ? (
-            // Thumbnail real do Reel
-            <Image
-              src={thumbnail}
-              alt={post.caption || "Reel Las Chicas Fitness"}
-              fill
-              className="object-cover brightness-90 group-hover:scale-105 transition-transform duration-700"
-              unoptimized
-              onError={() => setThumbError(true)}
-            />
-          ) : (
-            // Sem thumbnail → foto real da academia como fallback
-            <Image
-              src={fallbackImage}
-              alt={post.caption || "Reel Las Chicas Fitness"}
-              fill
-              className="object-cover brightness-90 group-hover:scale-105 transition-transform duration-700"
-              unoptimized
-            />
-          )}
+      {/* ══════════ MÍDIA ══════════ */}
 
-          {/* Overlay escuro + botão play centralizado */}
-          <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors duration-300" />
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="w-14 h-14 rounded-full bg-black/55 backdrop-blur-sm border border-white/25 flex items-center justify-center group-hover:bg-brand-pink/80 group-hover:scale-110 transition-all duration-300 shadow-xl">
-              <Play className="w-6 h-6 text-white fill-white ml-1" />
+      {isVid ? (
+        /* Vídeo MP4 direto em loop */
+        <LoopingVideo src={post.mediaUrl!} />
+
+      ) : isInsta && embedUrl ? (
+        /* Link do Instagram → embed real do Reel/Post */
+        <div className="relative w-full h-full bg-black overflow-hidden">
+          <iframe
+            src={embedUrl}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[110%] h-[110%] border-0 pointer-events-none"
+            scrolling="no"
+            loading="lazy"
+            style={{ marginTop: "-30px" }}
+          />
+          {/* Overlay play para indicar que é clicável */}
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors z-[5]" />
+          <div className="absolute inset-0 flex items-center justify-center z-[6] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xl">
+              <Play className="w-6 h-6 text-white fill-white ml-0.5" />
             </div>
           </div>
         </div>
+
       ) : (
-        // Foto normal
+        /* Foto normal (upload ou fallback da academia) */
         <Image
-          src={post.mediaUrl && !post.mediaUrl.includes("mixkit") ? post.mediaUrl : fallbackImage}
-          alt={post.caption || `Postagem Las Chicas Fitness ${idx + 1}`}
+          src={post.mediaUrl && !post.mediaUrl.includes("mixkit") && !isInsta ? post.mediaUrl : fallback}
+          alt={post.caption || `Las Chicas Fitness ${idx + 1}`}
           fill
           className="object-cover brightness-90 group-hover:scale-105 transition-transform duration-700"
           unoptimized
         />
       )}
 
-      {/* Badge de tipo */}
+      {/* ══════════ BADGE ══════════ */}
       <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20 shadow-md">
-        {isInstaLink || post.type === "video" ? (
-          <>
-            <Play className="w-3 h-3 fill-current text-brand-pink" />
-            <span>Reels</span>
-          </>
+        {isInsta || post.type === "video" ? (
+          <><Play className="w-3 h-3 fill-current text-brand-pink" /><span>Reels</span></>
         ) : (
           <Instagram className="w-3.5 h-3.5 text-brand-pink" />
         )}
       </div>
 
-      {/* Gradiente na base */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none z-10" />
+      {/* ══════════ GRADIENTE ══════════ */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-transparent opacity-80 group-hover:opacity-95 transition-opacity pointer-events-none z-10" />
 
-      {/* Conteúdo textual */}
-      <div className="absolute inset-0 p-5 flex flex-col justify-between pointer-events-none z-20">
+      {/* ══════════ TEXTO ══════════ */}
+      <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between pointer-events-none z-20">
         <div>
-          <span className="text-[11px] font-bold text-pink-200 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 shadow-sm">
-            {instagramHandle || "@las.chicasfitness"}
+          <span className="text-[11px] font-bold text-pink-200 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+            {handle}
           </span>
         </div>
         <div className="space-y-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
@@ -225,43 +155,32 @@ function InstagramReelCard({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Seção principal do Instagram
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Seção principal ────────────────────────────────────────────────────────
 
 export function InstagramSection() {
   const { config } = useAcademy();
   const posts = config.instagramPosts || [];
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [perPage, setPerPage] = useState(4);
 
   useEffect(() => {
-    const calc = () => {
-      setItemsPerPage(
-        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 4
-      );
-    };
+    const calc = () => setPerPage(innerWidth < 640 ? 1 : innerWidth < 1024 ? 2 : 4);
     calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
+    addEventListener("resize", calc);
+    return () => removeEventListener("resize", calc);
   }, []);
 
-  const totalPages = Math.max(1, posts.length - itemsPerPage + 1);
+  const pages = Math.max(1, posts.length - perPage + 1);
 
   useEffect(() => {
-    if (isPaused || posts.length <= itemsPerPage) return;
-    const t = setInterval(
-      () => setCurrentIndex((p) => (p + 1 >= totalPages ? 0 : p + 1)),
-      4500
-    );
+    if (isPaused || posts.length <= perPage) return;
+    const t = setInterval(() => setCurrentIndex((p) => (p + 1 >= pages ? 0 : p + 1)), 4500);
     return () => clearInterval(t);
-  }, [isPaused, totalPages, posts.length, itemsPerPage]);
+  }, [isPaused, pages, posts.length, perPage]);
 
-  const instagramHandle = config.contacts?.instagramHandle || "@las.chicasfitness";
-  const instagramUrl =
-    config.contacts?.instagramUrl || "https://www.instagram.com/las.chicasfitness/";
+  const handle = config.contacts?.instagramHandle || "@las.chicasfitness";
+  const url = config.contacts?.instagramUrl || "https://www.instagram.com/las.chicasfitness/";
 
   if (!posts.length) return null;
 
@@ -278,8 +197,7 @@ export function InstagramSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-pink/10 border border-brand-pink/30 text-brand-pink text-xs font-bold uppercase tracking-wider mb-3.5">
-              <Instagram className="w-3.5 h-3.5" />
-              <span>{instagramHandle}</span>
+              <Instagram className="w-3.5 h-3.5" /><span>{handle}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight">
               ACOMPANHE A{" "}
@@ -291,32 +209,19 @@ export function InstagramSection() {
               Veja nossos treinos, vídeos e a rotina inspiradora da nossa comunidade feminina.
             </p>
           </div>
-
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 mr-2">
-              <button
-                onClick={() =>
-                  setCurrentIndex((p) => (p === 0 ? totalPages - 1 : p - 1))
-                }
-                className="p-2.5 rounded-xl bg-surface hover:bg-brand-pink text-zinc-300 hover:text-white border border-white/10 transition-all"
-              >
+              <button onClick={() => setCurrentIndex((p) => (p === 0 ? pages - 1 : p - 1))}
+                className="p-2.5 rounded-xl bg-surface hover:bg-brand-pink text-zinc-300 hover:text-white border border-white/10 transition-all">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button
-                onClick={() =>
-                  setCurrentIndex((p) => (p + 1 >= totalPages ? 0 : p + 1))
-                }
-                className="p-2.5 rounded-xl bg-surface hover:bg-brand-pink text-zinc-300 hover:text-white border border-white/10 transition-all"
-              >
+              <button onClick={() => setCurrentIndex((p) => (p + 1 >= pages ? 0 : p + 1))}
+                className="p-2.5 rounded-xl bg-surface hover:bg-brand-pink text-zinc-300 hover:text-white border border-white/10 transition-all">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-surface-card hover:bg-brand-pink border border-white/15 hover:border-brand-pink text-white text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 shadow-md group"
-            >
+            <a href={url} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-surface-card hover:bg-brand-pink border border-white/15 hover:border-brand-pink text-white text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 shadow-md group">
               <Instagram className="w-4 h-4 text-brand-pink group-hover:text-white" />
               <span>Seguir no Instagram</span>
               <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-white" />
@@ -326,39 +231,22 @@ export function InstagramSection() {
 
         {/* Carrossel */}
         <div className="relative overflow-hidden rounded-3xl p-1">
-          <div
-            className="flex transition-transform duration-700 ease-out gap-4 sm:gap-6"
-            style={{
-              transform: `translateX(-${
-                currentIndex * (100 / itemsPerPage + (itemsPerPage === 1 ? 0 : 1.5))
-              }%)`,
-            }}
-          >
-            {posts.map((post, idx) => (
-              <InstagramReelCard
-                key={post.id || idx}
-                post={post}
-                idx={idx}
-                instagramHandle={instagramHandle}
-                instagramUrl={instagramUrl}
-              />
+          <div className="flex transition-transform duration-700 ease-out gap-4 sm:gap-6"
+            style={{ transform: `translateX(-${currentIndex * (100 / perPage + (perPage === 1 ? 0 : 1.5))}%)` }}>
+            {posts.map((post, i) => (
+              <PostCard key={post.id || i} post={post} idx={i} handle={handle} profileUrl={url} />
             ))}
           </div>
         </div>
 
-        {/* Dots de paginação */}
-        {totalPages > 1 && (
+        {/* Paginação */}
+        {pages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-8">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentIndex(i)}
+            {Array.from({ length: pages }).map((_, i) => (
+              <button key={i} onClick={() => setCurrentIndex(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  currentIndex === i
-                    ? "w-8 bg-brand-pink shadow-glow-pink"
-                    : "w-2 bg-zinc-700 hover:bg-zinc-500"
-                }`}
-              />
+                  currentIndex === i ? "w-8 bg-brand-pink shadow-glow-pink" : "w-2 bg-zinc-700 hover:bg-zinc-500"
+                }`} />
             ))}
           </div>
         )}
