@@ -87,13 +87,20 @@ function PostCard({
         <div className="relative w-full h-full bg-black overflow-hidden">
           <iframe
             src={embedUrl}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[110%] h-[110%] border-0 pointer-events-none"
+            className="absolute border-0 pointer-events-none"
             scrolling="no"
             loading="lazy"
-            style={{ marginTop: "-30px" }}
+            style={{
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%) scale(2)",
+              width: "100%",
+              height: "100%",
+              transformOrigin: "center center",
+            }}
           />
           {/* Overlay play para indicar que é clicável */}
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors z-[5]" />
+          <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors z-[5]" />
           <div className="absolute inset-0 flex items-center justify-center z-[6] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xl">
               <Play className="w-6 h-6 text-white fill-white ml-0.5" />
