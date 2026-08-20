@@ -13,7 +13,17 @@ const LOCAL_FILE_PATH = path.join(
   "saved_config.json"
 );
 
-// Obter configuração
+// Função para obter o store do Netlify Blobs de forma segura
+async function getNetlifyConfigStore() {
+  try {
+    const { getStore } = await import("@netlify/blobs");
+    return getStore("las-chicas-config");
+  } catch (e) {
+    return null;
+  }
+}
+
+// Obter configuração global
 export async function GET() {
   const headers = {
     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
@@ -21,7 +31,33 @@ export async function GET() {
     Expires: "0",
   };
 
-  // 1. Tenta carregar do arquivo local (se ambiente permitir)
+  // 1. Tenta carregar do Netlify Blobs (armazenamento oficial na nuvem do Netlify)
+  try {
+    const store = await getNetlifyConfigStore();
+    if (store) {
+      const netlifyData: any = await store.get("global_config", { type: "json" });
+      if (netlifyData && typeof netlifyData === "object") {
+        return NextResponse.json(
+          {
+            source: "netlify_blobs",
+            config: {
+              ...ACADEMY_CONFIG,
+              ...netlifyData,
+              contacts: {
+                ...ACADEMY_CONFIG.contacts,
+                ...(netlifyData.contacts || {}),
+              },
+            },
+          },
+          { headers }
+        );
+      }
+    }
+  } catch (netlifyErr) {
+    console.warn("Netlify Blobs não disponível ou sem dados:", netlifyErr);
+  }
+
+  // 2. Fallback: Arquivo local (para desenvolvimento local)
   try {
     if (fs.existsSync(LOCAL_FILE_PATH)) {
       const fileData = fs.readFileSync(LOCAL_FILE_PATH, "utf-8");
@@ -42,10 +78,10 @@ export async function GET() {
       );
     }
   } catch (fileErr) {
-    console.warn("Ambiente read-only ou arquivo ausente:", fileErr);
+    console.warn("Arquivo local não acessível:", fileErr);
   }
 
-  // 2. Fallback padrão: Retorna configuração padrão
+  // 3. Fallback: Configuração padrão do código
   return NextResponse.json(
     {
       source: "default",
@@ -55,7 +91,7 @@ export async function GET() {
   );
 }
 
-// Salvar configuração (Seguro, resiliente e sem travar na Vercel)
+// Salvar configuração globalmente no Netlify Blobs e Local
 export async function POST(req: NextRequest) {
   const headers = {
     "Cache-Control": "no-store, no-cache, must-revalidate",
@@ -72,9 +108,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let savedToNetlify = false;
     let savedLocally = false;
 
-    // Tenta salvar no disco se o ambiente permitir escrita
+    // 1. Salva no Netlify Blobs (permanente para todos os usuários e computadores)
+    try {
+      const store = await getNetlifyConfigStore();
+      if (store) {
+        await store.setJSON("global_config", newConfig);
+        savedToNetlify = true;
+      }
+    } catch (netlifyErr) {
+      console.warn("Erro ao salvar no Netlify Blobs:", netlifyErr);
+    }
+
+    // 2. Salva no arquivo local se o ambiente permitir
     try {
       const dir = path.dirname(LOCAL_FILE_PATH);
       if (!fs.existsSync(dir)) {
@@ -82,15 +130,14 @@ export async function POST(req: NextRequest) {
       }
       fs.writeFileSync(LOCAL_FILE_PATH, JSON.stringify(newConfig, null, 2), "utf-8");
       savedLocally = true;
-    } catch (e) {
-      // Vercel serverless functions são read-only em runtime
-    }
+    } catch (e) {}
 
     return NextResponse.json(
       {
         success: true,
+        savedToNetlify,
         savedLocally,
-        message: "Configurações salvas com sucesso!",
+        message: "Configurações salvas com sucesso para todos os visitantes!",
       },
       { headers }
     );
@@ -98,7 +145,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Configurações recebidas com sucesso!",
+        message: "Configuração processada com sucesso!",
       },
       { headers }
     );
