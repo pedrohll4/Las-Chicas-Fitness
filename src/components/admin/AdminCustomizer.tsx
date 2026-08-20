@@ -1106,10 +1106,10 @@ export function AdminCustomizer() {
                       />
                     </div>
 
-                    {post.type === "video" ? (
+                    {post.mediaUrl && (post.mediaUrl.includes("instagram.com/reel/") || post.mediaUrl.includes("instagram.com/p/")) ? (
                       <div className="space-y-2">
                         <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
-                          URL do Vídeo (.mp4)
+                          Link do Reel / Post do Instagram
                         </label>
                         <input
                           type="text"
@@ -1117,7 +1117,33 @@ export function AdminCustomizer() {
                           onChange={(e) =>
                             handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
                           }
-                          placeholder="https://exemplo.com/treino.mp4"
+                          placeholder="https://www.instagram.com/reel/..."
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
+                        />
+                        <div className="relative aspect-[4/5] max-h-60 w-full rounded-xl overflow-hidden bg-black border border-white/10 mt-1 flex items-center justify-center">
+                          <iframe
+                            src={
+                              post.mediaUrl.includes("/reel/")
+                                ? `https://www.instagram.com/reel/${post.mediaUrl.split("/reel/")[1]?.split("/")[0]?.split("?")[0]}/embed/`
+                                : `https://www.instagram.com/p/${post.mediaUrl.split("/p/")[1]?.split("/")[0]?.split("?")[0]}/embed/`
+                            }
+                            className="w-full h-full border-0 pointer-events-none"
+                            scrolling="no"
+                          />
+                        </div>
+                      </div>
+                    ) : post.type === "video" ? (
+                      <div className="space-y-2">
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                          Link do Vídeo (.mp4) ou Link do Reel do Instagram
+                        </label>
+                        <input
+                          type="text"
+                          value={post.mediaUrl}
+                          onChange={(e) =>
+                            handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
+                          }
+                          placeholder="https://www.instagram.com/reel/... ou https://exemplo.com/video.mp4"
                           className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
                         />
                         {post.mediaUrl && (
@@ -1135,7 +1161,7 @@ export function AdminCustomizer() {
                       </div>
                     ) : (
                       <ImageUploader
-                        label="Foto do Post"
+                        label="Foto do Post (Upload ou URL)"
                         value={post.mediaUrl}
                         onChange={(url) =>
                           handleUpdateInstagramPost(post.id, { mediaUrl: url })

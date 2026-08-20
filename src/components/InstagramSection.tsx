@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Instagram,
@@ -13,6 +13,31 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
+
+function getInstagramEmbedInfo(url: string) {
+  if (!url || typeof url !== "string") return null;
+  if (!url.includes("instagram.com/reel/") && !url.includes("instagram.com/p/")) return null;
+
+  let type = "reel";
+  let id = "";
+
+  if (url.includes("/reel/")) {
+    type = "reel";
+    id = url.split("/reel/")[1]?.split("/")[0]?.split("?")[0] || "";
+  } else if (url.includes("/p/")) {
+    type = "p";
+    id = url.split("/p/")[1]?.split("/")[0]?.split("?")[0] || "";
+  }
+
+  if (!id) return null;
+
+  return {
+    id,
+    type,
+    embedUrl: `https://www.instagram.com/${type}/${id}/embed/`,
+    permalink: `https://www.instagram.com/${type}/${id}/`,
+  };
+}
 
 export function InstagramSection() {
   const { config } = useAcademy();
@@ -77,7 +102,7 @@ export function InstagramSection() {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-pink/10 border border-brand-pink/30 text-brand-pink text-xs font-bold uppercase tracking-wider mb-3.5">
               <Instagram className="w-3.5 h-3.5" />
-              <span>{config.contacts.instagramHandle}</span>
+              <span>{config.contacts.instagramHandle || "@las.chicasfitness"}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight uppercase leading-tight">
@@ -116,7 +141,7 @@ export function InstagramSection() {
             </div>
 
             <a
-              href={config.contacts.instagramUrl}
+              href="https://www.instagram.com/las.chicasfitness/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-surface-card hover:bg-brand-pink border border-white/15 hover:border-brand-pink text-white text-xs sm:text-sm font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 shadow-md group"
@@ -137,15 +162,19 @@ export function InstagramSection() {
             }}
           >
             {posts.map((post, idx) => {
+              const instaEmbed = getInstagramEmbedInfo(post.mediaUrl || "");
               const isMp4Video =
-                post.mediaUrl?.endsWith(".mp4") ||
-                post.mediaUrl?.endsWith(".webm") ||
-                post.mediaUrl?.includes("video");
-              const isReel = post.type === "video" || isMp4Video;
+                !instaEmbed &&
+                (post.mediaUrl?.endsWith(".mp4") ||
+                  post.mediaUrl?.endsWith(".webm") ||
+                  post.mediaUrl?.includes("video"));
+              const isReel = post.type === "video" || isMp4Video || !!instaEmbed;
+
               const targetUrl =
-                post.permalink && post.permalink.includes("las.chicasfitness")
+                instaEmbed?.permalink ||
+                (post.permalink && post.permalink.startsWith("http")
                   ? post.permalink
-                  : "https://www.instagram.com/las.chicasfitness/";
+                  : "https://www.instagram.com/las.chicasfitness/");
 
               return (
                 <a
@@ -155,9 +184,23 @@ export function InstagramSection() {
                   rel="noopener noreferrer"
                   className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] rounded-2xl overflow-hidden bg-surface border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300"
                 >
-                  {/* Media: Video (sem som / loop) or Image */}
-                  {isMp4Video ? (
-                    <div className="relative w-full h-full">
+                  {/* Option 1: Instagram Embed iframe (quando cola link do instagram.com/reel/...) */}
+                  {instaEmbed ? (
+                    <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
+                      <iframe
+                        src={instaEmbed.embedUrl}
+                        className="w-full h-full border-0 pointer-events-none scale-105"
+                        scrolling="no"
+                        loading="lazy"
+                      />
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20">
+                        <Play className="w-3 h-3 fill-current" />
+                        <span>Reels</span>
+                      </div>
+                    </div>
+                  ) : isMp4Video ? (
+                    /* Option 2: Direct MP4 Video */
+                    <div className="relative w-full h-full bg-black">
                       <video
                         src={post.mediaUrl}
                         autoPlay
@@ -166,25 +209,24 @@ export function InstagramSection() {
                         playsInline
                         className="w-full h-full object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-700"
                       />
-                      {/* Video indicator badge */}
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5">
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-bold text-pink-300 flex items-center gap-1.5 z-20">
                         <Play className="w-3 h-3 fill-current" />
                         <span>Reels</span>
                         <VolumeX className="w-3 h-3 text-zinc-400 ml-0.5" />
                       </div>
                     </div>
                   ) : (
-                    <div className="relative w-full h-full">
+                    /* Option 3: Image / Snapshot */
+                    <div className="relative w-full h-full bg-surface-card">
                       <Image
-                        src={post.mediaUrl}
+                        src={post.mediaUrl || "/images/instagram/reel_13.jpg"}
                         alt={post.caption || `Postagem Instagram ${idx + 1}`}
                         fill
                         className="object-cover object-center group-hover:scale-105 filter brightness-95 group-hover:brightness-100 transition-transform duration-700 ease-out"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        unoptimized={post.mediaUrl.startsWith("data:") || post.mediaUrl.startsWith("/images/")}
+                        unoptimized={true}
                       />
-                      {/* Photo or Reel indicator badge */}
-                      <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-pink-300 flex items-center gap-1">
+                      <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-pink-300 flex items-center gap-1 z-20">
                         {isReel ? (
                           <>
                             <Play className="w-3 h-3 fill-current" />
@@ -198,14 +240,14 @@ export function InstagramSection() {
                   )}
 
                   {/* Dark gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-75 group-hover:opacity-95 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-75 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none" />
 
                   {/* Hover & Details Content */}
-                  <div className="absolute inset-0 p-5 flex flex-col justify-between">
+                  <div className="absolute inset-0 p-5 flex flex-col justify-between pointer-events-none">
                     {/* Top: Handle */}
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-bold text-pink-200 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-                        {config.contacts.instagramHandle}
+                        {config.contacts.instagramHandle || "@las.chicasfitness"}
                       </span>
                     </div>
 
@@ -220,7 +262,7 @@ export function InstagramSection() {
                       <div className="flex items-center gap-4 text-xs font-bold text-zinc-300 pt-1 border-t border-white/10">
                         <div className="flex items-center gap-1.5 text-pink-300">
                           <Heart className="w-3.5 h-3.5 fill-current text-brand-pink" />
-                          <span>{post.likes}</span>
+                          <span>{post.likes || "1.5k"}</span>
                         </div>
                         {post.comments && (
                           <div className="flex items-center gap-1.5 text-zinc-400">
