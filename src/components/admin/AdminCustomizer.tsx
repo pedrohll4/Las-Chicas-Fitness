@@ -1121,14 +1121,91 @@ export function AdminCustomizer() {
                       />
                     </div>
 
-                    <ImageUploader
-                      label="Foto ou Vídeo do Post (Upload do seu computador ou link)"
-                      value={post.mediaUrl}
-                      onChange={(url) =>
-                        handleUpdateInstagramPost(post.id, { mediaUrl: url })
-                      }
-                      aspectRatio="video"
-                    />
+                    <div className="space-y-2">
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Mídia do Post (cole link do Instagram, MP4, ou faça upload)
+                      </label>
+                      <input
+                        type="text"
+                        value={post.mediaUrl || ""}
+                        onChange={(e) =>
+                          handleUpdateInstagramPost(post.id, { mediaUrl: e.target.value })
+                        }
+                        placeholder="https://www.instagram.com/reel/... ou https://www.instagram.com/p/..."
+                        className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px] focus:outline-none focus:border-brand-pink"
+                      />
+
+                      {/* Preview de Reel do Instagram */}
+                      {post.mediaUrl &&
+                        (post.mediaUrl.includes("instagram.com/reel/") ||
+                          post.mediaUrl.includes("instagram.com/p/")) && (
+                          <div className="mt-2 rounded-xl overflow-hidden bg-black border border-white/10 aspect-[4/5] max-h-64 w-full flex items-center justify-center relative">
+                            <iframe
+                              key={post.mediaUrl}
+                              src={
+                                post.mediaUrl.includes("/reel/")
+                                  ? `https://www.instagram.com/reel/${post.mediaUrl.split("/reel/")[1]?.split("/")[0]?.split("?")[0]}/embed/captioned/`
+                                  : `https://www.instagram.com/p/${post.mediaUrl.split("/p/")[1]?.split("/")[0]?.split("?")[0]}/embed/captioned/`
+                              }
+                              className="w-full h-full border-0"
+                              scrolling="no"
+                              loading="lazy"
+                              allowFullScreen
+                            />
+                          </div>
+                        )}
+
+                      {/* Preview de vídeo MP4 */}
+                      {post.mediaUrl &&
+                        (post.mediaUrl.endsWith(".mp4") ||
+                          post.mediaUrl.endsWith(".webm") ||
+                          post.mediaUrl.startsWith("data:video")) && (
+                          <div className="mt-2 rounded-xl overflow-hidden bg-black border border-white/10 aspect-video w-full">
+                            <video
+                              src={post.mediaUrl}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+
+                      {/* Upload de arquivo de imagem/vídeo */}
+                      <div className="flex items-center gap-2 mt-1">
+                        <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card border border-white/10 text-xs text-zinc-300 hover:border-brand-pink hover:text-white transition-colors">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          Upload do Arquivo
+                          <input
+                            type="file"
+                            accept="image/*,video/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (ev) => {
+                                  handleUpdateInstagramPost(post.id, {
+                                    mediaUrl: ev.target?.result as string,
+                                  });
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </label>
+                        {post.mediaUrl && !post.mediaUrl.includes("instagram.com") && (
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateInstagramPost(post.id, { mediaUrl: "" })}
+                            className="text-xs text-zinc-500 hover:text-red-400 transition-colors"
+                          >
+                            Limpar
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
