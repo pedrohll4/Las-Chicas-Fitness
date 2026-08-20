@@ -138,7 +138,10 @@ export function InstagramSection() {
           >
             {posts.map((post, idx) => {
               const isVideo = post.type === "video";
-              const targetUrl = post.permalink || config.contacts.instagramUrl;
+              const targetUrl =
+                post.permalink && post.permalink.includes("las.chicasfitness")
+                  ? post.permalink
+                  : "https://www.instagram.com/las.chicasfitness/";
 
               return (
                 <a

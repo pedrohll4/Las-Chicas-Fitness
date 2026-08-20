@@ -102,7 +102,12 @@ export function Location() {
                 </a>
 
                 <a
-                  href={config.contacts.instagramUrl}
+                  href={
+                    config.contacts.instagramUrl &&
+                    config.contacts.instagramUrl.includes("las.chicasfitness")
+                      ? config.contacts.instagramUrl
+                      : "https://www.instagram.com/las.chicasfitness/"
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-xl bg-surface-light hover:bg-brand-pink/20 border border-white/5 hover:border-brand-pink/40 text-zinc-200 hover:text-white transition-all text-xs font-semibold"

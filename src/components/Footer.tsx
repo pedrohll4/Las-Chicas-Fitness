@@ -49,7 +49,12 @@ export function Footer() {
               </a>
 
               <a
-                href={config.contacts.instagramUrl}
+                href={
+                  config.contacts.instagramUrl &&
+                  config.contacts.instagramUrl.includes("las.chicasfitness")
+                    ? config.contacts.instagramUrl
+                    : "https://www.instagram.com/las.chicasfitness/"
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-surface border border-white/10 hover:border-brand-pink text-zinc-300 hover:text-brand-pink transition-all shadow-sm"
