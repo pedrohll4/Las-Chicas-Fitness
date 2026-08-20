@@ -27,6 +27,9 @@ interface AcademyContextType {
   exportConfigJson: () => string;
   importConfigJson: (jsonStr: string) => boolean;
 
+  saveGlobalConfig: () => Promise<boolean>;
+  isSavingGlobal: boolean;
+
   // Auth & UI state
   isAdmin: boolean;
   login: (password: string) => boolean;
@@ -54,9 +57,11 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [isSavingGlobal, setIsSavingGlobal] = useState<boolean>(false);
 
-  // Carregar dados salvos no localStorage ao iniciar
+  // 1. Carregar dados do localStorage e sincronizar com a nuvem/servidor ao iniciar
   useEffect(() => {
+    // A) Carregamento rápido inicial do localStorage
     try {
       const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
       if (savedConfig) {
@@ -89,15 +94,60 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsInitialized(true);
     }
+
+    // B) Sincronização em segundo plano com a API global na nuvem
+    fetch("/api/config")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.config && data.source !== "default") {
+          setConfig((prev) => {
+            const merged = {
+              ...ACADEMY_CONFIG,
+              ...prev,
+              ...data.config,
+              contacts: {
+                ...ACADEMY_CONFIG.contacts,
+                ...(data.config.contacts || {}),
+              },
+            };
+            try {
+              localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(merged));
+            } catch (err) {}
+            return merged;
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn("Não foi possível sincronizar da nuvem:", err);
+      });
   }, []);
 
-  // Salvar no localStorage sempre que a config mudar
+  // Salvar no localStorage e atualizar estado
   const persistConfig = (newConfig: AcademyConfig) => {
     setConfig(newConfig);
     try {
       localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(newConfig));
     } catch (e) {
       console.error("Erro ao salvar configuração no localStorage:", e);
+    }
+  };
+
+  // Salvar na Nuvem / Servidor para todos os visitantes do site
+  const saveGlobalConfig = async (): Promise<boolean> => {
+    setIsSavingGlobal(true);
+    try {
+      const res = await fetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config }),
+      });
+      const data = await res.json();
+      return res.ok && !!data.success;
+    } catch (e) {
+      console.error("Erro ao salvar na nuvem:", e);
+      return false;
+    } finally {
+      setIsSavingGlobal(false);
     }
   };
 
@@ -256,6 +306,8 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         resetToDefaults,
         exportConfigJson,
         importConfigJson,
+        saveGlobalConfig,
+        isSavingGlobal,
         isAdmin,
         login,
         logout,

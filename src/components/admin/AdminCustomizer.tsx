@@ -29,6 +29,7 @@ import {
 import { useAcademy } from "@/context/AcademyContext";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import {
+  AcademyConfig,
   ModalityItem,
   StructureItem,
   GalleryItem,
@@ -63,20 +64,20 @@ export function AdminCustomizer() {
     resetToDefaults,
     exportConfigJson,
     importConfigJson,
-    isCustomizerOpen,
-    closeCustomizer,
+    saveGlobalConfig,
+    isSavingGlobal,
     logout,
     changePassword,
+    isCustomizerOpen,
+    closeCustomizer,
   } = useAcademy();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("geral");
+  const [formData, setFormData] = useState<AcademyConfig>(config);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Form states
-  const [formData, setFormData] = useState(config);
-  const [jsonInput, setJsonInput] = useState("");
-  const [oldPass, setOldPass] = useState("");
-  const [newPass, setNewPass] = useState("");
+  const [jsonInput, setJsonInput] = useState<string>("");
+  const [oldPass, setOldPass] = useState<string>("");
+  const [newPass, setNewPass] = useState<string>("");
   const [passMessage, setPassMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Sincronizar formData sempre que o customizer abrir
@@ -93,12 +94,17 @@ export function AdminCustomizer() {
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
     updateConfig(formData);
-    showToast("Alterações salvas com sucesso!");
+    const ok = await saveGlobalConfig();
+    if (ok) {
+      showToast("✅ Publicado com sucesso para todos os visitantes do site!");
+    } else {
+      showToast("✅ Alterações salvas com sucesso!");
+    }
   };
 
   // Modality handlers
@@ -342,10 +348,15 @@ export function AdminCustomizer() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleSaveAll}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all"
+              disabled={isSavingGlobal}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all disabled:opacity-50"
             >
-              <Save className="w-4 h-4" />
-              <span className="hidden sm:inline">Salvar Tudo</span>
+              {isSavingGlobal ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>{isSavingGlobal ? "Publicando..." : "Publicar no Site (Salvar)"}</span>
             </button>
 
             <button
@@ -1898,6 +1909,32 @@ export function AdminCustomizer() {
                     Atualizar Senha
                   </button>
                 </form>
+              </div>
+
+              {/* Sincronização Global na Nuvem (Vercel / Todos os PCs) */}
+              <div className="p-5 rounded-2xl bg-surface border border-brand-pink/30 space-y-4 shadow-glow-pink/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-white font-bold text-sm">
+                    <Sparkles className="w-4 h-4 text-brand-pink" />
+                    <span>Publicação Global na Nuvem</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveAll}
+                    disabled={isSavingGlobal}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all disabled:opacity-50"
+                  >
+                    {isSavingGlobal ? (
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Save className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isSavingGlobal ? "Sincronizando..." : "Sincronizar com a Nuvem"}</span>
+                  </button>
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Ao clicar em <strong>Publicar no Site</strong>, suas alterações são salvas na nuvem e ficam visíveis instantaneamente para <span className="text-white font-semibold">todos os computadores, celulares e visitantes do site</span> (mesmo na Vercel).
+                </p>
               </div>
 
               {/* Exportar / Importar Backup */}
