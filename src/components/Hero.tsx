@@ -40,7 +40,7 @@ export function Hero() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-brand-pink/30 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(255,46,147,0.2)] animate-float">
           <span className="w-2 h-2 rounded-full bg-brand-pink animate-ping" />
           <span className="text-xs sm:text-sm font-semibold tracking-wider text-pink-200 uppercase">
-            Experiência Fitness Premium
+            Academia feminina • Ariquemes/RO
           </span>
         </div>
 

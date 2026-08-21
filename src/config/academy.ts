@@ -43,12 +43,12 @@ export const ACADEMY_CONFIG: AcademyConfig = {
 
     // Endereço físico
     address: {
-      street: "ACADEMY_ADDRESS", // Substitua pelo endereço real (ex: Av. Principal, 1500)
+      street: "ACADEMY_ADDRESS",
       neighborhood: "Centro",
-      city: "Sua Cidade",
-      state: "UF",
-      zipCode: "00000-000",
-      fullAddress: "Av. Principal, 1000 - Bairro Nobre, Sua Cidade - UF",
+      city: "Ariquemes",
+      state: "RO",
+      zipCode: "76870-000",
+      fullAddress: "Ariquemes - RO",
     },
 
     // Mapa interativo do Google Maps (iframe embed).
