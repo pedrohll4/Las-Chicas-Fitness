@@ -87,8 +87,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#beneficios" className="hover:text-brand-pink transition-colors">
-                  Diferenciais
+                <Link href="#loja" className="hover:text-brand-pink transition-colors">
+                  Lojinha
                 </Link>
               </li>
               <li>
@@ -148,15 +148,15 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar with Watermark & Personalizar Button */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div className="pt-8 pb-8 sm:pb-0 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 relative z-20">
           <p>© 2026 {config.name}. Todos os direitos reservados.</p>
 
           <div className="flex items-center gap-3">
-            {/* Botão Personalizar Solicitado pelo Usuário */}
+            {/* Botão Personalizar */}
             <button
               type="button"
               onClick={openCustomizer}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface hover:bg-brand-pink/15 border border-white/10 hover:border-brand-pink/50 text-zinc-300 hover:text-white transition-all shadow-sm group cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface hover:bg-brand-pink/15 border border-white/10 hover:border-brand-pink/50 text-zinc-300 hover:text-white transition-all shadow-sm group cursor-pointer relative z-20"
               title="Acessar painel de personalização do site"
             >
               {isAdmin ? (
@@ -177,12 +177,12 @@ export function Footer() {
               href="https://wa.me/5569992102965?text=Ol%C3%A1%20Pedro!%20Vi%20que%20voc%C3%AA%20fez%20o%20site%20da%20Las%20Chicas%20Fitness.%20Gostaria%20de%20saber%20mais%20sobre%20como%20funciona%20para%20criar%20um%20site%20para%20o%20meu%20neg%C3%B3cio!"
               target="_blank"
               rel="noopener noreferrer"
-              title="Falar com Pedro (Desenvolvedor)"
-              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] hover:bg-brand-pink/10 border border-white/10 hover:border-brand-pink/30 text-zinc-400 hover:text-zinc-200 transition-all duration-300 hover:scale-105"
+              title="Falar com Pedro no WhatsApp"
+              className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/50 text-zinc-400 hover:text-white transition-all duration-300 hover:scale-105 cursor-pointer relative z-30 shadow-sm hover:shadow-[0_0_15px_rgba(255,46,147,0.25)]"
             >
               <Code2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-brand-pink transition-colors" />
               <span>Feito por</span>
-              <span className="font-semibold text-zinc-300 group-hover:text-brand-pink transition-colors">
+              <span className="font-bold text-zinc-200 group-hover:text-brand-pink transition-colors">
                 Pedro
               </span>
             </a>
