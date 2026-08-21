@@ -68,6 +68,22 @@ function InstagramCard({
 
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [imgError, setImgError] = useState<boolean>(false);
+
+  // Cores únicas de degradê por índice (garante visual diferente por card)
+  const gradients = [
+    "from-pink-900/80 via-purple-900/60 to-zinc-900",
+    "from-rose-900/80 via-pink-800/60 to-zinc-900",
+    "from-fuchsia-900/80 via-pink-900/60 to-zinc-900",
+    "from-purple-900/80 via-rose-900/60 to-zinc-900",
+    "from-pink-800/80 via-fuchsia-900/60 to-zinc-900",
+    "from-rose-800/80 via-purple-800/60 to-zinc-900",
+  ];
+  const bgGradient = gradients[idx % gradients.length];
+
+  // Emojis únicos para cada card de placeholder
+  const placeholderEmojis = ["🏋️‍♀️", "💪", "✨", "🌸", "💖", "🔥", "💗", "🏃‍♀️", "⚡", "🎯"];
+  const placeholderEmoji = placeholderEmojis[idx % placeholderEmojis.length];
 
   // Busca a imagem real via API se for link do Instagram
   useEffect(() => {
@@ -75,6 +91,7 @@ function InstagramCard({
 
     let isMounted = true;
     setLoading(true);
+    setImgError(false);
 
     fetch(`/api/instagram-oembed?url=${encodeURIComponent(post.mediaUrl || "")}`)
       .then((res) => res.json())
@@ -101,15 +118,19 @@ function InstagramCard({
       ? post.mediaUrl
       : profileUrl;
 
-  // Imagem de fallback oficial da academia
-  const fallbackImage = `/images/instagram/reel_${(idx % 12) + 1}.jpg`;
+  // Imagem local de fallback (somente se mediaUrl for caminho local)
+  const isLocalImage =
+    post.mediaUrl && (post.mediaUrl.startsWith("/") || post.mediaUrl.startsWith("http") && !isInsta);
 
   // URL final da imagem a exibir
   const finalImage = isInsta
-    ? thumbnailUrl || fallbackImage
-    : post.mediaUrl && !post.mediaUrl.includes("mixkit")
-    ? post.mediaUrl
-    : fallbackImage;
+    ? thumbnailUrl   // null → vai cair no placeholder
+    : isLocalImage
+    ? post.mediaUrl!
+    : null;
+
+  // Mostrar placeholder quando: link do Instagram sem thumbnail, ou imagem com erro
+  const showPlaceholder = (!finalImage || imgError) && !isVideo && !loading;
 
   return (
     <a
@@ -118,24 +139,39 @@ function InstagramCard({
       rel="noopener noreferrer"
       className="group relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] aspect-[4/5] sm:aspect-[9/13] rounded-2xl overflow-hidden bg-[#111116] border border-white/10 shadow-lg hover:border-brand-pink/60 hover:shadow-glow-pink transition-all duration-300 block"
     >
-      {/* ── MÍDIA DO CARD (FOTO OU VÍDEO CENTRALIZADO) ── */}
+      {/* ── MÍDIA DO CARD (FOTO, VÍDEO OU PLACEHOLDER) ── */}
       {isVideo ? (
         <div className="relative w-full h-full bg-black">
           <LoopingVideo src={post.mediaUrl!} />
         </div>
+      ) : showPlaceholder ? (
+        /* Placeholder elegante e único por índice */
+        <div className={`absolute inset-0 bg-gradient-to-br ${bgGradient} flex flex-col items-center justify-center`}>
+          <span className="text-5xl mb-3 drop-shadow-lg">{placeholderEmoji}</span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20">
+            <Instagram className="w-3.5 h-3.5 text-pink-300" />
+            <span className="text-[11px] font-bold text-pink-200">{handle}</span>
+          </div>
+          <p className="mt-3 text-[10px] text-zinc-400 text-center px-4 leading-relaxed line-clamp-2">
+            {post.caption}
+          </p>
+        </div>
       ) : (
         <div className="relative w-full h-full bg-[#111116]">
           {loading && !thumbnailUrl && (
-            <div className="absolute inset-0 bg-zinc-900 animate-pulse z-0" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${bgGradient} animate-pulse z-0`} />
           )}
-          <Image
-            src={finalImage}
-            alt={post.caption || `Postagem Las Chicas Fitness ${idx + 1}`}
-            fill
-            className="object-cover object-center group-hover:scale-105 filter brightness-95 group-hover:brightness-100 transition-transform duration-700 ease-out"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            unoptimized
-          />
+          {finalImage && (
+            <Image
+              src={finalImage}
+              alt={post.caption || `Postagem Las Chicas Fitness ${idx + 1}`}
+              fill
+              className="object-cover object-center group-hover:scale-105 filter brightness-95 group-hover:brightness-100 transition-transform duration-700 ease-out"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              unoptimized
+              onError={() => setImgError(true)}
+            />
+          )}
         </div>
       )}
 
@@ -156,15 +192,18 @@ function InstagramCard({
       {/* ── CONTEÚDO E DETALHES ── */}
       <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between pointer-events-none z-20">
         {/* Top: Tag de identificação */}
-        <div>
-          <span className="text-[11px] font-bold text-pink-200 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 shadow-sm">
-            {handle}
-          </span>
-        </div>
+        {!showPlaceholder && (
+          <div>
+            <span className="text-[11px] font-bold text-pink-200 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 shadow-sm">
+              {handle}
+            </span>
+          </div>
+        )}
+        {showPlaceholder && <div />}
 
         {/* Bottom: Legenda e Curtidas */}
         <div className="space-y-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-          {post.caption && (
+          {post.caption && !showPlaceholder && (
             <p className="text-xs text-zinc-200 line-clamp-2 leading-relaxed font-medium">
               {post.caption}
             </p>
