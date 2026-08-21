@@ -14,7 +14,7 @@ export function About() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column: Narrative & Stats */}
+          {/* Left Column: Narrative */}
           <div className="lg:col-span-7 flex flex-col justify-center">
             {/* Section Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/10 border border-brand-pink/20 text-brand-pink text-xs font-bold uppercase tracking-wider w-fit mb-4">
@@ -45,7 +45,7 @@ export function About() {
             </p>
 
             {/* Highlights bullet points */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-8">
               <div className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
                 <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
                 <span>Atendimento humanizado e focado em você</span>
@@ -64,26 +64,17 @@ export function About() {
               </div>
             </div>
 
-            {/* Dynamic Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-surface border border-white/5 shadow-card-dark">
-              {config.stats.map((stat, index) => (
-                <div key={index} className="text-center sm:text-left px-2">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-baseline justify-center sm:justify-start gap-0.5">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-white to-pink-200">
-                      {stat.value}
-                    </span>
-                    {stat.suffix && <span className="text-brand-pink text-lg">{stat.suffix}</span>}
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-zinc-300 mt-0.5">
-                    {stat.label}
-                  </div>
-                  {stat.description && (
-                    <div className="text-[11px] text-zinc-400 mt-0.5 hidden sm:block">
-                      {stat.description}
-                    </div>
-                  )}
-                </div>
-              ))}
+            {/* CTA Button */}
+            <div className="pt-2">
+              <a
+                href={getWhatsAppUrl(`Olá! Gostaria de agendar uma visita e conhecer a ${config.name}.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-brand-pink hover:bg-brand-pink-dark text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-glow-pink hover:scale-105 transition-all duration-300"
+              >
+                <span>Agendar uma Visita</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
