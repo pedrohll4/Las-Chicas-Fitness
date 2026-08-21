@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Save,
@@ -41,6 +41,63 @@ import {
   InstagramPost,
   TestimonialItem,
 } from "@/types";
+
+function AdminInstagramMediaPreview({ url }: { url: string }) {
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!url || (!url.includes("instagram.com/p/") && !url.includes("instagram.com/reel/"))) {
+      setThumbnail(null);
+      setLoading(false);
+      setError(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(false);
+
+    fetch(`/api/instagram-oembed?url=${encodeURIComponent(url)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.thumbnailUrl) {
+          setThumbnail(data.thumbnailUrl);
+        } else {
+          setError(true);
+        }
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [url]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-[#181820] text-zinc-400 text-xs gap-2 p-4 animate-pulse">
+        <div className="w-5 h-5 border-2 border-brand-pink border-t-transparent rounded-full animate-spin" />
+        <span className="text-[11px] font-medium text-pink-200">Carregando capa do Instagram...</span>
+      </div>
+    );
+  }
+
+  if (thumbnail && !error) {
+    return (
+      <img
+        src={thumbnail}
+        alt="Preview do Instagram"
+        className="w-full h-full object-cover object-center"
+      />
+    );
+  }
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-[#181820] text-zinc-400 text-xs p-4 text-center">
+      <Instagram className="w-6 h-6 text-brand-pink mb-1.5" />
+      <span className="font-bold text-white text-xs">Post do Instagram Reconhecido</span>
+      <span className="text-[10px] text-zinc-400 mt-0.5">A foto oficial aparecerá no carrossel do site</span>
+    </div>
+  );
+}
 
 type ActiveTab =
   | "geral"
@@ -1330,23 +1387,7 @@ export function AdminCustomizer() {
                               className="w-full h-full object-cover"
                             />
                           ) : post.mediaUrl.includes("instagram.com") ? (
-                            <img
-                              src={`/api/instagram-image?url=${encodeURIComponent(
-                                post.mediaUrl
-                              )}`}
-                              onError={(e) => {
-                                // Fallback para a rota de extração se necessário
-                                fetch(`/api/instagram-oembed?url=${encodeURIComponent(post.mediaUrl)}`)
-                                  .then((r) => r.json())
-                                  .then((d) => {
-                                    if (d.thumbnailUrl) {
-                                      (e.target as HTMLImageElement).src = d.thumbnailUrl;
-                                    }
-                                  });
-                              }}
-                              alt="Preview Reel Instagram"
-                              className="w-full h-full object-cover object-center"
-                            />
+                            <AdminInstagramMediaPreview url={post.mediaUrl} />
                           ) : (
                             <img
                               src={post.mediaUrl}

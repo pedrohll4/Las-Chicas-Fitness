@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const url = searchParams.get("url");
@@ -9,10 +11,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const cleanUrl = url.split("?")[0];
+    const cleanUrl = url.split("?")[0].replace(/\/$/, "") + "/";
     const resp = await fetch(cleanUrl, {
       headers: {
-        "User-Agent": "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)",
+        "User-Agent":
+          "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)",
         Accept: "*/*",
       },
       next: { revalidate: 3600 },
@@ -22,7 +25,9 @@ export async function GET(req: NextRequest) {
       const html = await resp.text();
       const match =
         html.match(/property="og:image"\s+content="([^"]+)"/) ||
-        html.match(/content="([^"]+)"\s+property="og:image"/);
+        html.match(/content="([^"]+)"\s+property="og:image"/) ||
+        html.match(/property='og:image'\s+content='([^']+)'/) ||
+        html.match(/content='([^']+)'\s+property='og:image'/);
 
       if (match && match[1]) {
         // Decodificar entidades html como &amp;
