@@ -8,6 +8,7 @@ import { Services } from "@/components/Services";
 import { Benefits } from "@/components/Benefits";
 import { Structure } from "@/components/Structure";
 import { Gallery } from "@/components/Gallery";
+import { Testimonials } from "@/components/Testimonials";
 import { CTA } from "@/components/CTA";
 import { InstagramSection } from "@/components/InstagramSection";
 import { Location } from "@/components/Location";
@@ -42,7 +43,10 @@ export default function Home() {
           {/* 7. Galeria de Fotos com Lightbox */}
           <Gallery />
 
-          {/* 8. Chamada para Matrícula (CTA) */}
+          {/* 8. Depoimentos das Alunas (Quem treina, sente a diferença) */}
+          <Testimonials />
+
+          {/* 9. Chamada para Matrícula (CTA) */}
           <CTA />
 
           {/* 9. Feed e Redes Sociais */}

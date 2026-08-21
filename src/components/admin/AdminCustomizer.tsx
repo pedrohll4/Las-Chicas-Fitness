@@ -25,6 +25,8 @@ import {
   Video,
   AlertCircle,
   Key,
+  MessageSquareHeart,
+  Quote,
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 import { ImageUploader } from "@/components/admin/ImageUploader";
@@ -37,11 +39,13 @@ import {
   StatItem,
   PlanItem,
   InstagramPost,
+  TestimonialItem,
 } from "@/types";
 
 type ActiveTab =
   | "geral"
   | "planos"
+  | "depoimentos"
   | "instagram"
   | "servicos"
   | "estrutura"
@@ -60,6 +64,7 @@ export function AdminCustomizer() {
     updateBenefits,
     updatePlans,
     updateInstagramPosts,
+    updateTestimonials,
     updateStats,
     resetToDefaults,
     exportConfigJson,
@@ -267,6 +272,39 @@ export function AdminCustomizer() {
     updateInstagramPosts(updated);
   };
 
+  // Testimonials handlers
+  const handleAddTestimonial = () => {
+    const newTestimonial: TestimonialItem = {
+      id: `depo-${Date.now()}`,
+      name: "Nova Aluna",
+      role: "Aluna Las Chicas",
+      rating: 5,
+      comment: "Conte a experiência da aluna aqui...",
+      imageUrl: "",
+      date: "Hoje",
+      isVerified: true,
+    };
+    const updated = [newTestimonial, ...(formData.testimonials || [])];
+    setFormData({ ...formData, testimonials: updated });
+    updateTestimonials(updated);
+    showToast("Novo depoimento adicionado!");
+  };
+
+  const handleRemoveTestimonial = (id: string) => {
+    const updated = (formData.testimonials || []).filter((t) => t.id !== id);
+    setFormData({ ...formData, testimonials: updated });
+    updateTestimonials(updated);
+    showToast("Depoimento removido!");
+  };
+
+  const handleUpdateTestimonial = (id: string, partial: Partial<TestimonialItem>) => {
+    const updated = (formData.testimonials || []).map((t) =>
+      t.id === id ? { ...t, ...partial } : t
+    );
+    setFormData({ ...formData, testimonials: updated });
+    updateTestimonials(updated);
+  };
+
   // Export JSON
   const handleDownloadBackup = () => {
     const jsonStr = exportConfigJson();
@@ -308,6 +346,7 @@ export function AdminCustomizer() {
   const TABS = [
     { id: "geral", label: "Geral & Textos", icon: Building2 },
     { id: "planos", label: "Planos & Mensalidades", icon: CreditCard },
+    { id: "depoimentos", label: "Depoimentos", icon: MessageSquareHeart },
     { id: "instagram", label: "Instagram & Vídeos", icon: Instagram },
     { id: "servicos", label: "Serviços & Modalidades", icon: Dumbbell },
     { id: "estrutura", label: "Fotos da Estrutura", icon: Images },
@@ -858,6 +897,136 @@ export function AdminCustomizer() {
                         />
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: DEPOIMENTOS DAS ALUNAS */}
+          {/* ========================================================================= */}
+          {activeTab === "depoimentos" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-white">Depoimentos & Avaliações</h3>
+                  <p className="text-xs text-zinc-400">
+                    Gerencie os depoimentos enviados pelas alunas ou adicione novas histórias de sucesso.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddTestimonial}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Adicionar Depoimento</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {(formData.testimonials || []).map((t, idx) => (
+                  <div
+                    key={t.id || idx}
+                    className="p-5 rounded-2xl bg-surface border border-white/5 space-y-4 relative group hover:border-white/15 transition-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-brand-pink/15 text-brand-pink font-bold flex items-center justify-center text-xs">
+                          #{idx + 1}
+                        </div>
+                        <span className="text-sm font-bold text-white">
+                          {t.name || "Aluna sem nome"}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTestimonial(t.id)}
+                        className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 transition-colors"
+                        title="Remover depoimento"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Nome da Aluna / Assinatura
+                        </label>
+                        <input
+                          type="text"
+                          value={t.name}
+                          onChange={(e) =>
+                            handleUpdateTestimonial(t.id, { name: e.target.value })
+                          }
+                          placeholder="Ex: Mariana Silva"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Tempo / Modalidade
+                        </label>
+                        <input
+                          type="text"
+                          value={t.role || ""}
+                          onChange={(e) =>
+                            handleUpdateTestimonial(t.id, { role: e.target.value })
+                          }
+                          placeholder="Ex: Aluna há 1 ano"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Avaliação (Estrelas: 1 a 5)
+                        </label>
+                        <select
+                          value={t.rating || 5}
+                          onChange={(e) =>
+                            handleUpdateTestimonial(t.id, {
+                              rating: parseInt(e.target.value, 10),
+                            })
+                          }
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        >
+                          <option value="5">★★★★★ (5 Estrelas - Excelente)</option>
+                          <option value="4">★★★★☆ (4 Estrelas)</option>
+                          <option value="3">★★★☆☆ (3 Estrelas)</option>
+                          <option value="2">★★☆☆☆ (2 Estrelas)</option>
+                          <option value="1">★☆☆☆☆ (1 Estrela)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Texto do Depoimento
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={t.comment}
+                        onChange={(e) =>
+                          handleUpdateTestimonial(t.id, { comment: e.target.value })
+                        }
+                        placeholder="Depoimento da aluna..."
+                        className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink resize-none"
+                      />
+                    </div>
+
+                    <ImageUploader
+                      label="Foto da Aluna ou Resultado (Opcional)"
+                      value={t.imageUrl || ""}
+                      onChange={(url) =>
+                        handleUpdateTestimonial(t.id, { imageUrl: url })
+                      }
+                      aspectRatio="square"
+                    />
                   </div>
                 ))}
               </div>

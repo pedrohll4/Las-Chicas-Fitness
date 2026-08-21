@@ -14,6 +14,7 @@ const NAV_LINKS: NavItem[] = [
   { label: "Benefícios", href: "#beneficios" },
   { label: "Estrutura", href: "#estrutura" },
   { label: "Galeria", href: "#galeria" },
+  { label: "Depoimentos", href: "#depoimentos" },
   { label: "Planos", href: "#planos" },
   { label: "Localização", href: "#localizacao" },
 ];

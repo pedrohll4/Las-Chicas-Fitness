@@ -9,6 +9,7 @@ import {
   BenefitItem,
   PlanItem,
   InstagramPost,
+  TestimonialItem,
   StatItem,
 } from "@/types";
 import { ACADEMY_CONFIG } from "@/config/academy";
@@ -22,6 +23,10 @@ interface AcademyContextType {
   updateBenefits: (benefits: BenefitItem[]) => void;
   updatePlans: (plans: PlanItem[]) => void;
   updateInstagramPosts: (posts: InstagramPost[]) => void;
+  updateTestimonials: (testimonials: TestimonialItem[]) => void;
+  addTestimonial: (
+    item: Omit<TestimonialItem, "id" | "date" | "createdAt">
+  ) => Promise<boolean>;
   updateStats: (stats: StatItem[]) => void;
   resetToDefaults: () => void;
   exportConfigJson: () => string;
@@ -82,6 +87,10 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
             Array.isArray(parsed.instagramPosts) && parsed.instagramPosts.length > 0
               ? parsed.instagramPosts
               : ACADEMY_CONFIG.instagramPosts,
+          testimonials:
+            Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0
+              ? parsed.testimonials
+              : ACADEMY_CONFIG.testimonials,
         }));
       }
 
@@ -188,6 +197,30 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   const updateInstagramPosts = (instagramPosts: InstagramPost[]) => {
     const updated = { ...config, instagramPosts };
     persistConfig(updated);
+  };
+
+  const updateTestimonials = (testimonials: TestimonialItem[]) => {
+    const updated = { ...config, testimonials };
+    persistConfig(updated);
+  };
+
+  const addTestimonial = async (
+    item: Omit<TestimonialItem, "id" | "date" | "createdAt">
+  ): Promise<boolean> => {
+    const newTestimonial: TestimonialItem = {
+      ...item,
+      id: `depo-${Date.now()}`,
+      date: "Hoje",
+      createdAt: new Date().toISOString(),
+      isVerified: true,
+    };
+    const currentList = config.testimonials || [];
+    const updatedList = [newTestimonial, ...currentList];
+    const updatedConfig = { ...config, testimonials: updatedList };
+    persistConfig(updatedConfig);
+    // Sincroniza em segundo plano com o backend
+    saveGlobalConfig(updatedConfig);
+    return true;
   };
 
   const updateStats = (stats: StatItem[]) => {
@@ -306,6 +339,8 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         updateBenefits,
         updatePlans,
         updateInstagramPosts,
+        updateTestimonials,
+        addTestimonial,
         updateStats,
         resetToDefaults,
         exportConfigJson,

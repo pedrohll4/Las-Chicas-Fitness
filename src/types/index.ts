@@ -68,6 +68,18 @@ export interface InstagramPost {
   permalink?: string;
 }
 
+export interface TestimonialItem {
+  id: string;
+  name: string; // Nome da aluna / assinatura
+  role?: string; // Ex: "Aluna há 1 ano" ou "Musculação & Funcional"
+  rating: number; // 1 a 5 estrelas
+  comment: string; // Depoimento da aluna
+  imageUrl?: string; // Foto anexada da aluna ou resultado (opcional)
+  date?: string; // Data de exibição (ex: "Há 2 dias")
+  createdAt?: string;
+  isVerified?: boolean;
+}
+
 export interface AcademyHours {
   weekdays: string;
   saturdays: string;
@@ -107,6 +119,7 @@ export interface AcademyConfig {
   gallery: GalleryItem[];
   plans: PlanItem[];
   instagramPosts: InstagramPost[];
+  testimonials: TestimonialItem[];
   author: {
     name: string;
     label: string;
