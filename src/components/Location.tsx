@@ -25,15 +25,35 @@ export function Location() {
   const getMapEmbedUrl = () => {
     const raw = config.contacts.googleMapsEmbedUrl;
     if (raw && typeof raw === "string" && raw.trim().length > 0) {
-      const trimmed = raw.trim();
-      // Se colou o código completo de <iframe>
+      let trimmed = raw.trim();
+
+      // 1. Se colou o código completo de <iframe>
       if (trimmed.includes("<iframe")) {
         const srcMatch = trimmed.match(/src=["']([^"']+)["']/i);
-        if (srcMatch && srcMatch[1]) return srcMatch[1];
+        if (srcMatch && srcMatch[1]) trimmed = srcMatch[1];
       }
-      // Se for uma URL válida sem coordenadas dummy 0x0
-      if (trimmed.startsWith("http") && !trimmed.includes("0x0%3A0x0")) {
+
+      // 2. Se for link do local oficial Las Chicas Fitness ou encurtado maps.app.goo.gl
+      if (
+        trimmed.includes("ZNCfRiW2RgeY65cXA") ||
+        trimmed.includes("0x93cc910fb352ce89") ||
+        trimmed.includes("-9.8974622")
+      ) {
+        return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr";
+      }
+
+      // 3. Se for uma URL oficial de embed (/maps/embed ou output=embed)
+      if (
+        (trimmed.includes("/maps/embed") || trimmed.includes("output=embed")) &&
+        !trimmed.includes("0x0%3A0x0")
+      ) {
         return trimmed;
+      }
+
+      // 4. Se tiver coordenadas na URL (ex: @-9.8974622,-63.035374)
+      const coordMatch = trimmed.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (coordMatch) {
+        return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&hl=pt-BR&z=17&output=embed`;
       }
     }
 
@@ -44,9 +64,11 @@ export function Location() {
   };
 
   // Link para abrir direto no app do Google Maps / Waze
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-    fullAddress
-  )}`;
+  const directionsUrl =
+    config.contacts.googleMapsEmbedUrl &&
+    config.contacts.googleMapsEmbedUrl.includes("maps.app.goo.gl")
+      ? config.contacts.googleMapsEmbedUrl
+      : "https://maps.app.goo.gl/ZNCfRiW2RgeY65cXA";
 
   return (
     <section id="localizacao" className="py-24 sm:py-32 bg-[#0C0C10] relative">

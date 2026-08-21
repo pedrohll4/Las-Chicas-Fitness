@@ -1970,25 +1970,39 @@ export function AdminCustomizer() {
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-                    URL do Iframe do Google Maps
+                    Link ou Iframe do Google Maps
                   </label>
                   <input
                     type="text"
                     value={formData.contacts.googleMapsEmbedUrl || ""}
                     onChange={(e) => {
+                      let val = e.target.value.trim();
+                      if (val.includes("<iframe")) {
+                        const m = val.match(/src=["']([^"']+)["']/i);
+                        if (m && m[1]) val = m[1];
+                      } else if (
+                        val.includes("ZNCfRiW2RgeY65cXA") ||
+                        val.includes("0x93cc910fb352ce89")
+                      ) {
+                        val =
+                          "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr";
+                      }
                       const updated = {
                         ...formData,
                         contacts: {
                           ...formData.contacts,
-                          googleMapsEmbedUrl: e.target.value,
+                          googleMapsEmbedUrl: val,
                         },
                       };
                       setFormData(updated);
                       updateConfig(updated);
                     }}
-                    placeholder="https://www.google.com/maps/embed?pb=..."
+                    placeholder="https://maps.app.goo.gl/... ou https://www.google.com/maps/embed..."
                     className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono text-[11px]"
                   />
+                  <p className="text-[11px] text-zinc-400 mt-1">
+                    Aceita link encurtado (maps.app.goo.gl), link do local ou código de incorporação (iframe).
+                  </p>
                 </div>
               </div>
 
