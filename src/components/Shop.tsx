@@ -16,7 +16,7 @@ import { useAcademy } from "@/context/AcademyContext";
 import { ProductItem } from "@/types";
 
 export function Shop() {
-  const { config, getWhatsAppUrl } = useAcademy();
+  const { config, getShopWhatsAppUrl } = useAcademy();
   const products: ProductItem[] = config.products || [];
 
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
@@ -35,7 +35,7 @@ export function Shop() {
 
   const handleBuyWhatsApp = (product: ProductItem) => {
     const msg = `Olá! Vi o produto *${product.name}* (${product.price}) na Lojinha do site da ${config.name} e gostaria de saber sobre disponibilidade e tamanhos para comprar! 💕`;
-    return getWhatsAppUrl(msg);
+    return getShopWhatsAppUrl(msg);
   };
 
   return (

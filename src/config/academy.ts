@@ -24,10 +24,37 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   // CONTATOS & REDES SOCIAIS (PLACEHOLDERS EDITÁVEIS)
   // ======================================================================
   contacts: {
-    // Altere para o WhatsApp real da academia (somente números com DDI + DDD)
-    // Exemplo: "5511999998888"
+    // WhatsApp Principal (Recepção & Matrículas)
     whatsappNumber: "5511999999999",
     whatsappDisplay: "(11) 99999-9999",
+
+    // WhatsApp da Lojinha & Moda Fitness
+    whatsappShopNumber: "5511999999999",
+    whatsappShopDisplay: "(11) 99999-9999",
+
+    // WhatsApp de Atendimento Adicional (Suporte / Central)
+    whatsappExtraNumber: "",
+    whatsappExtraDisplay: "",
+
+    // Canais múltiplos de WhatsApp
+    whatsappContacts: [
+      {
+        id: "w-recepcao",
+        label: "Recepção & Matrículas",
+        number: "5511999999999",
+        display: "(11) 99999-9999",
+        description: "Planos, mensalidades, horários e matrícula",
+        icon: "reception",
+      },
+      {
+        id: "w-loja",
+        label: "Lojinha & Moda Fitness",
+        number: "5511999999999",
+        display: "(11) 99999-9999",
+        description: "Roupas, garrafas térmicas e encomendas",
+        icon: "shop",
+      },
+    ],
     phone: "(11) 99999-9999",
     email: "contato@laschicasfitness.com.br",
     instagramHandle: "@las.chicasfitness",

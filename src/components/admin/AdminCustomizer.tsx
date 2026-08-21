@@ -1968,51 +1968,173 @@ export function AdminCustomizer() {
           {/* ========================================================================= */}
           {activeTab === "contatos" && (
             <div className="space-y-6">
+              {/* WhatsApp Multi-Canais */}
+              <div className="p-4 rounded-2xl bg-surface border border-white/5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider text-pink-300">
+                    Números de WhatsApp (Multi-Canais)
+                  </h3>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-brand-pink/15 text-brand-pink">
+                    Multi-Setores
+                  </span>
+                </div>
+
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Configure números diferentes para cada setor. Quando houver 2 ou mais números, o botão do WhatsApp exibirá um menu para a cliente escolher com quem falar.
+                </p>
+
+                {/* 1. WhatsApp Recepção / Matrículas */}
+                <div className="p-3.5 rounded-xl bg-surface-card border border-white/10 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span className="text-xs font-bold text-white uppercase">1. Recepção & Matrículas (Principal)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Número (DDI + DDD + Número - apenas dígitos)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappNumber}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappNumber: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: 5511999998888"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Texto de Exibição
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappDisplay}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappDisplay: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: (11) 99999-9999"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. WhatsApp da Lojinha */}
+                <div className="p-3.5 rounded-xl bg-surface-card border border-white/10 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-brand-pink" />
+                    <span className="text-xs font-bold text-white uppercase">2. Lojinha & Moda Fitness (Vendas)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Número da Loja (DDI + DDD + Número)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappShopNumber || ""}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappShopNumber: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: 5511988887777"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Texto de Exibição da Loja
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappShopDisplay || ""}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappShopDisplay: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: (11) 98888-7777"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. WhatsApp Atendimento Adicional / Suporte */}
+                <div className="p-3.5 rounded-xl bg-surface-card border border-white/10 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    <span className="text-xs font-bold text-white uppercase">3. Atendimento Personalizado / Central</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Número Adicional (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappExtraNumber || ""}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappExtraNumber: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: 5511977776666"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Texto de Exibição
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappExtraDisplay || ""}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappExtraDisplay: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: (11) 97777-6666"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Outros Canais */}
               <div className="p-4 rounded-2xl bg-surface border border-white/5 space-y-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider text-pink-300">
-                  Canais de Contato
+                  Outros Canais & Redes
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-                      WhatsApp (Número internacional - apenas dígitos)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.contacts.whatsappNumber}
-                      onChange={(e) => {
-                        const updated = {
-                          ...formData,
-                          contacts: { ...formData.contacts, whatsappNumber: e.target.value },
-                        };
-                        setFormData(updated);
-                        updateConfig(updated);
-                      }}
-                      placeholder="Ex: 5511999998888"
-                      className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-                      WhatsApp (Texto Exibido)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.contacts.whatsappDisplay}
-                      onChange={(e) => {
-                        const updated = {
-                          ...formData,
-                          contacts: { ...formData.contacts, whatsappDisplay: e.target.value },
-                        };
-                        setFormData(updated);
-                        updateConfig(updated);
-                      }}
-                      placeholder="Ex: (11) 99999-9999"
-                      className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white"
-                    />
-                  </div>
 
                   <div>
                     <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">

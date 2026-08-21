@@ -48,7 +48,8 @@ interface AcademyContextType {
   isCustomizerOpen: boolean;
   openCustomizer: () => void;
   closeCustomizer: () => void;
-  getWhatsAppUrl: (customMessage?: string) => string;
+  getWhatsAppUrl: (customMessage?: string, targetNumber?: string) => string;
+  getShopWhatsAppUrl: (customMessage?: string) => string;
 }
 
 const STORAGE_KEY_CONFIG = "las_chicas_fitness_config_v1";
@@ -327,12 +328,26 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   };
   const closeCustomizer = () => setIsCustomizerOpen(false);
 
-  const getWhatsAppUrl = (customMessage?: string): string => {
-    const phone = config.contacts.whatsappNumber.replace(/\D/g, "");
+  const getWhatsAppUrl = (customMessage?: string, targetNumber?: string): string => {
+    const rawNumber =
+      targetNumber || config.contacts.whatsappNumber || "5511999999999";
+    const phone = rawNumber.replace(/\D/g, "");
     const message =
       customMessage ||
       `Olá! Gostaria de saber mais sobre as matrículas e planos da ${config.name}.`;
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  };
+
+  const getShopWhatsAppUrl = (customMessage?: string): string => {
+    const rawNumber =
+      config.contacts.whatsappShopNumber ||
+      config.contacts.whatsappNumber ||
+      "5511999999999";
+    return getWhatsAppUrl(
+      customMessage ||
+        `Olá! Gostaria de informações sobre os produtos e roupas da ${config.name}.`,
+      rawNumber
+    );
   };
 
   return (
@@ -366,6 +381,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         openCustomizer,
         closeCustomizer,
         getWhatsAppUrl,
+        getShopWhatsAppUrl,
       }}
     >
       {children}

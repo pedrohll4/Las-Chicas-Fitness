@@ -92,6 +92,15 @@ export interface ProductItem {
   inStock?: boolean;
 }
 
+export interface WhatsAppContact {
+  id: string;
+  label: string; // Ex: "Recepção & Matrículas", "Lojinha & Moda Fitness", "Atendimento Personalizado"
+  number: string; // Formato internacional (somente números, ex: "5511999999999")
+  display?: string; // Formato legível (ex: "(11) 99999-9999")
+  description?: string; // Ex: "Dúvidas de planos, aulas e horários"
+  icon?: "reception" | "shop" | "support" | "custom";
+}
+
 export interface AcademyHours {
   weekdays: string;
   saturdays: string;
@@ -107,8 +116,13 @@ export interface AcademyConfig {
   aboutDescription: string;
   aboutSecondary: string;
   contacts: {
-    whatsappNumber: string; // Formato internacional: 5511999999999 (apenas dígitos)
+    whatsappNumber: string; // WhatsApp Principal (Recepção & Planos)
     whatsappDisplay: string;
+    whatsappShopNumber?: string; // WhatsApp da Lojinha & Boutique
+    whatsappShopDisplay?: string;
+    whatsappExtraNumber?: string; // WhatsApp de Atendimento Adicional
+    whatsappExtraDisplay?: string;
+    whatsappContacts?: WhatsAppContact[]; // Lista dinâmica de múltiplos canais
     phone: string;
     email: string;
     instagramHandle: string;
