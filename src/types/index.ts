@@ -80,6 +80,18 @@ export interface TestimonialItem {
   isVerified?: boolean;
 }
 
+export interface ProductItem {
+  id: string;
+  name: string;
+  category: string; // Ex: "Roupas", "Acessórios", "Suplementos"
+  price: string; // Ex: "R$ 89,90"
+  description: string;
+  sizes?: string[]; // Ex: ["P", "M", "G"] ou ["Tamanho Único"]
+  imageUrl: string;
+  tag?: string; // Ex: "Lançamento", "Mais Vendido", "Exclusivo"
+  inStock?: boolean;
+}
+
 export interface AcademyHours {
   weekdays: string;
   saturdays: string;
@@ -115,6 +127,7 @@ export interface AcademyConfig {
   stats: StatItem[];
   modalities: ModalityItem[];
   benefits: BenefitItem[];
+  products?: ProductItem[];
   structure: StructureItem[];
   gallery: GalleryItem[];
   plans: PlanItem[];

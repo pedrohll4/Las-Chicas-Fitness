@@ -204,6 +204,78 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   ],
 
   // ======================================================================
+  // LOJA & BOUTIQUE LAS CHICAS (ROUPAS & ACESSÓRIOS)
+  // ======================================================================
+  products: [
+    {
+      id: "prod-1",
+      name: "Conjunto Seamless Performance Rosa",
+      category: "Roupas & Conjuntos",
+      price: "R$ 149,90",
+      description: "Top com sustentação premium + Legging cós alto com compressão zero transparência.",
+      sizes: ["P", "M", "G"],
+      imageUrl: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80",
+      tag: "Mais Vendido",
+      inStock: true,
+    },
+    {
+      id: "prod-2",
+      name: "Legging Empina Bumbum Black Velvet",
+      category: "Roupas & Conjuntos",
+      price: "R$ 99,90",
+      description: "Modelagem anatômica que valoriza o corpo com tecido respirável e toque macio.",
+      sizes: ["P", "M", "G", "GG"],
+      imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=80",
+      tag: "Lançamento",
+      inStock: true,
+    },
+    {
+      id: "prod-3",
+      name: "Top Cruzado Strappy Pink Las Chicas",
+      category: "Roupas & Conjuntos",
+      price: "R$ 69,90",
+      description: "Design moderno com costas cruzadas e bojo removível para máxima segurança no treino.",
+      sizes: ["P", "M", "G"],
+      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop&q=80",
+      tag: "Exclusivo",
+      inStock: true,
+    },
+    {
+      id: "prod-4",
+      name: "Garrafa Térmica 1L Las Chicas Matte Pink",
+      category: "Acessórios",
+      price: "R$ 79,90",
+      description: "Mantém sua água gelada por até 24h. Aço inox com acabamento aveludado e bico retrátil.",
+      sizes: ["1 Litro"],
+      imageUrl: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=80",
+      tag: "Destaque",
+      inStock: true,
+    },
+    {
+      id: "prod-5",
+      name: "Kit Mini Bands Las Chicas (5 Intensidades)",
+      category: "Acessórios",
+      price: "R$ 49,90",
+      description: "Elásticos para ativação de glúteos e membros superiores com case exclusiva inclusa.",
+      sizes: ["Kit 5 Níveis"],
+      imageUrl: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=800&auto=format&fit=crop&q=80",
+      tag: "Treino em Casa",
+      inStock: true,
+    },
+    {
+      id: "prod-6",
+      name: "Boné Aba Curva Oficial Las Chicas Black & Pink",
+      category: "Acessórios",
+      price: "R$ 59,90",
+      description: "Estilo e proteção para o dia a dia e treinos ao ar livre com bordado de alta definição.",
+      sizes: ["Ajustável"],
+      imageUrl: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&auto=format&fit=crop&q=80",
+      tag: "Coleção Oficial",
+      inStock: true,
+    },
+  ],
+
+  // ======================================================================
   // PLANOS E MENSALIDADES (PLACEHOLDERS EDITÁVEIS)
   // ======================================================================
   plans: [

@@ -11,7 +11,7 @@ const NAV_LINKS: NavItem[] = [
   { label: "Início", href: "#hero" },
   { label: "Sobre", href: "#sobre" },
   { label: "Modalidades", href: "#modalidades" },
-  { label: "Benefícios", href: "#beneficios" },
+  { label: "Lojinha", href: "#loja" },
   { label: "Estrutura", href: "#estrutura" },
   { label: "Galeria", href: "#galeria" },
   { label: "Depoimentos", href: "#depoimentos" },

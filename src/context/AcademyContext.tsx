@@ -8,6 +8,7 @@ import {
   GalleryItem,
   BenefitItem,
   PlanItem,
+  ProductItem,
   InstagramPost,
   TestimonialItem,
   StatItem,
@@ -21,6 +22,7 @@ interface AcademyContextType {
   updateStructure: (structure: StructureItem[]) => void;
   updateGallery: (gallery: GalleryItem[]) => void;
   updateBenefits: (benefits: BenefitItem[]) => void;
+  updateProducts: (products: ProductItem[]) => void;
   updatePlans: (plans: PlanItem[]) => void;
   updateInstagramPosts: (posts: InstagramPost[]) => void;
   updateTestimonials: (testimonials: TestimonialItem[]) => void;
@@ -189,6 +191,11 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
     persistConfig(updated);
   };
 
+  const updateProducts = (products: ProductItem[]) => {
+    const updated = { ...config, products };
+    persistConfig(updated);
+  };
+
   const updatePlans = (plans: PlanItem[]) => {
     const updated = { ...config, plans };
     persistConfig(updated);
@@ -337,6 +344,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         updateStructure,
         updateGallery,
         updateBenefits,
+        updateProducts,
         updatePlans,
         updateInstagramPosts,
         updateTestimonials,

@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { Services } from "@/components/Services";
-import { Benefits } from "@/components/Benefits";
+import { Shop } from "@/components/Shop";
 import { Structure } from "@/components/Structure";
 import { Gallery } from "@/components/Gallery";
 import { Testimonials } from "@/components/Testimonials";
@@ -34,8 +34,8 @@ export default function Home() {
           {/* 4. Modalidades e Serviços */}
           <Services />
 
-          {/* 5. Benefícios e Diferenciais */}
-          <Benefits />
+          {/* 5. Loja & Boutique Las Chicas (Roupas & Acessórios) */}
+          <Shop />
 
           {/* 6. Estrutura e Equipamentos */}
           <Structure />

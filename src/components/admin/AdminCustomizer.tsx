@@ -27,6 +27,8 @@ import {
   Key,
   MessageSquareHeart,
   Quote,
+  ShoppingBag,
+  Tag,
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 import { ImageUploader } from "@/components/admin/ImageUploader";
@@ -40,6 +42,7 @@ import {
   PlanItem,
   InstagramPost,
   TestimonialItem,
+  ProductItem,
 } from "@/types";
 
 function AdminInstagramMediaPreview({ url }: { url: string }) {
@@ -102,12 +105,12 @@ function AdminInstagramMediaPreview({ url }: { url: string }) {
 type ActiveTab =
   | "geral"
   | "planos"
+  | "loja"
   | "depoimentos"
   | "instagram"
   | "servicos"
   | "estrutura"
   | "galeria"
-  | "beneficios"
   | "contatos"
   | "sistema";
 
@@ -119,6 +122,7 @@ export function AdminCustomizer() {
     updateStructure,
     updateGallery,
     updateBenefits,
+    updateProducts,
     updatePlans,
     updateInstagramPosts,
     updateTestimonials,
@@ -362,6 +366,40 @@ export function AdminCustomizer() {
     updateTestimonials(updated);
   };
 
+  // Products handlers
+  const handleAddProduct = () => {
+    const newProduct: ProductItem = {
+      id: `prod-${Date.now()}`,
+      name: "Novo Produto / Roupa",
+      category: "Roupas & Conjuntos",
+      price: "R$ 99,90",
+      description: "Descrição da peça ou acessório oficial...",
+      sizes: ["P", "M", "G"],
+      imageUrl: "",
+      tag: "Novo",
+      inStock: true,
+    };
+    const updated = [newProduct, ...(formData.products || [])];
+    setFormData({ ...formData, products: updated });
+    updateProducts(updated);
+    showToast("Novo produto adicionado à loja!");
+  };
+
+  const handleRemoveProduct = (id: string) => {
+    const updated = (formData.products || []).filter((p) => p.id !== id);
+    setFormData({ ...formData, products: updated });
+    updateProducts(updated);
+    showToast("Produto removido da loja!");
+  };
+
+  const handleUpdateProduct = (id: string, partial: Partial<ProductItem>) => {
+    const updated = (formData.products || []).map((p) =>
+      p.id === id ? { ...p, ...partial } : p
+    );
+    setFormData({ ...formData, products: updated });
+    updateProducts(updated);
+  };
+
   // Export JSON
   const handleDownloadBackup = () => {
     const jsonStr = exportConfigJson();
@@ -403,12 +441,12 @@ export function AdminCustomizer() {
   const TABS = [
     { id: "geral", label: "Geral & Textos", icon: Building2 },
     { id: "planos", label: "Planos & Mensalidades", icon: CreditCard },
+    { id: "loja", label: "Lojinha & Roupas", icon: ShoppingBag },
     { id: "depoimentos", label: "Depoimentos", icon: MessageSquareHeart },
     { id: "instagram", label: "Instagram & Vídeos", icon: Instagram },
     { id: "servicos", label: "Serviços & Modalidades", icon: Dumbbell },
     { id: "estrutura", label: "Fotos da Estrutura", icon: Images },
     { id: "galeria", label: "Galeria de Fotos", icon: Camera },
-    { id: "beneficios", label: "Diferenciais", icon: Award },
     { id: "contatos", label: "Contatos & Horários", icon: PhoneCall },
     { id: "sistema", label: "Sistema & Backup", icon: Settings },
   ] as const;
@@ -954,6 +992,167 @@ export function AdminCustomizer() {
                         />
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: LOJINHA & ROUPAS */}
+          {/* ========================================================================= */}
+          {activeTab === "loja" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-white">Lojinha & Roupas Fitness</h3>
+                  <p className="text-xs text-zinc-400">
+                    Cadastre roupas, garrafas e acessórios com fotos, valores e botão de compra direta no WhatsApp.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddProduct}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink-dark text-white text-xs font-bold shadow-glow-pink transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Adicionar Produto</span>
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                {(formData.products || []).map((prod, idx) => (
+                  <div
+                    key={prod.id || idx}
+                    className="p-5 rounded-2xl bg-surface border border-white/5 space-y-4 relative group hover:border-white/15 transition-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-brand-pink/15 text-brand-pink font-bold flex items-center justify-center text-xs">
+                          #{idx + 1}
+                        </div>
+                        <span className="text-sm font-bold text-white">
+                          {prod.name || "Produto sem nome"}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProduct(prod.id)}
+                        className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 transition-colors"
+                        title="Remover produto"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      <div className="sm:col-span-2">
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Nome do Produto / Roupa
+                        </label>
+                        <input
+                          type="text"
+                          value={prod.name}
+                          onChange={(e) =>
+                            handleUpdateProduct(prod.id, { name: e.target.value })
+                          }
+                          placeholder="Ex: Conjunto Seamless Rosa"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Categoria
+                        </label>
+                        <input
+                          type="text"
+                          value={prod.category}
+                          onChange={(e) =>
+                            handleUpdateProduct(prod.id, { category: e.target.value })
+                          }
+                          placeholder="Ex: Roupas & Conjuntos, Acessórios"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Preço / Valor
+                        </label>
+                        <input
+                          type="text"
+                          value={prod.price}
+                          onChange={(e) =>
+                            handleUpdateProduct(prod.id, { price: e.target.value })
+                          }
+                          placeholder="Ex: R$ 99,90"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink font-semibold text-brand-pink"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Tag de Destaque (Opcional)
+                        </label>
+                        <input
+                          type="text"
+                          value={prod.tag || ""}
+                          onChange={(e) =>
+                            handleUpdateProduct(prod.id, { tag: e.target.value })
+                          }
+                          placeholder="Ex: Mais Vendido, Lançamento, Exclusivo"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                          Tamanhos Disponíveis (separados por vírgula)
+                        </label>
+                        <input
+                          type="text"
+                          value={(prod.sizes || []).join(", ")}
+                          onChange={(e) =>
+                            handleUpdateProduct(prod.id, {
+                              sizes: e.target.value
+                                .split(",")
+                                .map((s) => s.trim())
+                                .filter(Boolean),
+                            })
+                          }
+                          placeholder="Ex: P, M, G, GG ou Tamanho Único"
+                          className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        Descrição do Produto
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={prod.description}
+                        onChange={(e) =>
+                          handleUpdateProduct(prod.id, { description: e.target.value })
+                        }
+                        placeholder="Detalhes sobre o tecido, sustentação, material ou benefícios da peça..."
+                        className="w-full px-3 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink resize-none"
+                      />
+                    </div>
+
+                    <ImageUploader
+                      label="Foto do Produto (Roupa / Acessório)"
+                      value={prod.imageUrl || ""}
+                      onChange={(url) =>
+                        handleUpdateProduct(prod.id, { imageUrl: url })
+                      }
+                      aspectRatio="square"
+                    />
                   </div>
                 ))}
               </div>
@@ -1758,57 +1957,6 @@ export function AdminCustomizer() {
                       onChange={(url) => handleUpdateGallery(item.id, { imageUrl: url })}
                       aspectRatio="square"
                     />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================================= */}
-          {/* TAB 6: DIFERENCIAIS / BENEFÍCIOS */}
-          {/* ========================================================================= */}
-          {activeTab === "beneficios" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-base font-bold text-white">Diferenciais e Benefícios</h3>
-                <p className="text-xs text-zinc-400">
-                  Edite os títulos e descrições dos 8 diferenciais da academia.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {formData.benefits.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="p-4 rounded-2xl bg-surface border border-white/10 space-y-2"
-                  >
-                    <span className="text-xs font-bold text-brand-pink">Diferencial #{index + 1}</span>
-                    <div>
-                      <input
-                        type="text"
-                        value={item.title}
-                        onChange={(e) => {
-                          const newBenefits = [...formData.benefits];
-                          newBenefits[index].title = e.target.value;
-                          setFormData({ ...formData, benefits: newBenefits });
-                          updateBenefits(newBenefits);
-                        }}
-                        className="w-full px-3 py-1.5 text-xs font-bold bg-surface-card border border-white/10 rounded-lg text-white"
-                      />
-                    </div>
-                    <div>
-                      <textarea
-                        rows={2}
-                        value={item.description}
-                        onChange={(e) => {
-                          const newBenefits = [...formData.benefits];
-                          newBenefits[index].description = e.target.value;
-                          setFormData({ ...formData, benefits: newBenefits });
-                          updateBenefits(newBenefits);
-                        }}
-                        className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-zinc-300"
-                      />
-                    </div>
                   </div>
                 ))}
               </div>
