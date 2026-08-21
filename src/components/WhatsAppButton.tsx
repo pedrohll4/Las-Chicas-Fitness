@@ -32,7 +32,7 @@ export function WhatsAppButton() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Monta lista de canais disponíveis
+  // Monta lista de canais disponíveis de forma única e limpa
   const channels: Array<{
     id: string;
     title: string;
@@ -42,11 +42,11 @@ export function WhatsAppButton() {
     defaultMsg: string;
   }> = [];
 
-  const mainNumber = config.contacts.whatsappNumber;
-  const shopNumber = config.contacts.whatsappShopNumber;
-  const extraNumber = config.contacts.whatsappExtraNumber;
+  const mainNumber = config.contacts.whatsappNumber?.trim();
+  const shopNumber = config.contacts.whatsappShopNumber?.trim();
+  const extraNumber = config.contacts.whatsappExtraNumber?.trim();
 
-  // 1. Canal de Recepção / Planos
+  // 1. Canal de Recepção / Planos (Principal)
   if (mainNumber) {
     channels.push({
       id: "recepcao",
@@ -58,18 +58,8 @@ export function WhatsAppButton() {
     });
   }
 
-  // 2. Canal da Lojinha (se for diferente ou se estiver preenchido)
-  if (shopNumber && shopNumber !== mainNumber) {
-    channels.push({
-      id: "loja",
-      title: "Lojinha & Moda Fitness",
-      description: "Roupas, garrafas térmicas e encomendas",
-      number: shopNumber,
-      icon: ShoppingBag,
-      defaultMsg: `Olá! Gostaria de informações sobre os produtos e roupas da Lojinha ${config.name}.`,
-    });
-  } else if (shopNumber && channels.length === 1) {
-    // Se ambos forem o mesmo número mas o usuário cadastrou explicitamente
+  // 2. Canal da Lojinha (somente se preenchido)
+  if (shopNumber) {
     channels.push({
       id: "loja",
       title: "Lojinha & Moda Fitness",
@@ -80,7 +70,7 @@ export function WhatsAppButton() {
     });
   }
 
-  // 3. Canal de Atendimento Adicional (Suporte / Central)
+  // 3. Canal de Atendimento Adicional (Suporte / Central - somente se preenchido)
   if (extraNumber) {
     channels.push({
       id: "suporte",
@@ -89,22 +79,6 @@ export function WhatsAppButton() {
       number: extraNumber,
       icon: Headphones,
       defaultMsg: `Olá! Gostaria de falar com o atendimento da ${config.name}.`,
-    });
-  }
-
-  // Se houver canais adicionais em whatsappContacts
-  if (Array.isArray(config.contacts.whatsappContacts) && config.contacts.whatsappContacts.length > 0) {
-    config.contacts.whatsappContacts.forEach((c) => {
-      if (c.number && !channels.some((ch) => ch.number === c.number && ch.title === c.label)) {
-        channels.push({
-          id: c.id,
-          title: c.label,
-          description: c.description || "Canal direto de atendimento",
-          number: c.number,
-          icon: c.icon === "shop" ? ShoppingBag : c.icon === "support" ? Headphones : Dumbbell,
-          defaultMsg: `Olá! Gostaria de falar com ${c.label} da ${config.name}.`,
-        });
-      }
     });
   }
 

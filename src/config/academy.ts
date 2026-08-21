@@ -29,32 +29,13 @@ export const ACADEMY_CONFIG: AcademyConfig = {
     whatsappDisplay: "(11) 99999-9999",
 
     // WhatsApp da Lojinha & Moda Fitness
-    whatsappShopNumber: "5511999999999",
-    whatsappShopDisplay: "(11) 99999-9999",
+    whatsappShopNumber: "",
+    whatsappShopDisplay: "",
 
     // WhatsApp de Atendimento Adicional (Suporte / Central)
     whatsappExtraNumber: "",
     whatsappExtraDisplay: "",
 
-    // Canais múltiplos de WhatsApp
-    whatsappContacts: [
-      {
-        id: "w-recepcao",
-        label: "Recepção & Matrículas",
-        number: "5511999999999",
-        display: "(11) 99999-9999",
-        description: "Planos, mensalidades, horários e matrícula",
-        icon: "reception",
-      },
-      {
-        id: "w-loja",
-        label: "Lojinha & Moda Fitness",
-        number: "5511999999999",
-        display: "(11) 99999-9999",
-        description: "Roupas, garrafas térmicas e encomendas",
-        icon: "shop",
-      },
-    ],
     phone: "(11) 99999-9999",
     email: "contato@laschicasfitness.com.br",
     instagramHandle: "@las.chicasfitness",
