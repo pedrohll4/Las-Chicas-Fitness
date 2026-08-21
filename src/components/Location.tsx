@@ -1,17 +1,59 @@
 "use client";
 
-import { MapPin, Clock, Phone, MessageCircle, Instagram, Mail, Navigation } from "lucide-react";
+import {
+  MapPin,
+  Clock,
+  Phone,
+  MessageCircle,
+  Instagram,
+  Mail,
+  Navigation,
+  ExternalLink,
+} from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 
 export function Location() {
   const { config, getWhatsAppUrl } = useAcademy();
+
+  // Endereço formatado para busca
+  const fullAddress =
+    config.contacts.address?.fullAddress ||
+    `${config.contacts.address?.street || ""}, ${config.contacts.address?.city || ""}` ||
+    "Las Chicas Fitness";
+
+  // Gera URL do Iframe segura e 100% funcional do Google Maps
+  const getMapEmbedUrl = () => {
+    const raw = config.contacts.googleMapsEmbedUrl;
+    if (raw && typeof raw === "string" && raw.trim().length > 0) {
+      const trimmed = raw.trim();
+      // Se colou o código completo de <iframe>
+      if (trimmed.includes("<iframe")) {
+        const srcMatch = trimmed.match(/src=["']([^"']+)["']/i);
+        if (srcMatch && srcMatch[1]) return srcMatch[1];
+      }
+      // Se for uma URL válida sem coordenadas dummy 0x0
+      if (trimmed.startsWith("http") && !trimmed.includes("0x0%3A0x0")) {
+        return trimmed;
+      }
+    }
+
+    // Embed Universal automático baseado no endereço / nome da academia
+    return `https://maps.google.com/maps?q=${encodeURIComponent(
+      fullAddress
+    )}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  };
+
+  // Link para abrir direto no app do Google Maps / Waze
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    fullAddress
+  )}`;
 
   return (
     <section id="localizacao" className="py-24 sm:py-32 bg-[#0C0C10] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/10 border border-brand-pink/20 text-brand-pink text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/10 border border-brand-pink/20 text-brand-pink text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
             <MapPin className="w-3.5 h-3.5" />
             <span>Localização & Contato</span>
           </div>
@@ -41,8 +83,17 @@ export function Location() {
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">Nosso Endereço</h3>
                   <p className="text-sm text-zinc-300 leading-relaxed font-mono">
-                    {config.contacts.address.fullAddress}
+                    {fullAddress}
                   </p>
+                  <a
+                    href={directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-pink hover:text-pink-300 mt-2.5 transition-colors"
+                  >
+                    <span>Como chegar pelo GPS</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </div>
 
@@ -141,28 +192,31 @@ export function Location() {
                 <Navigation className="w-4 h-4 text-brand-pink" />
                 <span>Mapa Interativo da Unidade</span>
               </div>
-              <span className="text-[11px] font-mono text-zinc-500">Google Maps</span>
+
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-light hover:bg-brand-pink border border-white/10 text-zinc-300 hover:text-white text-xs font-bold transition-all"
+              >
+                <span>Traçar Rota</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
 
             {/* Map Frame */}
-            <div className="flex-1 w-full h-full relative">
-              {config.contacts.googleMapsEmbedUrl ? (
-                <iframe
-                  title="Mapa de Localização"
-                  src={config.contacts.googleMapsEmbedUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="w-full h-full min-h-[320px] filter grayscale contrast-125 invert-[0.9] hue-rotate-180 opacity-90"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-surface p-6 text-center text-zinc-500 text-xs">
-                  Insira o link do iframe do Google Maps no painel de personalização
-                </div>
-              )}
+            <div className="flex-1 w-full h-full relative min-h-[340px] bg-[#1a1a24]">
+              <iframe
+                title="Mapa de Localização Las Chicas Fitness"
+                src={getMapEmbedUrl()}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full min-h-[340px] opacity-95"
+              />
             </div>
           </div>
         </div>

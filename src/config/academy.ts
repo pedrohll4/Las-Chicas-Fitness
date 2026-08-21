@@ -43,9 +43,9 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       fullAddress: "Av. Principal, 1000 - Bairro Nobre, Sua Cidade - UF",
     },
 
-    // Mapa interativo do Google Maps (iframe embed). Substitua pelo iframe da localização oficial.
+    // Mapa interativo do Google Maps (iframe embed).
     googleMapsEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1975765792257!2d-46.6565343!3d-23.5613467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzQwLjkiUyA0NsKwMzknMjMuNSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr",
+      "https://maps.google.com/maps?q=Las%20Chicas%20Fitness&t=&z=15&ie=UTF8&iwloc=&output=embed",
   },
 
   // ======================================================================
