@@ -150,6 +150,7 @@ export interface AcademyConfig {
   author: {
     name: string;
     label: string;
+    whatsappNumber?: string;
     url?: string;
   };
 }

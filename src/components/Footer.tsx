@@ -172,15 +172,20 @@ export function Footer() {
               )}
             </button>
 
-            {/* Marca d'água discreta: Feito por Pedro */}
-            <div className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.02] hover:bg-brand-pink/10 border border-white/5 hover:border-brand-pink/30 text-zinc-400 hover:text-zinc-200 transition-all duration-300 cursor-default">
+            {/* Marca d'água: Feito por Pedro com link direto para WhatsApp */}
+            <a
+              href="https://wa.me/5569992102965?text=Ol%C3%A1%20Pedro!%20Vi%20que%20voc%C3%AA%20fez%20o%20site%20da%20Las%20Chicas%20Fitness.%20Gostaria%20de%20saber%20mais%20sobre%20como%20funciona%20para%20criar%20um%20site%20para%20o%20meu%20neg%C3%B3cio!"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Falar com Pedro (Desenvolvedor)"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.03] hover:bg-brand-pink/10 border border-white/10 hover:border-brand-pink/30 text-zinc-400 hover:text-zinc-200 transition-all duration-300 hover:scale-105"
+            >
               <Code2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-brand-pink transition-colors" />
               <span>Feito por</span>
               <span className="font-semibold text-zinc-300 group-hover:text-brand-pink transition-colors">
                 Pedro
               </span>
-              <Heart className="w-3 h-3 text-brand-pink/40 group-hover:text-brand-pink group-hover:scale-125 transition-all" />
-            </div>
+            </a>
           </div>
         </div>
       </div>

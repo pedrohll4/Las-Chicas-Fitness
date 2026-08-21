@@ -667,58 +667,6 @@ export function AdminCustomizer() {
                   />
                 </div>
               </div>
-
-              {/* Estatísticas */}
-              <div className="p-4 rounded-2xl bg-surface border border-white/5 space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider text-pink-300">
-                  Estatísticas e Números
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {formData.stats.map((stat, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-surface-card border border-white/5 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={stat.value}
-                          onChange={(e) => {
-                            const newStats = [...formData.stats];
-                            newStats[idx].value = e.target.value;
-                            setFormData({ ...formData, stats: newStats });
-                            updateStats(newStats);
-                          }}
-                          placeholder="Valor (ex: +1.200)"
-                          className="w-1/2 px-3 py-1.5 text-xs font-bold bg-surface border border-white/10 rounded-lg text-white"
-                        />
-                        <input
-                          type="text"
-                          value={stat.label}
-                          onChange={(e) => {
-                            const newStats = [...formData.stats];
-                            newStats[idx].label = e.target.value;
-                            setFormData({ ...formData, stats: newStats });
-                            updateStats(newStats);
-                          }}
-                          placeholder="Rótulo (ex: Alunas)"
-                          className="w-1/2 px-3 py-1.5 text-xs bg-surface border border-white/10 rounded-lg text-white"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        value={stat.description || ""}
-                        onChange={(e) => {
-                          const newStats = [...formData.stats];
-                          newStats[idx].description = e.target.value;
-                          setFormData({ ...formData, stats: newStats });
-                          updateStats(newStats);
-                        }}
-                        placeholder="Subtexto descritivo"
-                        className="w-full px-3 py-1.5 text-[11px] bg-surface border border-white/10 rounded-lg text-zinc-400"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 

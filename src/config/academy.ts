@@ -623,7 +623,8 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   author: {
     name: "Pedro",
     label: "Feito por Pedro",
-    url: "#",
+    whatsappNumber: "5569992102965",
+    url: "https://wa.me/5569992102965?text=Ol%C3%A1%20Pedro!%20Vi%20que%20voc%C3%AA%20fez%20o%20site%20da%20Las%20Chicas%20Fitness%2C%20como%20funciona%20para%20criar%20um%20site%3F",
   },
 };
 
