@@ -132,6 +132,7 @@ export function AdminCustomizer() {
     importConfigJson,
     saveGlobalConfig,
     isSavingGlobal,
+    cloudSyncStatus,
     logout,
     changePassword,
     isCustomizerOpen,
@@ -167,11 +168,12 @@ export function AdminCustomizer() {
     updateConfig(formData);
     const ok = await saveGlobalConfig(formData);
     if (ok) {
-      showToast("✅ Publicado com sucesso para todos os visitantes do site!");
+      showToast("✅ Configurações publicadas com sucesso!");
     } else {
-      showToast("✅ Alterações salvas com sucesso!");
+      showToast("⚠️ Salvo localmente, mas falhou na nuvem. Verifique a conexão.");
     }
   };
+
 
   // Modality handlers
   const handleAddModality = () => {
@@ -480,6 +482,23 @@ export function AdminCustomizer() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Badge de status de sincronização com nuvem */}
+            {cloudSyncStatus === "cloud" && (
+              <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                ☁️ Salvo na nuvem
+              </span>
+            )}
+            {cloudSyncStatus === "local_only" && (
+              <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-full">
+                ⚠️ Só local
+              </span>
+            )}
+            {cloudSyncStatus === "error" && (
+              <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2.5 py-1 rounded-full">
+                ❌ Erro na nuvem
+              </span>
+            )}
+
             <button
               onClick={handleSaveAll}
               disabled={isSavingGlobal}

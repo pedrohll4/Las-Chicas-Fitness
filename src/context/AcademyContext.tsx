@@ -36,6 +36,7 @@ interface AcademyContextType {
 
   saveGlobalConfig: (overrideConfig?: AcademyConfig) => Promise<boolean>;
   isSavingGlobal: boolean;
+  cloudSyncStatus: "idle" | "saving" | "cloud" | "local_only" | "error";
 
   // Auth & UI state
   isAdmin: boolean;
@@ -66,6 +67,8 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isSavingGlobal, setIsSavingGlobal] = useState<boolean>(false);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<"idle" | "saving" | "cloud" | "local_only" | "error">("idle");
+
 
   // 1. Carregar dados do localStorage e sincronizar com a nuvem/servidor ao iniciar
   useEffect(() => {
@@ -144,6 +147,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   // Salvar na Nuvem / Servidor para todos os visitantes do site
   const saveGlobalConfig = async (overrideConfig?: AcademyConfig): Promise<boolean> => {
     setIsSavingGlobal(true);
+    setCloudSyncStatus("saving");
     const configToSave = overrideConfig || config;
     try {
       const res = await fetch("/api/config", {
@@ -156,16 +160,29 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         try {
           localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(configToSave));
         } catch (e) {}
+        // Verifica se foi salvo na nuvem ou só localmente
+        if (data.savedToCloud) {
+          setCloudSyncStatus("cloud");
+        } else {
+          setCloudSyncStatus("local_only");
+        }
+        // Reseta o status após 4 segundos
+        setTimeout(() => setCloudSyncStatus("idle"), 4000);
         return true;
       }
+      setCloudSyncStatus("error");
+      setTimeout(() => setCloudSyncStatus("idle"), 4000);
       return false;
     } catch (e) {
       console.error("Erro ao salvar na nuvem:", e);
+      setCloudSyncStatus("error");
+      setTimeout(() => setCloudSyncStatus("idle"), 4000);
       return false;
     } finally {
       setIsSavingGlobal(false);
     }
   };
+
 
   const updateConfig = (partial: Partial<AcademyConfig>) => {
     const updated = { ...config, ...partial };
@@ -370,6 +387,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
         importConfigJson,
         saveGlobalConfig,
         isSavingGlobal,
+        cloudSyncStatus,
         isAdmin,
         login,
         logout,
