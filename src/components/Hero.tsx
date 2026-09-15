@@ -13,25 +13,40 @@ export function Hero() {
       id="hero"
       className="relative min-h-[90vh] lg:min-h-screen flex flex-col justify-center items-center pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-black"
     >
-      {/* Fundo preto básico com o logo oficial Las Chicas Fitness */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-black pointer-events-none select-none">
-        {/* Glow rosa sutil e moderno atrás do logo */}
-        <div className="absolute w-[400px] sm:w-[600px] h-[400px] bg-brand-pink/10 rounded-full blur-[130px] pointer-events-none" />
+      {/* Fundo Premium Dark: Não é preto baqueado/chapado, possui iluminação de palco, textura sutil e profundidade */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden bg-[#070709] pointer-events-none select-none">
+        {/* 1. Spotlight de palco no topo (efeito estúdio de luxo) */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] sm:w-[1000px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(255,46,147,0.18)_0%,rgba(168,85,247,0.08)_40%,transparent_70%)] blur-2xl pointer-events-none" />
 
-        {/* Logo oficial no fundo preto básico */}
-        <div className="relative w-[280px] sm:w-[460px] md:w-[600px] lg:w-[720px] aspect-[4/3] flex items-center justify-center opacity-30">
+        {/* 2. Orbes atmosféricos de neon rosa nas laterais */}
+        <div className="absolute top-1/3 -left-32 w-96 h-96 bg-brand-pink/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-brand-pink/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-48 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
+
+        {/* 3. Micro-textura pontilhada moderna (sensação tátil e refinada) */}
+        <div
+          className="absolute inset-0 opacity-[0.07] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+
+        {/* 4. Logo oficial Las Chicas Fitness com presença e glow de contorno */}
+        <div className="relative w-[300px] sm:w-[480px] md:w-[640px] lg:w-[740px] aspect-[4/3] flex items-center justify-center">
           <Image
             src="/logo.png"
             alt={`Logo ${config.name}`}
             fill
             priority
             quality={95}
-            className="object-contain object-center filter brightness-95 contrast-110"
+            className="object-contain object-center opacity-35 filter brightness-105 contrast-125 drop-shadow-[0_0_80px_rgba(255,46,147,0.35)] transition-all duration-700"
           />
         </div>
 
-        {/* Gradiente sutil para acabamento perfeito no preto */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
+        {/* 5. Vinheta e gradiente sutil para garantir 100% de nitidez nos textos */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070709]/60 via-transparent to-[#070709]/90" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#070709]/30 to-[#070709]" />
       </div>
 
       {/* Decorative Glow Ambient Elements */}
