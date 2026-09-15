@@ -35,9 +35,12 @@ export function Location() {
 
       // 2. Se for link do local oficial Las Chicas Fitness ou encurtado maps.app.goo.gl
       if (
+        trimmed.includes("P5sa1TvFthnj8RnQ9") ||
         trimmed.includes("ZNCfRiW2RgeY65cXA") ||
         trimmed.includes("0x93cc910fb352ce89") ||
-        trimmed.includes("-9.8974622")
+        trimmed.includes("-9.8974622") ||
+        trimmed.toLowerCase().includes("las+chicas") ||
+        trimmed.toLowerCase().includes("las%20chicas")
       ) {
         return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr";
       }
@@ -55,6 +58,11 @@ export function Location() {
       if (coordMatch) {
         return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&hl=pt-BR&z=17&output=embed`;
       }
+
+      // 5. Se for qualquer link maps.app.goo.gl de Las Chicas Fitness
+      if (trimmed.includes("maps.app.goo.gl")) {
+        return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr";
+      }
     }
 
     // Embed Universal automático baseado no endereço / nome da academia
@@ -68,7 +76,7 @@ export function Location() {
     config.contacts.googleMapsEmbedUrl &&
     config.contacts.googleMapsEmbedUrl.includes("maps.app.goo.gl")
       ? config.contacts.googleMapsEmbedUrl
-      : "https://maps.app.goo.gl/ZNCfRiW2RgeY65cXA";
+      : "https://maps.app.goo.gl/P5sa1TvFthnj8RnQ9";
 
   return (
     <section id="localizacao" className="py-24 sm:py-32 bg-[#0C0C10] relative">

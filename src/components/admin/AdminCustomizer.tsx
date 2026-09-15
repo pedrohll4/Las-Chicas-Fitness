@@ -2218,8 +2218,12 @@ export function AdminCustomizer() {
                         const m = val.match(/src=["']([^"']+)["']/i);
                         if (m && m[1]) val = m[1];
                       } else if (
+                        val.includes("P5sa1TvFthnj8RnQ9") ||
                         val.includes("ZNCfRiW2RgeY65cXA") ||
-                        val.includes("0x93cc910fb352ce89")
+                        val.includes("0x93cc910fb352ce89") ||
+                        val.includes("-9.8974622") ||
+                        val.toLowerCase().includes("las+chicas") ||
+                        val.toLowerCase().includes("las%20chicas")
                       ) {
                         val =
                           "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr";
