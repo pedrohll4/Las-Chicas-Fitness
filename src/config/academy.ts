@@ -467,57 +467,43 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   structure: [
     {
       id: "str-1",
-      title: "Área de Musculação Premium",
-      category: "Musculação",
+      title: "Fachada Las Chicas Fitness",
+      category: "Fachada",
       description:
-        "Halteres emborrachados, estações de polias múltiplas e maquinário de alta precisão biomecânica.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+        "Arquitetura moderna e imponente com o logo oficial da Las Chicas Fitness. Fácil acesso e estacionamento amplo.",
+      imageUrl: "/images/estrutura/fachada.jpg",
     },
     {
       id: "str-2",
-      title: "Espaço Funcional & Cross",
-      category: "Funcional",
+      title: "Nossa Comunidade",
+      category: "Comunidade",
       description:
-        "Piso emborrachado de absorção de impacto, kettlebells, cordas navais e caixas de salto.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
+        "Mulheres unidas, fortes e inspiradoras. A Las Chicas é muito mais que uma academia — é família!",
+      imageUrl: "/images/estrutura/comunidade.png",
     },
     {
       id: "str-3",
-      title: "Studio de Cardio Tecnológico",
-      category: "Cardio",
+      title: "Equipamentos MV Machine",
+      category: "Musculação",
       description:
-        "Esteiras ergonômicas, escadas de alta performance e bikes de spinning com painéis digitais.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1200&auto=format&fit=crop",
+        "Equipamentos de alta performance com design exclusivo pink & black para o treino feminino de resultado.",
+      imageUrl: "/images/estrutura/equipamentos.png",
     },
     {
       id: "str-4",
-      title: "Recepção & Lounge de Convivência",
-      category: "Recepção",
+      title: "Mural Las Chicas Fitness",
+      category: "Ambiente",
       description:
-        "Atendimento acolhedor, área de shake bar e ambiente confortável para relaxar antes ou depois do treino.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1623874514711-0f321325f318?q=80&w=1200&auto=format&fit=crop",
+        "Arte exclusiva que representa a força, determinação e estilo das nossas alunas. Um espaço feito para você.",
+      imageUrl: "/images/estrutura/mural.jpg",
     },
     {
       id: "str-5",
-      title: "Ambiente Interno Climatizado",
-      category: "Ambiente Interno",
+      title: "Cantinho Fit Kids",
+      category: "Família",
       description:
-        "Design acústico, iluminação cênica suave e ventilação cruzada para o máximo conforto térmico.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: "str-6",
-      title: "Fachada & Estacionamento",
-      category: "Fachada",
-      description:
-        "Arquitetura imponente com segurança 24h, fácil acesso e comodidade para sua rotina.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=1200&auto=format&fit=crop",
+        "Espaço dedicado aos filhos das alunas! Treine com tranquilidade enquanto seus filhos se divertem com segurança.",
+      imageUrl: "/images/estrutura/cantinho-kids.jpg",
     },
   ],
 
@@ -527,53 +513,41 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   gallery: [
     {
       id: "gal-1",
-      title: "Treino de Força & Foco",
-      category: "Superação",
-      imageUrl:
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      title: "Fachada Las Chicas Fitness",
+      category: "Estrutura",
+      imageUrl: "/images/estrutura/fachada.jpg",
       aspect: "tall",
     },
     {
       id: "gal-2",
-      title: "Ambiente Climatizado de Alta Energia",
-      category: "Estrutura",
-      imageUrl:
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+      title: "Nossa Comunidade",
+      category: "Comunidade",
+      imageUrl: "/images/estrutura/comunidade.png",
       aspect: "wide",
     },
     {
       id: "gal-3",
-      title: "Movimento & Disciplina Diária",
-      category: "Performance",
-      imageUrl:
-        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
-      aspect: "square",
+      title: "Equipamentos MV Machine",
+      category: "Musculação",
+      imageUrl: "/images/estrutura/equipamentos.png",
+      aspect: "wide",
     },
     {
       id: "gal-4",
-      title: "Conexão & Comunidade Fitness",
-      category: "Comunidade",
-      imageUrl:
-        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
+      title: "Mural Las Chicas Fitness",
+      category: "Ambiente",
+      imageUrl: "/images/estrutura/mural.jpg",
       aspect: "square",
     },
     {
       id: "gal-5",
-      title: "Acompanhamento Técnico Especializado",
-      category: "Personal",
-      imageUrl:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop",
-      aspect: "wide",
-    },
-    {
-      id: "gal-6",
-      title: "Equipamentos com Biomecânica Perfeita",
-      category: "Tecnologia",
-      imageUrl:
-        "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1200&auto=format&fit=crop",
-      aspect: "tall",
+      title: "Cantinho Fit Kids",
+      category: "Família",
+      imageUrl: "/images/estrutura/cantinho-kids.jpg",
+      aspect: "square",
     },
   ],
+
 
   // ======================================================================
   // DEPOIMENTOS E AVALIAÇÕES DAS ALUNAS

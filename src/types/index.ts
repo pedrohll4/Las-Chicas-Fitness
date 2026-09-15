@@ -31,7 +31,7 @@ export interface BenefitItem {
 export interface StructureItem {
   id: string;
   title: string;
-  category: "Musculação" | "Cardio" | "Funcional" | "Recepção" | "Ambiente Interno" | "Fachada";
+  category: "Musculação" | "Cardio" | "Funcional" | "Recepção" | "Ambiente Interno" | "Fachada" | "Comunidade" | "Ambiente" | "Família";
   description: string;
   imageUrl: string;
 }
