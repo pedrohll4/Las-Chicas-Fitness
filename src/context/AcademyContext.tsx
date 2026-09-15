@@ -124,9 +124,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
             },
           };
           setConfig(freshConfig);
-          try {
-            localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(freshConfig));
-          } catch (err) {}
+          safeSetLocalStorage(freshConfig);
         }
       })
       .catch((err) => {
@@ -134,14 +132,39 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
-  // Salvar no localStorage e atualizar estado
-  const persistConfig = (newConfig: AcademyConfig) => {
-    setConfig(newConfig);
+  // Salvar no localStorage de forma segura contra quota excedida
+  const safeSetLocalStorage = (newConfig: AcademyConfig) => {
     try {
       localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(newConfig));
     } catch (e) {
-      console.error("Erro ao salvar configuração no localStorage:", e);
+      // Se a cota do localStorage estourar (por conta de imagens pesadas em base64),
+      // removemos os base64 temporariamente para salvar com segurança todos os textos e configurações
+      try {
+        const lightweight = { ...newConfig };
+        if (lightweight.aboutImageUrl?.startsWith("data:")) {
+          delete (lightweight as any).aboutImageUrl;
+        }
+        if (Array.isArray(lightweight.products)) {
+          lightweight.products = lightweight.products.map((p) =>
+            p.imageUrl?.startsWith("data:") ? { ...p, imageUrl: "" } : p
+          );
+        }
+        if (Array.isArray(lightweight.modalities)) {
+          lightweight.modalities = lightweight.modalities.map((m) =>
+            m.imageUrl?.startsWith("data:") ? { ...m, imageUrl: "" } : m
+          );
+        }
+        localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(lightweight));
+      } catch (err2) {
+        console.warn("Não foi possível salvar no localStorage:", err2);
+      }
     }
+  };
+
+  // Salvar no localStorage e atualizar estado
+  const persistConfig = (newConfig: AcademyConfig) => {
+    setConfig(newConfig);
+    safeSetLocalStorage(newConfig);
   };
 
   // Salvar na Nuvem / Servidor para todos os visitantes do site
@@ -157,9 +180,7 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        try {
-          localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(configToSave));
-        } catch (e) {}
+        safeSetLocalStorage(configToSave);
         // Verifica se foi salvo na nuvem ou só localmente
         if (data.savedToCloud) {
           setCloudSyncStatus("cloud");

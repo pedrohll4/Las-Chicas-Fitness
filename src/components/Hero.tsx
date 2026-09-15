@@ -65,24 +65,36 @@ export function Hero() {
 
         {/* Main Bold Headline - Tamanho calibrado */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1] uppercase mb-3 sm:mb-4 drop-shadow-2xl">
-          {config.slogan.split(".").map((part, index) => {
-            const trimmed = part.trim();
-            if (!trimmed) return null;
-            if (index === 1) {
+          {(() => {
+            const raw = (config.slogan || "").trim();
+            let parts: string[] = [];
+            if (raw.includes(".")) {
+              parts = raw.split(".").map((p) => p.trim()).filter(Boolean);
+            } else if (raw.includes(",")) {
+              parts = raw.split(",").map((p) => p.trim()).filter(Boolean);
+            } else if (raw.includes("\n")) {
+              parts = raw.split("\n").map((p) => p.trim()).filter(Boolean);
+            } else {
+              parts = [raw];
+            }
+
+            if (parts.length >= 2) {
+              const first = parts[0];
+              const second = parts.slice(1).join(" ");
               return (
-                <span key={index} className="block">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-100 to-brand-pink drop-shadow-[0_0_35px_rgba(255,46,147,0.5)]">
-                    {trimmed}.
+                <>
+                  <span className="block">{first}</span>
+                  <span className="block">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-100 to-brand-pink drop-shadow-[0_0_35px_rgba(255,46,147,0.5)]">
+                      {second}
+                    </span>
                   </span>
-                </span>
+                </>
               );
             }
-            return (
-              <span key={index} className="block">
-                {trimmed}.
-              </span>
-            );
-          })}
+
+            return <span className="block">{raw}</span>;
+          })()}
         </h1>
 
         {/* Secondary Subtitle */}

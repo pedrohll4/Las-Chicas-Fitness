@@ -31,12 +31,12 @@ export function ImageUploader({
       img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 1200;
+        const MAX_WIDTH = 960;
         const scaleSize = MAX_WIDTH / img.width;
         
         if (scaleSize < 1) {
           canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scaleSize;
+          canvas.height = Math.round(img.height * scaleSize);
         } else {
           canvas.width = img.width;
           canvas.height = img.height;
@@ -44,7 +44,7 @@ export function ImageUploader({
 
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.78);
         onChange(dataUrl);
       };
     };
