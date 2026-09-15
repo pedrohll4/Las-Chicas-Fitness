@@ -19,6 +19,18 @@ export const ACADEMY_CONFIG: AcademyConfig = {
     "A Las Chicas Fitness nasceu para proporcionar um ambiente premium onde treino, saúde, autoestima e evolução caminham juntos. Aqui, cada aluna possui seu próprio objetivo e cada treino representa um passo a mais nessa jornada extraordinária.",
   aboutSecondary:
     "Combinamos estrutura de alto padrão, acolhimento, energia contagiante e acompanhamento técnico para você superar seus limites com confiança, beleza e determinação.",
+  aboutImageUrl:
+    "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop",
+  aboutTag: "Sobre a Academia",
+  aboutHighlights: [
+    "Atendimento humanizado e focado em você",
+    "Ambiente acolhedor e inspirador",
+    "Metodologia pensada para resultados reais",
+    "Equipamentos modernos e higienizados",
+  ],
+  aboutCardTitle: "Venha Evoluir Conosco",
+  aboutCardSubtitle: "Agende uma visita e sinta a energia",
+  aboutCtaText: "Agendar uma Visita",
 
   // ======================================================================
   // CONTATOS & REDES SOCIAIS (PLACEHOLDERS EDITÁVEIS)

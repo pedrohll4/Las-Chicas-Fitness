@@ -115,6 +115,12 @@ export interface AcademyConfig {
   aboutHeadline: string;
   aboutDescription: string;
   aboutSecondary: string;
+  aboutImageUrl?: string;
+  aboutTag?: string;
+  aboutHighlights?: string[];
+  aboutCardTitle?: string;
+  aboutCardSubtitle?: string;
+  aboutCtaText?: string;
   contacts: {
     whatsappNumber: string; // WhatsApp Principal (Recepção & Planos)
     whatsappDisplay: string;

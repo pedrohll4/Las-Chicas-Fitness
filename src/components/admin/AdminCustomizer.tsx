@@ -638,6 +638,77 @@ export function AdminCustomizer() {
                   Seção Sobre a Academia
                 </h3>
 
+                {/* Imagem Principal da Seção Sobre */}
+                <div className="p-3.5 rounded-xl bg-surface-card border border-white/10 space-y-3">
+                  <ImageUploader
+                    label="Foto Principal da Seção Sobre"
+                    value={
+                      formData.aboutImageUrl ||
+                      "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop"
+                    }
+                    onChange={(url) => {
+                      const updated = { ...formData, aboutImageUrl: url };
+                      setFormData(updated);
+                      updateConfig(updated);
+                    }}
+                    aspectRatio="wide"
+                  />
+
+                  {/* Sugestões Rápidas de Fotos Reais da Academia */}
+                  <div>
+                    <span className="block text-[11px] font-semibold text-zinc-400 mb-2">
+                      Ou escolha uma das fotos oficiais da Las Chicas:
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { label: "Fachada Oficial", url: "/images/estrutura/fachada.jpg" },
+                        { label: "Nossa Comunidade", url: "/images/estrutura/comunidade.png" },
+                        { label: "Equipamentos MV", url: "/images/estrutura/equipamentos.png" },
+                        { label: "Mural Las Chicas", url: "/images/estrutura/mural.jpg" },
+                        { label: "Cantinho Kids", url: "/images/estrutura/cantinho-kids.jpg" },
+                        {
+                          label: "Treino Fitness",
+                          url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop",
+                        },
+                      ].map((preset, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            const updated = { ...formData, aboutImageUrl: preset.url };
+                            setFormData(updated);
+                            updateConfig(updated);
+                          }}
+                          className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-all text-left truncate ${
+                            (formData.aboutImageUrl || "").includes(preset.url)
+                              ? "bg-brand-pink/20 border-brand-pink text-pink-200 shadow-sm"
+                              : "bg-surface border-white/10 text-zinc-300 hover:border-brand-pink/50 hover:text-white"
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                    Tag da Seção (Pequena)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.aboutTag || "Sobre a Academia"}
+                    onChange={(e) => {
+                      const updated = { ...formData, aboutTag: e.target.value };
+                      setFormData(updated);
+                      updateConfig(updated);
+                    }}
+                    placeholder="Sobre a Academia"
+                    className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
                     Título da Seção Sobre
@@ -650,7 +721,7 @@ export function AdminCustomizer() {
                       setFormData(updated);
                       updateConfig(updated);
                     }}
-                    className="w-full px-3.5 py-2.5 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                    className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
                   />
                 </div>
 
@@ -666,7 +737,7 @@ export function AdminCustomizer() {
                       setFormData(updated);
                       updateConfig(updated);
                     }}
-                    className="w-full px-3.5 py-2.5 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                    className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
                   />
                 </div>
 
@@ -682,7 +753,97 @@ export function AdminCustomizer() {
                       setFormData(updated);
                       updateConfig(updated);
                     }}
-                    className="w-full px-3.5 py-2.5 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                    className="w-full px-3.5 py-2 text-xs bg-surface-card border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-pink"
+                  />
+                </div>
+
+                {/* 4 Diferenciais com Check */}
+                <div className="p-3.5 rounded-xl bg-surface-card border border-white/10 space-y-2.5">
+                  <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                    4 Diferenciais com Check
+                  </label>
+                  {(
+                    formData.aboutHighlights || [
+                      "Atendimento humanizado e focado em você",
+                      "Ambiente acolhedor e inspirador",
+                      "Metodologia pensada para resultados reais",
+                      "Equipamentos modernos e higienizados",
+                    ]
+                  ).map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-brand-pink shrink-0 w-4">
+                        #{idx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={item}
+                        onChange={(e) => {
+                          const current = [
+                            ...(formData.aboutHighlights || [
+                              "Atendimento humanizado e focado em você",
+                              "Ambiente acolhedor e inspirador",
+                              "Metodologia pensada para resultados reais",
+                              "Equipamentos modernos e higienizados",
+                            ]),
+                          ];
+                          current[idx] = e.target.value;
+                          const updated = { ...formData, aboutHighlights: current };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        className="w-full px-3 py-1.5 text-xs bg-surface border border-white/10 rounded-lg text-white"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Card Flutuante e Botão */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                      Título do Card na Foto
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.aboutCardTitle || "Venha Evoluir Conosco"}
+                      onChange={(e) => {
+                        const updated = { ...formData, aboutCardTitle: e.target.value };
+                        setFormData(updated);
+                        updateConfig(updated);
+                      }}
+                      className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                      Subtítulo do Card na Foto
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.aboutCardSubtitle || "Agende uma visita e sinta a energia"}
+                      onChange={(e) => {
+                        const updated = { ...formData, aboutCardSubtitle: e.target.value };
+                        setFormData(updated);
+                        updateConfig(updated);
+                      }}
+                      className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                    Texto do Botão CTA
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.aboutCtaText || "Agendar uma Visita"}
+                    onChange={(e) => {
+                      const updated = { ...formData, aboutCtaText: e.target.value };
+                      setFormData(updated);
+                      updateConfig(updated);
+                    }}
+                    className="w-full px-3 py-1.5 text-xs bg-surface-card border border-white/10 rounded-lg text-white"
                   />
                 </div>
               </div>

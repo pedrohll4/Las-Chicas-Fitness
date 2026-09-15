@@ -7,6 +7,22 @@ import { useAcademy } from "@/context/AcademyContext";
 export function About() {
   const { config, getWhatsAppUrl } = useAcademy();
 
+  const aboutImageUrl =
+    config.aboutImageUrl ||
+    "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop";
+
+  const defaultHighlights = [
+    "Atendimento humanizado e focado em você",
+    "Ambiente acolhedor e inspirador",
+    "Metodologia pensada para resultados reais",
+    "Equipamentos modernos e higienizados",
+  ];
+
+  const highlights =
+    Array.isArray(config.aboutHighlights) && config.aboutHighlights.length > 0
+      ? config.aboutHighlights
+      : defaultHighlights;
+
   return (
     <section id="sobre" className="py-24 sm:py-32 bg-[#0A0A0C] relative overflow-hidden">
       {/* Background radial accent */}
@@ -18,7 +34,7 @@ export function About() {
           <div className="lg:col-span-7 flex flex-col justify-center">
             {/* Section Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/10 border border-brand-pink/20 text-brand-pink text-xs font-bold uppercase tracking-wider w-fit mb-4">
-              <span>Sobre a Academia</span>
+              <span>{config.aboutTag || "Sobre a Academia"}</span>
             </div>
 
             {/* Main Headline */}
@@ -46,22 +62,12 @@ export function About() {
 
             {/* Highlights bullet points */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-8">
-              <div className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
-                <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
-                <span>Atendimento humanizado e focado em você</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
-                <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
-                <span>Ambiente acolhedor e inspirador</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
-                <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
-                <span>Metodologia pensada para resultados reais</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
-                <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
-                <span>Equipamentos modernos e higienizados</span>
-              </div>
+              {highlights.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2.5 text-zinc-200 text-sm font-medium">
+                  <CheckCircle2 className="w-5 h-5 text-brand-pink flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
 
             {/* CTA Button */}
@@ -72,7 +78,7 @@ export function About() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-brand-pink hover:bg-brand-pink-dark text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-glow-pink hover:scale-105 transition-all duration-300"
               >
-                <span>Agendar uma Visita</span>
+                <span>{config.aboutCtaText || "Agendar uma Visita"}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
@@ -88,11 +94,12 @@ export function About() {
               <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-surface">
                 <div className="aspect-[4/5] relative">
                   <Image
-                    src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop"
+                    src={aboutImageUrl}
                     alt={`Treino na ${config.name}`}
                     fill
                     className="object-cover object-center filter brightness-95 contrast-105"
                     sizes="(max-width: 1024px) 100vw, 500px"
+                    unoptimized={aboutImageUrl.startsWith("data:")}
                   />
                   {/* Subtle dark gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-transparent to-transparent" />
@@ -102,10 +109,10 @@ export function About() {
                 <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-surface-card/90 backdrop-blur-md border border-white/10 flex items-center justify-between">
                   <div>
                     <span className="block text-xs font-semibold text-brand-pink uppercase tracking-wider">
-                      Venha Evoluir Conosco
+                      {config.aboutCardTitle || "Venha Evoluir Conosco"}
                     </span>
                     <span className="text-sm font-bold text-white">
-                      Agende uma visita e sinta a energia
+                      {config.aboutCardSubtitle || "Agende uma visita e sinta a energia"}
                     </span>
                   </div>
                   <a
