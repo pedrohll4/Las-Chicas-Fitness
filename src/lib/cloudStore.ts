@@ -8,7 +8,7 @@
 const BLOB_STORE_NAME = "las-chicas-config";
 export const GLOBAL_CONFIG_KEY = "global_config";
 
-function getKvCredentials(): { url: string | undefined; token: string | undefined } {
+export function getKvCredentials(): { url: string | undefined; token: string | undefined } {
   // 1. Prefixos conhecidos
   const url =
     process.env.STORAGE_REST_API_URL ||
