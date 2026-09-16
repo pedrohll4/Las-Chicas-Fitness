@@ -155,7 +155,7 @@ export function AdminCustomizer() {
       setOldPass("");
       setNewPass("");
     }
-  }, [isCustomizerOpen, config]);
+  }, [isCustomizerOpen]);
 
   if (!isCustomizerOpen) return null;
 

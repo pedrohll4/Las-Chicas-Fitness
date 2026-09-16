@@ -95,27 +95,23 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
       if (savedConfig) {
         const parsed = sanitizeConfigEncoding(JSON.parse(savedConfig));
-        setConfig((prev) => ({
+        setConfig({
           ...ACADEMY_CONFIG,
-          ...prev,
           ...parsed,
           contacts: {
             ...ACADEMY_CONFIG.contacts,
             ...(parsed.contacts || {}),
           },
-          plans:
-            Array.isArray(parsed.plans) && parsed.plans.length > 0
-              ? parsed.plans
-              : ACADEMY_CONFIG.plans,
-          instagramPosts:
-            Array.isArray(parsed.instagramPosts) && parsed.instagramPosts.length > 0
-              ? parsed.instagramPosts
-              : ACADEMY_CONFIG.instagramPosts,
-          testimonials:
-            Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0
-              ? parsed.testimonials
-              : ACADEMY_CONFIG.testimonials,
-        }));
+          ...(Array.isArray(parsed.plans) ? { plans: parsed.plans } : {}),
+          ...(Array.isArray(parsed.instagramPosts) ? { instagramPosts: parsed.instagramPosts } : {}),
+          ...(Array.isArray(parsed.testimonials) ? { testimonials: parsed.testimonials } : {}),
+          ...(Array.isArray(parsed.products) ? { products: parsed.products } : {}),
+          ...(Array.isArray(parsed.modalities) ? { modalities: parsed.modalities } : {}),
+          ...(Array.isArray(parsed.structure) ? { structure: parsed.structure } : {}),
+          ...(Array.isArray(parsed.gallery) ? { gallery: parsed.gallery } : {}),
+          ...(Array.isArray(parsed.benefits) ? { benefits: parsed.benefits } : {}),
+          ...(Array.isArray(parsed.stats) ? { stats: parsed.stats } : {}),
+        });
       }
 
       const savedAuth = sessionStorage.getItem(STORAGE_KEY_AUTH);
@@ -141,6 +137,15 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
               ...ACADEMY_CONFIG.contacts,
               ...(sanitizedCloud.contacts || {}),
             },
+            ...(Array.isArray(sanitizedCloud.plans) ? { plans: sanitizedCloud.plans } : {}),
+            ...(Array.isArray(sanitizedCloud.instagramPosts) ? { instagramPosts: sanitizedCloud.instagramPosts } : {}),
+            ...(Array.isArray(sanitizedCloud.testimonials) ? { testimonials: sanitizedCloud.testimonials } : {}),
+            ...(Array.isArray(sanitizedCloud.products) ? { products: sanitizedCloud.products } : {}),
+            ...(Array.isArray(sanitizedCloud.modalities) ? { modalities: sanitizedCloud.modalities } : {}),
+            ...(Array.isArray(sanitizedCloud.structure) ? { structure: sanitizedCloud.structure } : {}),
+            ...(Array.isArray(sanitizedCloud.gallery) ? { gallery: sanitizedCloud.gallery } : {}),
+            ...(Array.isArray(sanitizedCloud.benefits) ? { benefits: sanitizedCloud.benefits } : {}),
+            ...(Array.isArray(sanitizedCloud.stats) ? { stats: sanitizedCloud.stats } : {}),
           };
           setConfig(freshConfig);
           safeSetLocalStorage(freshConfig);

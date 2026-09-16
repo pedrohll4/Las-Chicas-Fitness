@@ -35,6 +35,15 @@ export async function GET() {
             ...ACADEMY_CONFIG.contacts,
             ...(parsed.contacts || {}),
           },
+          ...(Array.isArray(parsed.plans) ? { plans: parsed.plans } : {}),
+          ...(Array.isArray(parsed.instagramPosts) ? { instagramPosts: parsed.instagramPosts } : {}),
+          ...(Array.isArray(parsed.testimonials) ? { testimonials: parsed.testimonials } : {}),
+          ...(Array.isArray(parsed.products) ? { products: parsed.products } : {}),
+          ...(Array.isArray(parsed.modalities) ? { modalities: parsed.modalities } : {}),
+          ...(Array.isArray(parsed.structure) ? { structure: parsed.structure } : {}),
+          ...(Array.isArray(parsed.gallery) ? { gallery: parsed.gallery } : {}),
+          ...(Array.isArray(parsed.benefits) ? { benefits: parsed.benefits } : {}),
+          ...(Array.isArray(parsed.stats) ? { stats: parsed.stats } : {}),
         };
         console.log(`[Config API] Config carregada com sucesso do provedor: ${provider}`);
         return NextResponse.json(
@@ -70,24 +79,7 @@ export async function POST(req: NextRequest) {
     let providerUsed = "none";
 
     try {
-      // Preservar depoimentos recentes da nuvem para evitar que sejam sobrescritos acidentalmente
-      let configToSave = { ...newConfig };
-      try {
-        const { data: currentRaw } = await getCloudData(GLOBAL_CONFIG_KEY);
-        if (currentRaw) {
-          const currentObj = JSON.parse(currentRaw);
-          if (Array.isArray(currentObj?.testimonials) && Array.isArray(newConfig?.testimonials)) {
-            const submittedIds = new Set(newConfig.testimonials.map((t: any) => t.id));
-            const missingFromCloud = currentObj.testimonials.filter((t: any) => !submittedIds.has(t.id));
-            if (missingFromCloud.length > 0) {
-              configToSave.testimonials = [...missingFromCloud, ...newConfig.testimonials].slice(0, 80);
-            }
-          }
-        }
-      } catch (mergeErr) {
-        console.warn("[Config API] Aviso no merge de testimonials:", mergeErr);
-      }
-
+      const configToSave = { ...newConfig };
       const cleanPayload = JSON.stringify(configToSave).replace(/[\ufffd\u2014\u2013]/g, " - ");
       const result = await setCloudData(GLOBAL_CONFIG_KEY, cleanPayload);
       savedToCloud = result.success;
