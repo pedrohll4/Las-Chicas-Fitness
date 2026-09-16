@@ -11,16 +11,15 @@ import { AcademyConfig } from "@/types";
 export const ACADEMY_CONFIG: AcademyConfig = {
   name: "Las Chicas Fitness",
   shortName: "Las Chicas",
-  slogan: "MULHERES FORTES. RESULTADOS REAIS.",
+  slogan: "MULHERES FORTES, RESULTADOS REAIS!",
   subSlogan:
-    "Treine na Las Chicas Fitness e transforme sua rotina através de movimento, disciplina e evolução.",
-  aboutHeadline: "MAIS QUE UMA ACADEMIA. UM ESTILO DE VIDA.",
+    "Aqui na Las Chicas Fitness é onde a mágica acontece, venha viver essa experiência!",
+  aboutHeadline: "Mais que um treino, uma revolução feminina!",
   aboutDescription:
     "A Las Chicas Fitness nasceu para proporcionar um ambiente premium onde treino, saúde, autoestima e evolução caminham juntos. Aqui, cada aluna possui seu próprio objetivo e cada treino representa um passo a mais nessa jornada extraordinária.",
   aboutSecondary:
     "Combinamos estrutura de alto padrão, acolhimento, energia contagiante e acompanhamento técnico para você superar seus limites com confiança, beleza e determinação.",
-  aboutImageUrl:
-    "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop",
+  aboutImageUrl: "/images/estrutura/equipamentos.png",
   aboutTag: "Sobre a Academia",
   aboutHighlights: [
     "Atendimento humanizado e focado em você",
@@ -33,53 +32,52 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   aboutCtaText: "Agendar uma Visita",
 
   // ======================================================================
-  // CONTATOS & REDES SOCIAIS (PLACEHOLDERS EDITÁVEIS)
+  // CONTATOS & REDES SOCIAIS OFICIAIS
   // ======================================================================
   contacts: {
-    // WhatsApp Principal (Recepção & Matrículas)
-    whatsappNumber: "5511999999999",
+    // WhatsApp Principal (Recepção & Matrículas) - Marta
+    whatsappNumber: "556993603714",
     whatsappNumber2: "", // Segundo número para rodízio automático
-    whatsappDisplay: "(11) 99999-9999",
+    whatsappDisplay: "Marta",
 
-    // WhatsApp da Lojinha & Moda Fitness
-    whatsappShopNumber: "",
-    whatsappShopDisplay: "",
+    // WhatsApp da Lojinha & Moda Fitness - Alcy Loja
+    whatsappShopNumber: "556999172367",
+    whatsappShopDisplay: "Alcy Loja",
 
-    // WhatsApp de Atendimento Adicional (Suporte / Central)
-    whatsappExtraNumber: "",
-    whatsappExtraDisplay: "",
+    // WhatsApp de Atendimento Adicional (Suporte / Central) - Katia
+    whatsappExtraNumber: "556999655021",
+    whatsappExtraDisplay: "Katia",
 
-    phone: "(11) 99999-9999",
+    phone: "+55 69 9917-2367",
     email: "contato@laschicasfitness.com.br",
     instagramHandle: "@las.chicasfitness",
     instagramUrl: "https://www.instagram.com/las.chicasfitness/",
 
     // Endereço físico
     address: {
-      street: "ACADEMY_ADDRESS",
-      neighborhood: "Centro",
+      street: "R. Rio Grande do Sul - St. 5",
+      neighborhood: "St. 5",
       city: "Ariquemes",
       state: "RO",
-      zipCode: "76870-000",
-      fullAddress: "Ariquemes - RO",
+      zipCode: "76870-586",
+      fullAddress: "R. Rio Grande do Sul - St. 5, Ariquemes - RO, 76870-586",
     },
 
     // Mapa interativo do Google Maps (iframe embed).
-    googleMapsEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.8!2d-63.035374!3d-9.8974622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc910fb352ce89%3A0xa57c491e89f17f29!2sLas%20Chicas%20Fitness!5e0!3m2!1spt-BR!2sbr!4v1787313800000!5m2!1spt-BR!2sbr",
+    googleMapsEmbedUrl: "https://maps.app.goo.gl/P5sa1TvFthnj8RnQ9",
   },
 
   // ======================================================================
   // HORÁRIOS DE FUNCIONAMENTO
   // ======================================================================
   hours: {
-    weekdays: "Segunda a Sexta: 06:00 às 22:00",
-    saturdays: "Sábados: 08:00 às 16:00",
-    sundaysAndHolidays: "Domingos e Feriados: 08:00 às 13:00",
+    weekdays: "Segunda a Sexta: 06:00 às 21:00",
+    saturdays: "Sábados: 06:00 as 10:00",
+    sundaysAndHolidays: "Fechado",
   },
 
   // ======================================================================
-  // NÚMEROS E ESTATÍSTICAS (PLACEHOLDERS EDITÁVEIS)
+  // NÚMEROS E ESTATÍSTICAS
   // ======================================================================
   stats: [
     {
@@ -109,31 +107,17 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   ],
 
   // ======================================================================
-  // MODALIDADES (PLACEHOLDERS EDITÁVEIS)
+  // MODALIDADES
   // ======================================================================
   modalities: [
     {
-      id: "musculacao",
-      title: "Musculação",
-      subtitle: "Força, Hipertrofia & Definição",
-      description:
-        "Treinos personalizados focados no desenvolvimento muscular, queima de gordura e fortalecimento com biomecânica avançada.",
-      iconName: "Dumbbell",
-      tags: ["Força", "Definição", "Postura"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200&auto=format&fit=crop",
-      intensity: "Personalizada",
-    },
-    {
       id: "funcional",
-      title: "Treinamento Funcional",
-      subtitle: "Agilidade, Resistência & Mobilidade",
-      description:
-        "Movimentos dinâmicos com peso corporal e acessórios para melhorar condicionamento físico, estabilidade e capacidade cardiovascular.",
+      title: "Musculação ",
+      subtitle: "Força e resistência ",
+      description: "Treino preparado para oferecer força e resistência!",
       iconName: "Zap",
-      tags: ["Agilidade", "Cardio", "Queima Calórica"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      tags: ["Força"],
+      imageUrl: "",
       intensity: "Alta",
     },
     {
@@ -144,21 +128,8 @@ export const ACADEMY_CONFIG: AcademyConfig = {
         "Treinos intervalados de alta intensidade e esteiras/bikes de última geração para maximizar o gasto calórico e saúde do coração.",
       iconName: "Flame",
       tags: ["Resistência", "Metabolismo", "Energia"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1200&auto=format&fit=crop",
+      imageUrl: "",
       intensity: "Alta",
-    },
-    {
-      id: "personal",
-      title: "Personal Trainer",
-      subtitle: "Acompanhamento Exclusivo 1 a 1",
-      description:
-        "Supervisão individualizada com prescrição de treino direcionada aos seus objetivos, correção de movimentos e foco em resultados rápidos.",
-      iconName: "UserCheck",
-      tags: ["Exclusivo", "Resultados", "Foco"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop",
-      intensity: "Personalizada",
     },
   ],
 
@@ -225,138 +196,119 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   ],
 
   // ======================================================================
-  // LOJA & BOUTIQUE LAS CHICAS (ROUPAS & ACESSÓRIOS)
+  // LOJA & BOUTIQUE LAS CHICAS (ROUPAS & ACESSÓRIOS CADASTRADOS)
   // ======================================================================
   products: [
     {
-      id: "prod-1",
-      name: "Conjunto Seamless Performance Rosa",
+      id: "prod-1789519393373",
+      name: "Conjunto de short ",
       category: "Roupas & Conjuntos",
-      price: "R$ 149,90",
-      description: "Top com sustentação premium + Legging cós alto com compressão zero transparência.",
-      sizes: ["P", "M", "G"],
-      imageUrl: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80",
-      tag: "Mais Vendido",
+      price: "R$ 139,90",
+      description: "Veste até um 42",
+      sizes: ["M"],
+      imageUrl: "",
+      tag: "Novo",
+      inStock: true,
+    },
+    {
+      id: "prod-1789508860535",
+      name: "Vestido Fitness",
+      category: "Roupas & Conjuntos",
+      price: "R$ 129,90",
+      description: "Veste até um 42",
+      sizes: ["M"],
+      imageUrl: "",
+      tag: "Lançamento ",
+      inStock: true,
+    },
+    {
+      id: "prod-1789508799346",
+      name: "Conjunto de short",
+      category: "Roupas & Conjuntos",
+      price: "R$ 139,90",
+      description: "Veste até um 42",
+      sizes: ["M"],
+      imageUrl: "",
+      tag: "Lançamento ",
+      inStock: true,
+    },
+    {
+      id: "prod-1789496753854",
+      name: "Macaquinho ",
+      category: "Roupas & Conjuntos",
+      price: "129,00",
+      description: "Veste até um 40",
+      sizes: ["M"],
+      imageUrl: "",
+      tag: "Novo",
+      inStock: true,
+    },
+    {
+      id: "prod-1",
+      name: "Macaquinho ",
+      category: "Roupas & Conjuntos",
+      price: "R$ 129,90",
+      description: "Veste até um 42",
+      sizes: ["M"],
+      imageUrl: "",
+      tag: "Malha importada ",
       inStock: true,
     },
     {
       id: "prod-2",
-      name: "Legging Empina Bumbum Black Velvet",
+      name: "Macaquinho ",
       category: "Roupas & Conjuntos",
-      price: "R$ 99,90",
-      description: "Modelagem anatômica que valoriza o corpo com tecido respirável e toque macio.",
-      sizes: ["P", "M", "G", "GG"],
-      imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=80",
+      price: "R$ 129,90",
+      description: "Modelagem anatômica que valoriza o corpo com tecido respirável ",
+      sizes: ["M"],
+      imageUrl: "",
       tag: "Lançamento",
       inStock: true,
     },
     {
-      id: "prod-3",
-      name: "Top Cruzado Strappy Pink Las Chicas",
-      category: "Roupas & Conjuntos",
-      price: "R$ 69,90",
-      description: "Design moderno com costas cruzadas e bojo removível para máxima segurança no treino.",
-      sizes: ["P", "M", "G"],
-      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop&q=80",
+      id: "prod-4",
+      name: "Macaquinho ",
+      category: "Roupas",
+      price: "R$ 129,90",
+      description: "Veste até um 40",
+      sizes: ["M"],
+      imageUrl: "",
       tag: "Exclusivo",
       inStock: true,
     },
     {
-      id: "prod-4",
-      name: "Garrafa Térmica 1L Las Chicas Matte Pink",
-      category: "Acessórios",
-      price: "R$ 79,90",
-      description: "Mantém sua água gelada por até 24h. Aço inox com acabamento aveludado e bico retrátil.",
-      sizes: ["1 Litro"],
-      imageUrl: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=80",
-      tag: "Destaque",
-      inStock: true,
-    },
-    {
       id: "prod-5",
-      name: "Kit Mini Bands Las Chicas (5 Intensidades)",
-      category: "Acessórios",
-      price: "R$ 49,90",
-      description: "Elásticos para ativação de glúteos e membros superiores com case exclusiva inclusa.",
-      sizes: ["Kit 5 Níveis"],
-      imageUrl: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=800&auto=format&fit=crop&q=80",
-      tag: "Treino em Casa",
-      inStock: true,
-    },
-    {
-      id: "prod-6",
-      name: "Boné Aba Curva Oficial Las Chicas Black & Pink",
-      category: "Acessórios",
-      price: "R$ 59,90",
-      description: "Estilo e proteção para o dia a dia e treinos ao ar livre com bordado de alta definição.",
-      sizes: ["Ajustável"],
-      imageUrl: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&auto=format&fit=crop&q=80",
-      tag: "Coleção Oficial",
+      name: "Conjunto short ",
+      category: "Roupas",
+      price: "R$ 139,90",
+      description: "Super confortável ",
+      sizes: ["G"],
+      imageUrl: "",
+      tag: "Malha importada ",
       inStock: true,
     },
   ],
 
   // ======================================================================
-  // PLANOS E MENSALIDADES (PLACEHOLDERS EDITÁVEIS)
+  // PLANOS E MENSALIDADES
   // ======================================================================
   plans: [
     {
       id: "plano-mensal",
       name: "Plano Mensal Flex",
-      badge: "Sem Fidelidade",
-      price: "139",
+      badge: "",
+      price: "250",
       period: "/mês",
-      billingInfo: "Sem taxa de cancelamento",
+      billingInfo: "",
       description: "Ideal para quem busca total flexibilidade e liberdade na rotina.",
       features: [
         "Acesso livre à área de musculação",
         "Acesso completo ao estúdio cardio",
-        "Orientação de treino com professores",
-        "Vestiários modernos com armários rotativos",
-        "Sem taxa de matrícula",
-      ],
-      isPopular: false,
-      ctaText: "Escolher Mensal",
-      customMessage: "Olá! Gostaria de me matricular no Plano Mensal Flex da Las Chicas Fitness.",
-    },
-    {
-      id: "plano-anual",
-      name: "Plano Anual VIP",
-      badge: "MAIS ESCOLHIDO",
-      price: "89",
-      period: "/mês",
-      billingInfo: "Economize mais de 35% ao ano",
-      description: "O plano favorito das nossas alunas com a melhor experiência completa.",
-      features: [
-        "Acesso ilimitado a todas as áreas e equipamentos",
-        "Aulas coletivas e Treinamento Funcional inclusos",
-        "Avaliação física e bioimpedância periódica",
-        "1 convidada gratuita por mês (Free Pass)",
-        "Zero taxa de matrícula e anuidade",
-        "Kit de boas-vindas exclusivo Las Chicas",
+        "Orientação de treino com personal ",
       ],
       isPopular: true,
-      ctaText: "Garantir Plano VIP",
-      customMessage: "Olá! Gostaria de garantir minha vaga no Plano Anual VIP da Las Chicas Fitness.",
-    },
-    {
-      id: "plano-semestral",
-      name: "Plano Semestral Evolution",
-      badge: "Melhor Custo-Benefício",
-      price: "109",
-      period: "/mês",
-      billingInfo: "Compromisso de 6 meses",
-      description: "Constância perfeita para você atingir seus objetivos de evolução.",
-      features: [
-        "Acesso completo a todas as modalidades",
-        "Montagem de treino personalizado",
-        "Avaliação física completa inicial",
-        "Armários e chuveiros premium",
-        "Desconto em eventos e workshops",
-      ],
-      isPopular: false,
-      ctaText: "Escolher Semestral",
-      customMessage: "Olá! Gostaria de me matricular no Plano Semestral Evolution da Las Chicas Fitness.",
+      ctaText: "Escolher ",
+      customMessage: "Olá! Gostaria de me matricular no Plano Mensal Flex da Las Chicas Fitness.",
     },
   ],
 
@@ -561,7 +513,6 @@ export const ACADEMY_CONFIG: AcademyConfig = {
     },
   ],
 
-
   // ======================================================================
   // DEPOIMENTOS E AVALIAÇÕES DAS ALUNAS
   // ======================================================================
@@ -618,10 +569,11 @@ export const ACADEMY_CONFIG: AcademyConfig = {
 /**
  * Função utilitária para gerar link de WhatsApp com mensagem automática
  */
-export function getWhatsAppUrl(customMessage?: string): string {
-  const phone = ACADEMY_CONFIG.contacts.whatsappNumber;
+export function getWhatsAppUrl(customMessage?: string, targetNumber?: string): string {
+  const phone = targetNumber || ACADEMY_CONFIG.contacts.whatsappNumber;
+  const cleanPhone = phone.replace(/\D/g, "");
   const message =
     customMessage ||
     `Olá! Gostaria de saber mais sobre as matrículas e planos da ${ACADEMY_CONFIG.name}.`;
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
