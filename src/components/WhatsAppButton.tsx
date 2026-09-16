@@ -58,15 +58,15 @@ export function WhatsAppButton() {
     });
   }
 
-  // 2. Canal da Lojinha (somente se preenchido)
+  // 2. Canal da Lojinha (mantido conforme solicitado, sem a legenda de roupas e garrafas térmicas)
   if (shopNumber) {
     channels.push({
       id: "loja",
       title: "Lojinha & Moda Fitness",
-      description: "Roupas, garrafas térmicas e encomendas",
+      description: "",
       number: shopNumber,
       icon: ShoppingBag,
-      defaultMsg: `Olá! Gostaria de informações sobre os produtos e roupas da Lojinha ${config.name}.`,
+      defaultMsg: `Olá! Gostaria de informações sobre os produtos da Lojinha ${config.name}.`,
     });
   }
 
@@ -145,9 +145,11 @@ export function WhatsAppButton() {
                       <h5 className="text-xs font-bold text-white group-hover:text-pink-200 transition-colors">
                         {channel.title}
                       </h5>
-                      <p className="text-[10px] text-zinc-400 leading-tight mt-0.5">
-                        {channel.description}
-                      </p>
+                      {channel.description ? (
+                        <p className="text-[10px] text-zinc-400 leading-tight mt-0.5">
+                          {channel.description}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
 
