@@ -47,27 +47,8 @@ export async function GET() {
     console.warn("[Config API] Nuvem indisponivel:", e);
   }
 
-  const { url: testUrl, token: testToken } = getKvCredentials();
-  const availableStorageKeys = Object.keys(process.env).filter(
-    (k) =>
-      k.includes("KV") ||
-      k.includes("REDIS") ||
-      k.includes("STORAGE") ||
-      k.includes("UPSTASH") ||
-      k.includes("BLOB")
-  );
-
   return NextResponse.json(
-    {
-      source: "default",
-      config: ACADEMY_CONFIG,
-      debug: {
-        hasKvCredentials: !!(testUrl && testToken),
-        availableStorageKeys,
-        nodeEnv: process.env.NODE_ENV,
-        vercelEnv: process.env.VERCEL_ENV,
-      },
-    },
+    { source: "default", config: ACADEMY_CONFIG },
     { headers: NO_CACHE_HEADERS }
   );
 }
