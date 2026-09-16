@@ -8,10 +8,43 @@
 const BLOB_STORE_NAME = "las-chicas-config";
 export const GLOBAL_CONFIG_KEY = "global_config";
 
+function getKvCredentials(): { url: string | undefined; token: string | undefined } {
+  // 1. Prefixos conhecidos
+  const url =
+    process.env.STORAGE_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.KV_REST_API_URL ||
+    process.env.REDIS_REST_API_URL ||
+    process.env.STORAGE_URL ||
+    process.env.UPSTASH_REDIS_URL ||
+    process.env.KV_URL;
+
+  const token =
+    process.env.STORAGE_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.KV_REST_API_TOKEN ||
+    process.env.REDIS_REST_API_TOKEN ||
+    process.env.STORAGE_TOKEN ||
+    process.env.UPSTASH_REDIS_TOKEN ||
+    process.env.KV_TOKEN;
+
+  if (url && token) return { url, token };
+
+  // 2. Busca dinâmica por qualquer variável de ambiente injetada pelo Upstash / Vercel KV
+  for (const [k, v] of Object.entries(process.env)) {
+    if (k.endsWith("_REST_API_URL") && v) {
+      const prefix = k.replace(/_REST_API_URL$/, "");
+      const matchedToken = process.env[`${prefix}_REST_API_TOKEN`];
+      if (matchedToken) return { url: v, token: matchedToken };
+    }
+  }
+
+  return { url: undefined, token: undefined };
+}
+
 export async function getCloudData(key: string = GLOBAL_CONFIG_KEY): Promise<{ data: string | null; provider: string }> {
   // 1. Tentar Vercel KV ou Upstash Redis via REST
-  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  const { url: kvUrl, token: kvToken } = getKvCredentials();
 
   if (kvUrl && kvToken) {
     try {
@@ -51,8 +84,7 @@ export async function getCloudData(key: string = GLOBAL_CONFIG_KEY): Promise<{ d
 
 export async function setCloudData(key: string = GLOBAL_CONFIG_KEY, value: string): Promise<{ success: boolean; provider: string; error?: string }> {
   // 1. Tentar Vercel KV ou Upstash Redis via REST
-  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  const { url: kvUrl, token: kvToken } = getKvCredentials();
 
   if (kvUrl && kvToken) {
     try {
