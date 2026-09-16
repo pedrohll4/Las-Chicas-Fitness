@@ -184,8 +184,7 @@ export function AdminCustomizer() {
       description: "Descreva os benefícios e dinâmica desta modalidade aqui.",
       iconName: "Dumbbell",
       tags: ["Nova", "Treino"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      imageUrl: "/images/estrutura/equipamentos.png",
       intensity: "Personalizada",
     };
     const updated = [...formData.modalities, newModality];
@@ -214,8 +213,7 @@ export function AdminCustomizer() {
       title: "Nova Área da Academia",
       category: "Musculação",
       description: "Descrição detalhada do espaço e maquinários.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop",
+      imageUrl: "/images/estrutura/equipamentos.png",
     };
     const updated = [...formData.structure, newItem];
     setFormData({ ...formData, structure: updated });
@@ -242,8 +240,7 @@ export function AdminCustomizer() {
       id: `gal-${Date.now()}`,
       title: "Novo Momento Fitness",
       category: "Comunidade",
-      imageUrl:
-        "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop",
+      imageUrl: "/images/estrutura/comunidade.png",
       aspect: "square",
     };
     const updated = [...formData.gallery, newItem];
@@ -308,8 +305,7 @@ export function AdminCustomizer() {
     const newPost: InstagramPost = {
       id: `insta-${Date.now()}`,
       type: "image",
-      mediaUrl:
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
+      mediaUrl: "/images/estrutura/comunidade.png",
       likes: "350",
       comments: "25",
       caption: "Superação e energia na Las Chicas Fitness! ✨",
@@ -644,7 +640,7 @@ export function AdminCustomizer() {
                     label="Foto Principal da Seção Sobre"
                     value={
                       formData.aboutImageUrl ||
-                      "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop"
+                      "/images/estrutura/fachada.jpg"
                     }
                     onChange={(url) => {
                       const updated = { ...formData, aboutImageUrl: url };
@@ -666,10 +662,6 @@ export function AdminCustomizer() {
                         { label: "Equipamentos MV", url: "/images/estrutura/equipamentos.png" },
                         { label: "Mural Las Chicas", url: "/images/estrutura/mural.jpg" },
                         { label: "Cantinho Kids", url: "/images/estrutura/cantinho-kids.jpg" },
-                        {
-                          label: "Treino Fitness",
-                          url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop",
-                        },
                       ].map((preset, idx) => (
                         <button
                           key={idx}

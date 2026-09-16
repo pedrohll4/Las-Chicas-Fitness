@@ -52,12 +52,12 @@ export function Services() {
                 {/* Image Header with Gradient Overlay */}
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image
-                    src={item.imageUrl}
+                    src={item.imageUrl || "/images/estrutura/equipamentos.png"}
                     alt={item.title}
                     fill
                     className="object-cover object-center filter brightness-[0.75] group-hover:scale-110 group-hover:brightness-90 transition-all duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    unoptimized={item.imageUrl.startsWith("data:")}
+                    unoptimized={typeof item.imageUrl === 'string' && item.imageUrl.startsWith("data:")}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
 

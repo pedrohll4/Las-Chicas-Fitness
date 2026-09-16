@@ -117,7 +117,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       description: "Treino preparado para oferecer força e resistência!",
       iconName: "Zap",
       tags: ["Força"],
-      imageUrl: "",
+      imageUrl: "/images/estrutura/equipamentos.png",
       intensity: "Alta",
     },
     {
@@ -128,7 +128,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
         "Treinos intervalados de alta intensidade e esteiras/bikes de última geração para maximizar o gasto calórico e saúde do coração.",
       iconName: "Flame",
       tags: ["Resistência", "Metabolismo", "Energia"],
-      imageUrl: "",
+      imageUrl: "/images/estrutura/mural.jpg",
       intensity: "Alta",
     },
   ],
@@ -524,8 +524,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       rating: 5,
       comment:
         "A Las Chicas mudou totalmente a minha relação com a academia! O ambiente 100% feminino me deixa super à vontade e as professoras são incríveis e atenciosas.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop",
+      imageUrl: "",
       date: "Há 3 dias",
       isVerified: true,
     },
@@ -536,8 +535,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       rating: 5,
       comment:
         "Melhor decisão que tomei! Estrutura impecável, equipamentos modernos e uma energia maravilhosa. Sinto a diferença no meu corpo e na minha disposição todos os dias.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+      imageUrl: "",
       date: "Há 1 semana",
       isVerified: true,
     },
@@ -548,8 +546,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       rating: 5,
       comment:
         "Espaço acolhedor, limpo e com suporte de verdade. Não troco por nenhuma outra! Quem treina aqui realmente sente a diferença na saúde e na autoestima.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop",
+      imageUrl: "",
       date: "Há 2 semanas",
       isVerified: true,
     },

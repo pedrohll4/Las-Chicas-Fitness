@@ -9,7 +9,7 @@ export function About() {
 
   const aboutImageUrl =
     config.aboutImageUrl ||
-    "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1000&auto=format&fit=crop";
+    "/images/estrutura/fachada.jpg";
 
   const defaultHighlights = [
     "Atendimento humanizado e focado em você",
