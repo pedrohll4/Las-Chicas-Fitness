@@ -118,11 +118,11 @@ export function LightboxModal({
               </span>
             )}
             <h4 className="text-base sm:text-lg font-bold text-white">
-              {currentImage.title}
+              {(currentImage.title || "").replace(/[\ufffd\u2014\u2013]/g, " - ")}
             </h4>
             {currentImage.description && (
               <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
-                {currentImage.description}
+                {(currentImage.description || "").replace(/[\ufffd\u2014\u2013]/g, " - ")}
               </p>
             )}
           </div>

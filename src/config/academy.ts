@@ -490,7 +490,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
       title: "Nossa Comunidade",
       category: "Comunidade",
       description:
-        "Mulheres unidas, fortes e inspiradoras. A Las Chicas é muito mais que uma academia — é família!",
+        "Mulheres unidas, fortes e inspiradoras. A Las Chicas é muito mais que uma academia - é família!",
       imageUrl: "/images/estrutura/comunidade.png",
     },
     {

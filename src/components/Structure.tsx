@@ -28,9 +28,9 @@ export function Structure() {
 
   const lightboxImages: LightboxImage[] = filteredItems.map((item) => ({
     imageUrl: item.imageUrl,
-    title: item.title,
+    title: (item.title || "").replace(/[\ufffd\u2014\u2013]/g, " - "),
     category: item.category,
-    description: item.description,
+    description: (item.description || "").replace(/[\ufffd\u2014\u2013]/g, " - "),
   }));
 
   return (
@@ -112,10 +112,10 @@ export function Structure() {
               {/* Text Info */}
               <div className="p-5">
                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-brand-pink transition-colors">
-                  {item.title}
+                  {(item.title || "").replace(/[\ufffd\u2014\u2013]/g, " - ")}
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                  {item.description}
+                  {(item.description || "").replace(/[\ufffd\u2014\u2013]/g, " - ")}
                 </p>
               </div>
             </div>

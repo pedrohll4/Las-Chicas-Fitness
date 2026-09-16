@@ -12,8 +12,8 @@ export function Gallery() {
 
   const lightboxImages: LightboxImage[] = config.gallery.map((item) => ({
     imageUrl: item.imageUrl,
-    title: item.title,
-    category: item.category,
+    title: (item.title || "").replace(/[\ufffd\u2014\u2013]/g, " - "),
+    category: (item.category || "").replace(/[\ufffd\u2014\u2013]/g, " - "),
   }));
 
   return (
@@ -83,7 +83,7 @@ export function Gallery() {
                   {/* Bottom Title */}
                   <div className="translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-brand-pink transition-colors">
-                      {item.title}
+                      {(item.title || "").replace(/[\ufffd\u2014\u2013]/g, " - ")}
                     </h3>
                   </div>
                 </div>

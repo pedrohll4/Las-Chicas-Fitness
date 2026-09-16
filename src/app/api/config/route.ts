@@ -29,7 +29,8 @@ export async function GET() {
     if (store) {
       const raw = await store.get(BLOB_KEY, { type: "text" });
       if (raw) {
-        const parsed = JSON.parse(raw);
+        const cleanRaw = raw.replace(/[\ufffd\u2014\u2013]/g, " - ");
+        const parsed = JSON.parse(cleanRaw);
         if (parsed && typeof parsed === "object") {
           const merged = {
             ...ACADEMY_CONFIG,
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
           console.warn("[Config API] Aviso no merge de testimonials:", mergeErr);
         }
 
-        await store.set(BLOB_KEY, JSON.stringify(configToSave));
+        await store.set(BLOB_KEY, JSON.stringify(configToSave).replace(/[\ufffd\u2014\u2013]/g, " - "));
         savedToCloud = true;
         console.log("[Config API] Config salva no Netlify Blobs com merge seguro");
       } else {

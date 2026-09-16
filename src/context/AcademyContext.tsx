@@ -61,6 +61,24 @@ const DEFAULT_PASSWORD = "admin123";
 
 const AcademyContext = createContext<AcademyContextType | undefined>(undefined);
 
+function sanitizeConfigEncoding<T>(conf: T): T {
+  if (!conf) return conf;
+  if (typeof conf === "string") {
+    return conf.replace(/[\ufffd\u2014\u2013]/g, " - ") as unknown as T;
+  }
+  if (Array.isArray(conf)) {
+    return conf.map((item) => sanitizeConfigEncoding(item)) as unknown as T;
+  }
+  if (typeof conf === "object") {
+    const res: any = {};
+    for (const key of Object.keys(conf as any)) {
+      res[key] = sanitizeConfigEncoding((conf as any)[key]);
+    }
+    return res as T;
+  }
+  return conf;
+}
+
 export function AcademyProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<AcademyConfig>(ACADEMY_CONFIG);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -70,14 +88,13 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   const [isSavingGlobal, setIsSavingGlobal] = useState<boolean>(false);
   const [cloudSyncStatus, setCloudSyncStatus] = useState<"idle" | "saving" | "cloud" | "local_only" | "error">("idle");
 
-
   // 1. Carregar dados do localStorage e sincronizar com a nuvem/servidor ao iniciar
   useEffect(() => {
     // A) Carregamento rápido inicial do localStorage
     try {
       const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
       if (savedConfig) {
-        const parsed = JSON.parse(savedConfig);
+        const parsed = sanitizeConfigEncoding(JSON.parse(savedConfig));
         setConfig((prev) => ({
           ...ACADEMY_CONFIG,
           ...prev,
@@ -116,12 +133,13 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
       .then((res) => res.json())
       .then((data) => {
         if (data?.config && data.source !== "default") {
+          const sanitizedCloud = sanitizeConfigEncoding(data.config);
           const freshConfig: AcademyConfig = {
             ...ACADEMY_CONFIG,
-            ...data.config,
+            ...sanitizedCloud,
             contacts: {
               ...ACADEMY_CONFIG.contacts,
-              ...(data.config.contacts || {}),
+              ...(sanitizedCloud.contacts || {}),
             },
           };
           setConfig(freshConfig);
