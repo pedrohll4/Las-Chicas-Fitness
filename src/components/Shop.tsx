@@ -106,7 +106,7 @@ export function Shop() {
                     className="relative w-full aspect-[4/4.2] rounded-2xl overflow-hidden bg-black/40 border border-white/10 group-hover:border-brand-pink/40 transition-all cursor-pointer block mb-4"
                   >
                     <Image
-                      src={product.imageUrl || "/images/gallery/foto_1.jpg"}
+                      src={product.imageUrl || "/images/estrutura/fachada.jpg"}
                       alt={product.name}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
