@@ -5,13 +5,35 @@ import { getCloudData, setCloudData, getKvCredentials, GLOBAL_CONFIG_KEY } from 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// Cache em memória na instância do servidor (protege contra picos de milhares de acessos por segundo)
+let memoryCache: { data: any; provider: string; timestamp: number } | null = null;
+const MEMORY_CACHE_TTL_MS = 20 * 1000; // 20 segundos
+
+const EDGE_CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=300",
+  "CDN-Cache-Control": "public, s-maxage=60, stale-while-revalidate=600",
+  "Vercel-CDN-Cache-Control": "public, s-maxage=60, stale-while-revalidate=600",
+};
+
 const NO_CACHE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   Pragma: "no-cache",
   Expires: "0",
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const isBypassCache = url.searchParams.has("t") || url.searchParams.has("nocache") || url.searchParams.has("fresh");
+  const now = Date.now();
+
+  // 1. Resposta instantânea da memória local (0ms de latência)
+  if (!isBypassCache && memoryCache && now - memoryCache.timestamp < MEMORY_CACHE_TTL_MS) {
+    return NextResponse.json(
+      { source: `${memoryCache.provider}_cached`, config: memoryCache.data },
+      { headers: EDGE_CACHE_HEADERS }
+    );
+  }
+
   try {
     const { data: raw, provider } = await getCloudData(GLOBAL_CONFIG_KEY);
     if (raw) {
@@ -45,10 +67,13 @@ export async function GET() {
           ...(Array.isArray(parsed.benefits) ? { benefits: parsed.benefits } : {}),
           ...(Array.isArray(parsed.stats) ? { stats: parsed.stats } : {}),
         };
-        console.log(`[Config API] Config carregada com sucesso do provedor: ${provider}`);
+
+        // Atualiza cache em memória
+        memoryCache = { data: merged, provider, timestamp: now };
+
         return NextResponse.json(
           { source: provider, config: merged },
-          { headers: NO_CACHE_HEADERS }
+          { headers: isBypassCache ? NO_CACHE_HEADERS : EDGE_CACHE_HEADERS }
         );
       }
     }
@@ -58,7 +83,7 @@ export async function GET() {
 
   return NextResponse.json(
     { source: "default", config: ACADEMY_CONFIG },
-    { headers: NO_CACHE_HEADERS }
+    { headers: isBypassCache ? NO_CACHE_HEADERS : EDGE_CACHE_HEADERS }
   );
 }
 
@@ -86,6 +111,9 @@ export async function POST(req: NextRequest) {
       providerUsed = result.provider;
       if (!result.success && result.error) {
         cloudError = result.error;
+      } else {
+        // Invalida cache em memória para que os próximos acessos recebam o novo dado
+        memoryCache = null;
       }
       console.log(`[Config API] Config salva com sucesso no provedor: ${providerUsed}`);
     } catch (e: any) {
