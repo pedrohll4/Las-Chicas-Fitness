@@ -75,9 +75,30 @@ export async function POST(req: NextRequest) {
     try {
       const store = await getBlobStore();
       if (store) {
-        await store.set(BLOB_KEY, JSON.stringify(newConfig));
+        // Preservar depoimentos recentes da nuvem para evitar que sejam sobrescritos acidentalmente
+        let configToSave = { ...newConfig };
+        try {
+          const currentRaw = await store.get(BLOB_KEY, { type: "text" });
+          if (currentRaw) {
+            const currentObj = JSON.parse(currentRaw);
+            if (Array.isArray(currentObj?.testimonials) && Array.isArray(newConfig?.testimonials)) {
+              // Obter IDs dos testimonials enviados
+              const submittedIds = new Set(newConfig.testimonials.map((t: any) => t.id));
+              // Identificar depoimentos que estão na nuvem mas não no envio (recebidos enquanto admin estava na tela)
+              const missingFromCloud = currentObj.testimonials.filter((t: any) => !submittedIds.has(t.id));
+              if (missingFromCloud.length > 0) {
+                // Mesclar mantendo a ordem: novos da nuvem no topo, seguidos pelos do payload
+                configToSave.testimonials = [...missingFromCloud, ...newConfig.testimonials].slice(0, 80);
+              }
+            }
+          }
+        } catch (mergeErr) {
+          console.warn("[Config API] Aviso no merge de testimonials:", mergeErr);
+        }
+
+        await store.set(BLOB_KEY, JSON.stringify(configToSave));
         savedToCloud = true;
-        console.log("[Config API] Config salva no Netlify Blobs");
+        console.log("[Config API] Config salva no Netlify Blobs com merge seguro");
       } else {
         cloudError = "Netlify Blobs nao disponivel neste ambiente";
       }

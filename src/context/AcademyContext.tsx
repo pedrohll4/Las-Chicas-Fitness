@@ -27,7 +27,8 @@ interface AcademyContextType {
   updateInstagramPosts: (posts: InstagramPost[]) => void;
   updateTestimonials: (testimonials: TestimonialItem[]) => void;
   addTestimonial: (
-    item: Omit<TestimonialItem, "id" | "date" | "createdAt">
+    item: Omit<TestimonialItem, "id" | "date" | "createdAt">,
+    honeypot?: { website_hp?: string; phone_hp?: string }
   ) => Promise<boolean>;
   updateStats: (stats: StatItem[]) => void;
   resetToDefaults: () => void;
@@ -251,22 +252,42 @@ export function AcademyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addTestimonial = async (
-    item: Omit<TestimonialItem, "id" | "date" | "createdAt">
+    item: Omit<TestimonialItem, "id" | "date" | "createdAt">,
+    honeypot?: { website_hp?: string; phone_hp?: string }
   ): Promise<boolean> => {
-    const newTestimonial: TestimonialItem = {
-      ...item,
-      id: `depo-${Date.now()}`,
-      date: "Hoje",
-      createdAt: new Date().toISOString(),
-      isVerified: true,
-    };
-    const currentList = config.testimonials || [];
-    const updatedList = [newTestimonial, ...currentList];
-    const updatedConfig = { ...config, testimonials: updatedList };
-    persistConfig(updatedConfig);
-    // Sincroniza em segundo plano com o backend
-    saveGlobalConfig(updatedConfig);
-    return true;
+    try {
+      const res = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...item,
+          website_hp: honeypot?.website_hp,
+          phone_hp: honeypot?.phone_hp,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Não foi possível enviar seu depoimento.");
+      }
+
+      // Se o servidor retornou a lista atualizada com merge seguro, usamos ela
+      if (Array.isArray(data.testimonials) && data.testimonials.length > 0) {
+        const updatedConfig = { ...config, testimonials: data.testimonials };
+        persistConfig(updatedConfig);
+      } else if (data.testimonial) {
+        const currentList = config.testimonials || [];
+        const updatedList = [data.testimonial, ...currentList];
+        const updatedConfig = { ...config, testimonials: updatedList };
+        persistConfig(updatedConfig);
+      }
+
+      return true;
+    } catch (err: any) {
+      console.error("[AcademyContext] Erro ao adicionar depoimento:", err);
+      throw err;
+    }
   };
 
   const updateStats = (stats: StatItem[]) => {

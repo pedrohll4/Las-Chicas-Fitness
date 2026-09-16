@@ -13,6 +13,7 @@ import {
   Sparkles,
   Heart,
   UploadCloud,
+  AlertCircle,
 } from "lucide-react";
 import { useAcademy } from "@/context/AcademyContext";
 import { TestimonialItem } from "@/types";
@@ -30,6 +31,8 @@ export function Testimonials() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [hpWebsite, setHpWebsite] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -70,17 +73,42 @@ export function Testimonials() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !comment.trim()) return;
+    setErrorMessage(null);
+
+    const trimmedName = name.trim();
+    const trimmedComment = comment.trim();
+
+    if (!trimmedName || trimmedName.length < 2) {
+      setErrorMessage("Por favor, informe seu nome com pelo menos 2 letras.");
+      return;
+    }
+    if (trimmedName.length > 60) {
+      setErrorMessage("O nome não pode ter mais de 60 caracteres.");
+      return;
+    }
+    if (!trimmedComment || trimmedComment.length < 10) {
+      setErrorMessage("Por favor, conte mais sobre sua experiência (mínimo de 10 caracteres).");
+      return;
+    }
+    if (trimmedComment.length > 500) {
+      setErrorMessage("O depoimento não pode ultrapassar 500 caracteres.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      await addTestimonial({
-        name: name.trim(),
-        role: role.trim() || "Aluna Las Chicas",
-        rating,
-        comment: comment.trim(),
-        imageUrl: imagePreview || undefined,
-      });
+      await addTestimonial(
+        {
+          name: trimmedName,
+          role: role.trim() || "Aluna Las Chicas",
+          rating,
+          comment: trimmedComment,
+          imageUrl: imagePreview || undefined,
+        },
+        {
+          website_hp: hpWebsite,
+        }
+      );
 
       setSubmitSuccess(true);
       setTimeout(() => {
@@ -91,9 +119,14 @@ export function Testimonials() {
         setRating(5);
         setComment("");
         setImagePreview(null);
+        setHpWebsite("");
+        setErrorMessage(null);
       }, 2000);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("[Testimonials Form] Erro no envio:", err);
+      setErrorMessage(
+        err?.message || "Não foi possível enviar seu depoimento no momento. Tente novamente."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -129,7 +162,10 @@ export function Testimonials() {
           <div className="flex justify-center md:justify-end">
             <button
               type="button"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setErrorMessage(null);
+                setIsModalOpen(true);
+              }}
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-brand-pink hover:bg-brand-pink-dark text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-glow-pink hover:scale-105 transition-all duration-300"
             >
               <Plus className="w-4 h-4" />
@@ -252,6 +288,28 @@ export function Testimonials() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Honeypot Invisível para Bloquear Spambots */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    opacity: 0,
+                    height: 0,
+                    width: 0,
+                    pointerEvents: "none",
+                  }}
+                  aria-hidden="true"
+                >
+                  <input
+                    type="text"
+                    name="website_hp"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={hpWebsite}
+                    onChange={(e) => setHpWebsite(e.target.value)}
+                  />
+                </div>
+
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink text-[11px] font-bold uppercase tracking-wider mb-2">
                     <Sparkles className="w-3.5 h-3.5" />
@@ -264,6 +322,14 @@ export function Testimonials() {
                     Não é preciso login. Preencha seu nome e conte como está sendo sua experiência!
                   </p>
                 </div>
+
+                {/* Banner de Erro/Validação */}
+                {errorMessage && (
+                  <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-start gap-2.5 text-red-200 text-xs animate-fadeIn">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <span className="leading-relaxed">{errorMessage}</span>
+                  </div>
+                )}
 
                 {/* Seleção de Estrelas Interativa */}
                 <div>
@@ -297,14 +363,24 @@ export function Testimonials() {
 
                 {/* Nome / Assinatura */}
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-300 uppercase tracking-wider mb-1">
-                    Seu Nome ou Apelido *
-                  </label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-[11px] font-bold text-zinc-300 uppercase tracking-wider">
+                      Seu Nome ou Apelido *
+                    </label>
+                    <span className="text-[10px] text-zinc-500">
+                      {name.length}/60
+                    </span>
+                  </div>
                   <input
                     type="text"
                     required
+                    minLength={2}
+                    maxLength={60}
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (errorMessage) setErrorMessage(null);
+                    }}
                     placeholder="Ex: Juliana Santos ou Ju"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-surface-card border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-pink focus:ring-1 focus:ring-brand-pink transition-all"
                   />
@@ -317,6 +393,7 @@ export function Testimonials() {
                   </label>
                   <input
                     type="text"
+                    maxLength={60}
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Ex: Aluna há 6 meses, Musculação & Jump"
@@ -332,11 +409,31 @@ export function Testimonials() {
                   <textarea
                     required
                     rows={3}
+                    maxLength={500}
                     value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Conte como a academia mudou sua rotina, disposição e resultados..."
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                      if (errorMessage) setErrorMessage(null);
+                    }}
+                    placeholder="Conte como a academia mudou sua rotina, disposição e resultados (mínimo 10 caracteres)..."
                     className="w-full px-3.5 py-2.5 rounded-xl bg-surface-card border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-brand-pink focus:ring-1 focus:ring-brand-pink transition-all resize-none"
                   />
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-[10px] text-zinc-500">
+                      Mínimo de 10 caracteres
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold ${
+                        comment.length > 500
+                          ? "text-red-400"
+                          : comment.length >= 10
+                          ? "text-brand-pink"
+                          : "text-zinc-500"
+                      }`}
+                    >
+                      {comment.length}/500
+                    </span>
+                  </div>
                 </div>
 
                 {/* Foto Opcional */}
@@ -368,7 +465,7 @@ export function Testimonials() {
                         Clique para anexar uma foto
                       </span>
                       <span className="text-[10px] text-zinc-500 mt-0.5">
-                        PNG, JPG ou WEBP
+                        PNG, JPG ou WEBP (compactada automaticamente)
                       </span>
                       <input
                         type="file"
@@ -383,11 +480,19 @@ export function Testimonials() {
                 {/* Botão Submit */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || !name.trim() || !comment.trim()}
-                  className="w-full py-3.5 rounded-full bg-brand-pink hover:bg-brand-pink-dark text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-glow-pink hover:scale-[1.02] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  disabled={
+                    isSubmitting ||
+                    name.trim().length < 2 ||
+                    comment.trim().length < 10 ||
+                    comment.trim().length > 500
+                  }
+                  className="w-full py-3.5 rounded-full bg-brand-pink hover:bg-brand-pink-dark text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-glow-pink hover:scale-[1.02] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Validando e Publicando...</span>
+                    </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
