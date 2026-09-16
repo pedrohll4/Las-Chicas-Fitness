@@ -49,13 +49,34 @@ export async function getCloudData(key: string = GLOBAL_CONFIG_KEY): Promise<{ d
   if (kvUrl && kvToken) {
     try {
       const cleanUrl = kvUrl.replace(/\/$/, "");
-      const res = await fetch(`${cleanUrl}/get/${encodeURIComponent(key)}`, {
+      
+      // Tentativa A: Upstash REST Command POST ["GET", key]
+      const cmdRes = await fetch(cleanUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${kvToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(["GET", key]),
+        cache: "no-store",
+      });
+
+      if (cmdRes.ok) {
+        const json = await cmdRes.json();
+        if (json && json.result !== null && json.result !== undefined) {
+          const raw = typeof json.result === "string" ? json.result : JSON.stringify(json.result);
+          return { data: raw, provider: "vercel_kv" };
+        }
+      }
+
+      // Tentativa B: Endpoint legado GET /get/key
+      const getRes = await fetch(`${cleanUrl}/get/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${kvToken}` },
         cache: "no-store",
       });
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.result) {
+      if (getRes.ok) {
+        const json = await getRes.json();
+        if (json && json.result !== null && json.result !== undefined) {
           const raw = typeof json.result === "string" ? json.result : JSON.stringify(json.result);
           return { data: raw, provider: "vercel_kv" };
         }
@@ -89,18 +110,35 @@ export async function setCloudData(key: string = GLOBAL_CONFIG_KEY, value: strin
   if (kvUrl && kvToken) {
     try {
       const cleanUrl = kvUrl.replace(/\/$/, "");
-      const res = await fetch(`${cleanUrl}/set/${encodeURIComponent(key)}`, {
+
+      // Tentativa A: Upstash REST Command POST ["SET", key, value]
+      const cmdRes = await fetch(cleanUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${kvToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(value),
+        body: JSON.stringify(["SET", key, value]),
       });
-      if (res.ok) {
+
+      if (cmdRes.ok) {
+        return { success: true, provider: "vercel_kv" };
+      }
+
+      // Tentativa B: Endpoint legado POST /set/key
+      const setRes = await fetch(`${cleanUrl}/set/${encodeURIComponent(key)}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${kvToken}`,
+          "Content-Type": "application/json",
+        },
+        body: typeof value === "string" ? value : JSON.stringify(value),
+      });
+
+      if (setRes.ok) {
         return { success: true, provider: "vercel_kv" };
       } else {
-        const errText = await res.text();
+        const errText = await setRes.text();
         return { success: false, provider: "vercel_kv", error: errText };
       }
     } catch (e: any) {

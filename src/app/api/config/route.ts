@@ -15,8 +15,18 @@ export async function GET() {
   try {
     const { data: raw, provider } = await getCloudData(GLOBAL_CONFIG_KEY);
     if (raw) {
-      const cleanRaw = raw.replace(/[\ufffd\u2014\u2013]/g, " - ");
-      const parsed = JSON.parse(cleanRaw);
+      let parsed: any = null;
+      try {
+        const cleanRaw = typeof raw === "string" ? raw.replace(/[\ufffd\u2014\u2013]/g, " - ") : raw;
+        parsed = typeof cleanRaw === "string" ? JSON.parse(cleanRaw) : cleanRaw;
+        // Se ainda for string (double-encoded JSON), faz o segundo parse
+        if (typeof parsed === "string") {
+          parsed = JSON.parse(parsed);
+        }
+      } catch (parseErr) {
+        console.warn("[Config API] Erro no parse:", parseErr);
+      }
+
       if (parsed && typeof parsed === "object") {
         const merged = {
           ...ACADEMY_CONFIG,
@@ -26,7 +36,7 @@ export async function GET() {
             ...(parsed.contacts || {}),
           },
         };
-        console.log(`[Config API] Config carregada do provedor: ${provider}`);
+        console.log(`[Config API] Config carregada com sucesso do provedor: ${provider}`);
         return NextResponse.json(
           { source: provider, config: merged },
           { headers: NO_CACHE_HEADERS }
