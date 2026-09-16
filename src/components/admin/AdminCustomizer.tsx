@@ -1135,7 +1135,7 @@ export function AdminCustomizer() {
                 <div>
                   <h3 className="text-base font-bold text-white">Lojinha & Roupas Fitness</h3>
                   <p className="text-xs text-zinc-400">
-                    Cadastre roupas, garrafas e acessórios com fotos, valores e botão de compra direta no WhatsApp.
+                    Cadastre produtos e itens com fotos, valores e botão de compra direta no WhatsApp.
                   </p>
                 </div>
                 <button
