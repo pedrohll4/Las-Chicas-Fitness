@@ -38,6 +38,7 @@ export const ACADEMY_CONFIG: AcademyConfig = {
   contacts: {
     // WhatsApp Principal (Recepção & Matrículas)
     whatsappNumber: "5511999999999",
+    whatsappNumber2: "", // Segundo número para rodízio automático
     whatsappDisplay: "(11) 99999-9999",
 
     // WhatsApp da Lojinha & Moda Fitness

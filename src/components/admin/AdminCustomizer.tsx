@@ -2157,6 +2157,37 @@ export function AdminCustomizer() {
                       />
                     </div>
                   </div>
+
+                  {/* Segundo número para rodízio automático */}
+                  <div className="mt-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                        🔄 Rodízio Automático (Opcional)
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 leading-relaxed">
+                      Cadastre um segundo número para distribuir os atendimentos automaticamente. A cada clique, o sistema alterna entre os dois números sem o cliente perceber.
+                    </p>
+                    <div>
+                      <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                        2º Número para Rodízio (DDI + DDD + Número)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.contacts.whatsappNumber2 || ""}
+                        onChange={(e) => {
+                          const updated = {
+                            ...formData,
+                            contacts: { ...formData.contacts, whatsappNumber2: e.target.value },
+                          };
+                          setFormData(updated);
+                          updateConfig(updated);
+                        }}
+                        placeholder="Ex: 5511988886666 (deixe vazio para desativar)"
+                        className="w-full px-3 py-1.5 text-xs bg-[#111116] border border-white/10 rounded-lg text-white font-mono"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* 2. WhatsApp da Lojinha */}

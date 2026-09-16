@@ -123,6 +123,7 @@ export interface AcademyConfig {
   aboutCtaText?: string;
   contacts: {
     whatsappNumber: string; // WhatsApp Principal (Recepção & Planos)
+    whatsappNumber2?: string; // WhatsApp Secundário para rodízio (Recepção & Planos)
     whatsappDisplay: string;
     whatsappShopNumber?: string; // WhatsApp da Lojinha & Boutique
     whatsappShopDisplay?: string;

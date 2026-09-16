@@ -43,16 +43,44 @@ export function WhatsAppButton() {
   }> = [];
 
   const mainNumber = config.contacts.whatsappNumber?.trim();
+  const mainNumber2 = config.contacts.whatsappNumber2?.trim();
   const shopNumber = config.contacts.whatsappShopNumber?.trim();
   const extraNumber = config.contacts.whatsappExtraNumber?.trim();
 
-  // 1. Canal de Recepção / Planos (Principal)
+  // Função de rodízio: alterna entre número1 e número2 a cada clique
+  const getRotatingNumber = (): string => {
+    if (!mainNumber) return "";
+    if (!mainNumber2) return mainNumber; // Se não tem segundo número, usa o principal
+
+    // Busca o turno salvo no localStorage (0 ou 1)
+    let turn = 0;
+    try {
+      const saved = localStorage.getItem("lc_whatsapp_turn");
+      turn = saved ? parseInt(saved, 10) : 0;
+      if (isNaN(turn)) turn = 0;
+    } catch {
+      turn = 0;
+    }
+
+    const chosenNumber = turn === 0 ? mainNumber : mainNumber2;
+
+    // Salva o próximo turno para o próximo clique
+    try {
+      localStorage.setItem("lc_whatsapp_turn", String(turn === 0 ? 1 : 0));
+    } catch {
+      // fallback silencioso
+    }
+
+    return chosenNumber;
+  };
+
+  // 1. Canal de Recepção / Planos (Principal) - com rodízio automático se tiver 2 números
   if (mainNumber) {
     channels.push({
       id: "recepcao",
       title: "Recepção & Matrículas",
       description: "Planos, horários, aulas e mensalidades",
-      number: mainNumber,
+      number: mainNumber, // Número padrão (será sobrescrito no click via rodízio)
       icon: Dumbbell,
       defaultMsg: `Olá! Gostaria de saber mais sobre as matrículas e planos da ${config.name}.`,
     });
@@ -88,6 +116,12 @@ export function WhatsAppButton() {
     if (hasMultipleChannels) {
       e.preventDefault();
       setIsOpen(!isOpen);
+    } else {
+      // Canal único — usa rodízio se tiver número2 configurado
+      e.preventDefault();
+      const targetNumber = getRotatingNumber();
+      const url = getWhatsAppUrl(`Olá! Gostaria de mais informações sobre a ${config.name}.`, targetNumber);
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -128,14 +162,22 @@ export function WhatsAppButton() {
           <div className="space-y-2">
             {channels.map((channel) => {
               const Icon = channel.icon;
+
+              // Handler de clique: para "recepcao", usa rodízio; para outros, usa número fixo
+              const handleChannelClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.preventDefault();
+                const targetNumber = channel.id === "recepcao" ? getRotatingNumber() : channel.number;
+                const url = getWhatsAppUrl(channel.defaultMsg, targetNumber);
+                window.open(url, "_blank", "noopener,noreferrer");
+                setIsOpen(false);
+              };
+
               return (
                 <a
                   key={channel.id}
-                  href={getWhatsAppUrl(channel.defaultMsg, channel.number)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="group flex items-center justify-between p-3 rounded-2xl bg-surface hover:bg-surface-light border border-white/5 hover:border-brand-pink/40 transition-all duration-300 hover:scale-[1.02]"
+                  href="#"
+                  onClick={handleChannelClick}
+                  className="group flex items-center justify-between p-3 rounded-2xl bg-surface hover:bg-surface-light border border-white/5 hover:border-brand-pink/40 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-brand-pink/15 text-brand-pink border border-brand-pink/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -178,13 +220,7 @@ export function WhatsAppButton() {
         )}
 
         <a
-          href={
-            hasMultipleChannels
-              ? "#"
-              : getWhatsAppUrl(`Olá! Gostaria de mais informações sobre a ${config.name}.`)
-          }
-          target={hasMultipleChannels ? undefined : "_blank"}
-          rel={hasMultipleChannels ? undefined : "noopener noreferrer"}
+          href="#"
           onClick={handleButtonClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
