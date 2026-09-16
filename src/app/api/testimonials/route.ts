@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ACADEMY_CONFIG } from "@/config/academy";
 import { TestimonialItem, AcademyConfig } from "@/types";
+import { getCloudData, setCloudData, GLOBAL_CONFIG_KEY } from "@/lib/cloudStore";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const BLOB_STORE_NAME = "las-chicas-config";
-const BLOB_KEY = "global_config";
 
 const NO_CACHE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
@@ -14,14 +12,16 @@ const NO_CACHE_HEADERS = {
   Expires: "0",
 };
 
-// Controle simples de rate limit / anti-flood em memória (IP -> timestamp último envio)
+// ============================================================================
+// RATE LIMITING & SECURITY EM MEMÓRIA
+// ============================================================================
 interface RateLimitEntry {
   count: number;
   firstRequestTime: number;
 }
 const ipRateLimits = new Map<string, RateLimitEntry>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minuto
-const MAX_REQUESTS_PER_WINDOW = 3; // Máximo 3 envios por minuto por IP
+const MAX_REQUESTS_PER_WINDOW = 4; // Máximo 4 envios por minuto por IP
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -57,16 +57,6 @@ if (typeof setInterval !== "undefined") {
   }, 5 * 60 * 1000);
 }
 
-async function getBlobStore() {
-  try {
-    const { getStore } = await import("@netlify/blobs");
-    return getStore(BLOB_STORE_NAME);
-  } catch (e) {
-    console.warn("[Testimonials API] Netlify Blobs indisponivel localmente:", e);
-    return null;
-  }
-}
-
 // Higienizar texto removendo tags HTML
 function sanitizeText(text: string): string {
   return text
@@ -78,17 +68,14 @@ function sanitizeText(text: string): string {
 // GET: Retornar depoimentos atualizados
 export async function GET() {
   try {
-    const store = await getBlobStore();
-    if (store) {
-      const raw = await store.get(BLOB_KEY, { type: "text" });
-      if (raw) {
-        const parsed = JSON.parse(raw) as AcademyConfig;
-        if (parsed?.testimonials && Array.isArray(parsed.testimonials)) {
-          return NextResponse.json(
-            { testimonials: parsed.testimonials },
-            { headers: NO_CACHE_HEADERS }
-          );
-        }
+    const { data: raw, provider } = await getCloudData(GLOBAL_CONFIG_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as AcademyConfig;
+      if (parsed?.testimonials && Array.isArray(parsed.testimonials)) {
+        return NextResponse.json(
+          { testimonials: parsed.testimonials, source: provider },
+          { headers: NO_CACHE_HEADERS }
+        );
       }
     }
   } catch (e) {
@@ -96,7 +83,7 @@ export async function GET() {
   }
 
   return NextResponse.json(
-    { testimonials: ACADEMY_CONFIG.testimonials },
+    { testimonials: ACADEMY_CONFIG.testimonials, source: "default" },
     { headers: NO_CACHE_HEADERS }
   );
 }
@@ -112,53 +99,58 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Você enviou muitos depoimentos em pouco tempo. Por favor, aguarde 1 minuto antes de tentar novamente.",
+          error: "Você enviou muitos depoimentos recentemente. Aguarde um minuto antes de tentar novamente.",
         },
         { status: 429, headers: NO_CACHE_HEADERS }
       );
     }
 
+    // 2. Parse do corpo da requisição
     const body = await req.json();
+    const {
+      name: rawName,
+      role: rawRole,
+      rating: rawRating,
+      comment: rawComment,
+      imageUrl: rawImageUrl,
+      hpWebsite, // Honeypot anti-bot
+    } = body;
 
-    // 2. Honeypot check (campo invisível preenchido apenas por bots)
-    if (body.website_hp || body.phone_hp) {
-      console.warn("[Testimonials API] Honeypot ativado, requisição descartada.");
+    // Honeypot: se campo oculto foi preenchido, é um bot
+    if (hpWebsite && String(hpWebsite).trim().length > 0) {
+      console.warn(`[Testimonials Anti-Spam] Bot bloqueado no IP: ${ip}`);
       return NextResponse.json(
-        { success: true, message: "Depoimento recebido com sucesso!" },
+        { success: true, testimonial: null },
         { headers: NO_CACHE_HEADERS }
       );
     }
 
-    const rawName = String(body.name || "").trim();
-    const rawComment = String(body.comment || "").trim();
-    const rawRole = String(body.role || "").trim();
-    const rawRating = Number(body.rating);
-    const rawImageUrl = body.imageUrl ? String(body.imageUrl).trim() : undefined;
-
-    // 3. Regras de validação dos campos
-    if (!rawName || rawName.length < 2) {
+    // 3. Validações de campos obrigatórios e tamanho
+    if (!rawName || typeof rawName !== "string" || rawName.trim().length < 2) {
       return NextResponse.json(
-        { success: false, error: "O nome deve ter no mínimo 2 caracteres." },
+        { success: false, error: "Por favor, informe seu nome (mínimo 2 caracteres)." },
         { status: 400, headers: NO_CACHE_HEADERS }
       );
     }
-    if (rawName.length > 60) {
+
+    if (rawName.trim().length > 60) {
       return NextResponse.json(
         { success: false, error: "O nome não pode exceder 60 caracteres." },
         { status: 400, headers: NO_CACHE_HEADERS }
       );
     }
 
-    if (!rawComment || rawComment.length < 10) {
+    if (!rawComment || typeof rawComment !== "string" || rawComment.trim().length < 5) {
       return NextResponse.json(
         {
           success: false,
-          error: "Por favor, escreva um depoimento com pelo menos 10 caracteres.",
+          error: "Por favor, escreva um depoimento com pelo menos 5 caracteres.",
         },
         { status: 400, headers: NO_CACHE_HEADERS }
       );
     }
-    if (rawComment.length > 500) {
+
+    if (rawComment.trim().length > 500) {
       return NextResponse.json(
         {
           success: false,
@@ -224,77 +216,78 @@ export async function POST(req: NextRequest) {
       isVerified: true,
     };
 
-    // 8. Salvar no Netlify Blobs com leitura fresca e merge concorrente seguro
+    // 8. Salvar na nuvem com leitura fresca e merge concorrente seguro
     let savedToCloud = false;
     let updatedTestimonialsList: TestimonialItem[] = [newTestimonial];
 
     try {
-      const store = await getBlobStore();
-      if (store) {
-        let attempts = 0;
-        let success = false;
+      let attempts = 0;
+      let success = false;
 
-        while (attempts < 3 && !success) {
-          attempts++;
-          try {
-            const raw = await store.get(BLOB_KEY, { type: "text" });
-            let currentConfig: AcademyConfig = ACADEMY_CONFIG;
-            if (raw) {
-              const parsed = JSON.parse(raw);
-              if (parsed && typeof parsed === "object") {
-                currentConfig = { ...ACADEMY_CONFIG, ...parsed };
-              }
+      while (attempts < 3 && !success) {
+        attempts++;
+        try {
+          const { data: raw } = await getCloudData(GLOBAL_CONFIG_KEY);
+          let currentConfig: AcademyConfig = ACADEMY_CONFIG;
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === "object") {
+              currentConfig = { ...ACADEMY_CONFIG, ...parsed };
             }
+          }
 
-            const existingList: TestimonialItem[] = Array.isArray(currentConfig.testimonials)
-              ? currentConfig.testimonials
-              : ACADEMY_CONFIG.testimonials;
+          const existingList: TestimonialItem[] = Array.isArray(currentConfig.testimonials)
+            ? currentConfig.testimonials
+            : ACADEMY_CONFIG.testimonials;
 
-            // Anti-duplicação: verificar se já existe um depoimento idêntico enviado nos últimos minutos
-            const isDuplicate = existingList.some(
-              (item) =>
-                item.name.toLowerCase() === cleanName.toLowerCase() &&
-                item.comment.trim() === cleanComment &&
-                item.rating === cleanRating
+          // Anti-duplicação: verificar se já existe um depoimento idêntico enviado nos últimos minutos
+          const isDuplicate = existingList.some(
+            (item) =>
+              item.name.toLowerCase() === cleanName.toLowerCase() &&
+              item.comment.trim() === cleanComment &&
+              item.rating === cleanRating
+          );
+
+          if (isDuplicate) {
+            return NextResponse.json(
+              {
+                success: true,
+                testimonial: existingList.find((i) => i.name.toLowerCase() === cleanName.toLowerCase()) || newTestimonial,
+                testimonials: existingList,
+                savedToCloud: true,
+                duplicatePrevented: true,
+              },
+              { headers: NO_CACHE_HEADERS }
             );
+          }
 
-            if (isDuplicate) {
-              return NextResponse.json(
-                {
-                  success: true,
-                  testimonial: existingList.find((i) => i.name.toLowerCase() === cleanName.toLowerCase()) || newTestimonial,
-                  testimonials: existingList,
-                  savedToCloud: true,
-                  duplicatePrevented: true,
-                },
-                { headers: NO_CACHE_HEADERS }
-              );
-            }
+          // Inserir novo depoimento no início da lista, preservando todos os anteriores
+          updatedTestimonialsList = [newTestimonial, ...existingList].slice(0, 80);
 
-            // Inserir novo depoimento no início da lista, preservando todos os anteriores
-            updatedTestimonialsList = [newTestimonial, ...existingList].slice(0, 80);
+          const mergedConfig: AcademyConfig = {
+            ...currentConfig,
+            testimonials: updatedTestimonialsList,
+          };
 
-            const mergedConfig: AcademyConfig = {
-              ...currentConfig,
-              testimonials: updatedTestimonialsList,
-            };
-
-            await store.set(BLOB_KEY, JSON.stringify(mergedConfig));
+          const saveResult = await setCloudData(GLOBAL_CONFIG_KEY, JSON.stringify(mergedConfig));
+          if (saveResult.success) {
             success = true;
             savedToCloud = true;
             console.log(
-              `[Testimonials API] Depoimento de "${cleanName}" salvo com sucesso no Netlify Blobs (tentativa ${attempts})`
+              `[Testimonials API] Depoimento de "${cleanName}" salvo com sucesso no provedor: ${saveResult.provider} (tentativa ${attempts})`
             );
-          } catch (retryErr) {
-            console.warn(`[Testimonials API] Tentativa ${attempts} falhou:`, retryErr);
-            if (attempts < 3) {
-              await new Promise((res) => setTimeout(res, 80 * attempts));
-            }
+          } else {
+            throw new Error(saveResult.error || "Falha ao salvar");
+          }
+        } catch (retryErr) {
+          console.warn(`[Testimonials API] Tentativa ${attempts} falhou:`, retryErr);
+          if (attempts < 3) {
+            await new Promise((res) => setTimeout(res, 80 * attempts));
           }
         }
       }
-    } catch (blobErr) {
-      console.error("[Testimonials API] Erro ao persistir no store:", blobErr);
+    } catch (cloudErr) {
+      console.error("[Testimonials API] Erro ao persistir no cloud store:", cloudErr);
     }
 
     return NextResponse.json(
